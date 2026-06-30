@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peptide Bank // Premium Database</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        base: '#020617',
+                        surface: '#0f172a',
+                        surfaceHover: '#1e293b',
+                        brand: {
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                        },
+                        accent: '#38bdf8',
+                        danger: '#f43f5e',
+                        success: '#10b981',
+                        warning: '#f59e0b'
+                    },
+                    boxShadow: {
+                        'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
+                        'glow-brand': '0 0 20px rgba(99, 102, 241, 0.3)',
+                        'glow-success': '0 0 20px rgba(16, 185, 129, 0.3)',
+                        'glow-accent': '0 0 20px rgba(56, 189, 248, 0.3)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'ping-slow': 'ping 3s cubic-bezier(0, 0, 0.2, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        
+        .view-panel { transition: opacity 0.3s ease, transform 0.3s ease; }
+        .view-panel.hidden { opacity: 0; transform: translateY(10px); display: none; }
+        .view-panel.block { opacity: 1; transform: translateY(0); display: block; }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #818cf8, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Map Hover Effects */
+        .map-zone { transition: all 0.3s ease; cursor: pointer; }
+        .map-zone:hover { opacity: 0.8; stroke-width: 3; }
+        .map-subq { fill: rgba(16, 185, 129, 0.2); stroke: #10b981; }
+        .map-im { fill: rgba(56, 189, 248, 0.2); stroke: #38bdf8; }
+        .map-zone:hover.map-subq { fill: rgba(16, 185, 129, 0.5); filter: drop-shadow(0 0 8px #10b981); }
+        .map-zone:hover.map-im { fill: rgba(56, 189, 248, 0.5); filter: drop-shadow(0 0 8px #38bdf8); }
+    </style>
+</head>
+<body class="bg-base text-slate-200 font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-brand-500/30 selection:text-brand-400">
+
+    <div class="fixed top-0 left-1/4 w-[500px] h-[500px] bg-brand-600/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+
+    <header class="sticky top-0 z-50 glass-panel border-b border-white/5 py-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col xl:flex-row items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="goHome()">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white shadow-glow-brand group-hover:rotate-12 transition-transform duration-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">Peptide <span class="text-brand-400 font-normal">Bank</span></h1>
+                    <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider block">Clinical Research Database</span>
+                </div>
+            </div>
+
+            <nav class="flex flex-wrap items-center justify-center gap-1.5 bg-slate-900/50 p-1.5 rounded-full border border-white/5 shadow-inner max-w-full overflow-x-auto scrollbar-hide">
+                <button onclick="router('db')" id="nav-db" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md">Datenbank</button>
+                <button onclick="router('calc')" id="nav-calc" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Rechner</button>
+                <button onclick="router('map')" id="nav-map" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Injektion</button>
+                <button onclick="router('blood')" id="nav-blood" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Blutbild</button>
+                <button onclick="router('storage')" id="nav-storage" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Stabilität</button>
+                <button onclick="router('sport')" id="nav-sport" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Protokolle</button>
+                <button onclick="router('stack')" id="nav-stack" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300 flex items-center gap-1">Stacker <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span></button>
+                <button onclick="router('tutorial')" id="nav-tutorial" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Misch-Guide</button>
+                <button onclick="router('coupons')" id="nav-coupons" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-amber-400 hover:text-amber-300 transition-all duration-300 flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                    Partner
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-8 py-10 relative z-10">
+
+        <!-- VIEW: DATABASE -->
+        <div id="view-db" class="view-panel block space-y-8">
+            <div class="text-center space-y-4 mb-10">
+                <h2 class="text-4xl font-extrabold text-white tracking-tight">Molekulare <span class="text-gradient">Referenz</span></h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">Durchsuche 141 verifizierte Peptid-Sequenzen, SARMs und Bioregulatoren inkl. Studien-Links, YouTube-Guides, Applikations-Winkel und Halbwertszeiten.</p>
+            </div>
+
+            <div class="glass-panel rounded-3xl p-4 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="relative flex-grow">
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Substanz, Wirkung oder Indikation suchen..." class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-slate-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all">
+                    </div>
+                    <select id="catSelect" onchange="applyFilters()" class="bg-slate-900/50 border border-slate-700 rounded-2xl py-3.5 px-4 text-sm text-slate-300 focus:border-brand-500 outline-none min-w-[200px] cursor-pointer appearance-none">
+                        <option value="all">Alle Kategorien</option>
+                        <option value="heilung">Regeneration & Heilung</option>
+                        <option value="wachstum">Anabolismus & Wachstum</option>
+                        <option value="gewicht">Metabolismus & Gewicht</option>
+                        <option value="neuro">Neuro & Kognition</option>
+                        <option value="aging">Longevity & Anti-Aging</option>
+                        <option value="kosmetik">Kosmetik & Haut</option>
+                        <option value="libido">Libido</option>
+                    </select>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-2 pt-2">
+                    <span class="text-xs text-slate-500 font-medium mr-2">Risikoprofil:</span>
+                    <button onclick="setRiskFilter('all', this)" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-brand-500 bg-brand-500/10 text-brand-400 transition-all">Alle</button>
+                    <button onclick="setRiskFilter('low', this)" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all">Gering</button>
+                    <button onclick="setRiskFilter('med', this)" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all">Moderat</button>
+                    <button onclick="setRiskFilter('high', this)" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all">Hoch</button>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-500 font-medium px-2">
+                <div><span id="db-count" class="text-brand-400 font-bold text-sm">0</span> Substanzen geladen</div>
+                <div>Zertifizierte Daten 2026</div>
+            </div>
+
+            <div id="db-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+        </div>
+
+        <!-- VIEW: CALCULATOR -->
+        <div id="view-calc" class="view-panel hidden space-y-8">
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    <div class="lg:col-span-5 space-y-8">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold mb-4">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                Reconstitution Engine
+                            </div>
+                            <h2 class="text-3xl font-bold text-white mb-2">Präzisions-Rechner</h2>
+                            <p class="text-slate-400 text-sm">Berechne das exakte Mischverhältnis für die sterile Rekonstitution an der U100-Spritze.</p>
+                        </div>
+
+                        <div class="space-y-5 bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-slate-300">Schnellauswahl (Preset)</label>
+                                <select id="calcPreset" onchange="loadPresetToCalc()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none">
+                                    <option value="">-- Manuelle Eingabe --</option>
+                                </select>
+                            </div>
+                            <div class="h-px bg-slate-800 w-full"></div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-slate-300">Wirkstoff im Vial (mg)</label>
+                                <div class="relative">
+                                    <input type="number" id="calc-mg" value="5" step="1" min="1" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mg</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-slate-300">BAC-Wasser (ml)</label>
+                                <div class="relative">
+                                    <input type="number" id="calc-ml" value="2" step="0.5" min="0.5" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">ml</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-slate-300">Einzeldosis (mcg)</label>
+                                <div class="relative">
+                                    <input type="number" id="calc-mcg" value="250" step="50" min="10" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mcg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 flex flex-col justify-center space-y-8">
+                        <div class="text-center">
+                            <span class="text-sm font-semibold text-slate-400 block mb-2">Aufzuziehende Menge</span>
+                            <div class="text-6xl font-extrabold text-white tracking-tight flex items-baseline justify-center gap-2">
+                                <span id="res-units" class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-accent">10.0</span>
+                                <span class="text-2xl text-slate-500 font-bold">IE</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">Einheiten / Ticks auf der Insulinspritze</p>
+                        </div>
+
+                        <div class="relative px-8 py-10 flex items-center justify-center bg-slate-900/80 rounded-3xl border border-slate-800 shadow-inner overflow-hidden">
+                            <div class="w-8 h-[2px] bg-slate-600 absolute left-2"></div>
+                            <div class="w-full h-16 bg-slate-800/80 border-y-2 border-slate-600 rounded-md relative flex items-center shadow-inner overflow-hidden backdrop-blur-sm z-10">
+                                <div id="syringe-fluid" class="h-full bg-gradient-to-r from-brand-500/40 to-accent/60 border-r-4 border-accent shadow-[0_0_15px_rgba(56,189,248,0.5)] transition-all duration-700 ease-out" style="width: 10%;"></div>
+                                <div class="absolute inset-0 flex justify-between px-4 items-center pointer-events-none select-none font-mono text-[10px] text-slate-400 font-bold mix-blend-screen">
+                                    <span>| 0</span><span>| 20</span><span>| 40</span><span>| 60</span><span>| 80</span><span>| 100</span>
+                                </div>
+                            </div>
+                            <div class="w-16 h-8 bg-slate-700 border border-slate-500 rounded-r-lg flex-shrink-0 z-10 shadow-md"></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 text-center">
+                                <span class="text-slate-400 text-xs font-semibold block mb-1">Konzentration</span>
+                                <span class="text-white font-mono font-bold text-lg" id="res-conc">2.50 mg/ml</span>
+                            </div>
+                            <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 text-center">
+                                <span class="text-slate-400 text-xs font-semibold block mb-1">Ergiebigkeit</span>
+                                <span class="text-white font-mono font-bold text-lg" id="res-doses">20 Dosen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- VIEW: BODY MAP (INJEKTION) -->
+        <div id="view-map" class="view-panel hidden space-y-8">
+            <div class="text-center space-y-4 mb-6">
+                <h2 class="text-4xl font-extrabold text-white tracking-tight">Injektions-<span class="text-gradient">Zonen & Map</span></h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">Vermeide Lipohypertrophie (Gewebeverhärtungen). Rotiere stets die Einstichstellen. Klicke auf die Zonen für Details.</p>
+            </div>
+            
+            <div class="glass-card rounded-3xl p-6 lg:p-10">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    
+                    <div class="flex justify-center items-center relative bg-slate-900/50 rounded-2xl border border-slate-800 p-4">
+                        <svg viewBox="0 0 200 400" class="w-full max-w-[300px] drop-shadow-2xl">
+                            <!-- Silhouette Base -->
+                            <path d="M70,40 Q100,10 130,40 L140,80 Q160,90 170,120 L160,220 L135,220 L130,180 L130,350 Q100,380 95,350 L95,230 L90,230 L90,350 Q60,380 55,350 L55,180 L50,220 L25,220 L15,120 Q25,90 45,80 Z" fill="#1e293b" stroke="#334155" stroke-width="2" />
+                            
+                            <!-- Subkutan (Bauch/Hüfte) - Green -->
+                            <circle cx="100" cy="180" r="22" class="map-zone map-subq" onclick="showMapInfo('subq-bauch')" />
+                            <circle cx="100" cy="180" r="4" fill="#10b981" class="animate-ping-slow pointer-events-none" />
+                            <circle cx="100" cy="180" r="2" fill="#fff" class="pointer-events-none" />
+                            
+                            <ellipse cx="65" cy="185" rx="12" ry="18" class="map-zone map-subq" onclick="showMapInfo('subq-love')" />
+                            <ellipse cx="130" cy="185" rx="12" ry="18" class="map-zone map-subq" onclick="showMapInfo('subq-love')" />
+                            
+                            <!-- Intramuskulär (Schulter) - Blue -->
+                            <circle cx="35" cy="115" r="14" class="map-zone map-im" onclick="showMapInfo('im-schulter')" />
+                            <circle cx="35" cy="115" r="3" fill="#38bdf8" class="animate-ping-slow pointer-events-none" />
+                            <circle cx="160" cy="115" r="14" class="map-zone map-im" onclick="showMapInfo('im-schulter')" />
+                            <circle cx="160" cy="115" r="3" fill="#38bdf8" class="animate-ping-slow pointer-events-none" />
+                            
+                            <!-- Intramuskulär (Oberschenkel) - Blue -->
+                            <ellipse cx="70" cy="280" rx="12" ry="30" class="map-zone map-im" onclick="showMapInfo('im-bein')" />
+                            <ellipse cx="125" cy="280" rx="12" ry="30" class="map-zone map-im" onclick="showMapInfo('im-bein')" />
+                        </svg>
+
+                        <div class="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700 p-3 rounded-xl backdrop-blur-md text-xs space-y-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-emerald-500/50 border border-emerald-500 shadow-glow-success"></div>
+                                <span class="text-slate-300 font-bold">Subkutan (SC)</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-accent/50 border border-accent shadow-glow-accent"></div>
+                                <span class="text-slate-300 font-bold">Intramuskulär (IM)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col space-y-6">
+                        <div class="bg-slate-900/50 p-6 rounded-2xl border border-white/5 shadow-inner flex-grow h-full">
+                            <div id="map-info-default" class="block h-full flex flex-col justify-center items-center text-center space-y-3">
+                                <span class="text-4xl">👆</span>
+                                <h3 class="text-lg font-bold text-slate-300">Wähle eine Zone</h3>
+                                <p class="text-sm text-slate-500">Klicke auf die markierten Bereiche der Body Map, um spezifische Injektions- und Rotationstechniken zu sehen.</p>
+                            </div>
+                            
+                            <div id="map-info-content" class="hidden h-full flex-col">
+                                <div class="flex justify-between items-start mb-4 border-b border-white/10 pb-4">
+                                    <div>
+                                        <span id="map-info-badge" class="px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block">Applikation</span>
+                                        <h3 id="map-info-title" class="text-xl font-bold text-white">Zonen Name</h3>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="block text-[10px] text-slate-500 uppercase">Winkel</span>
+                                        <span id="map-info-angle" class="font-bold text-white text-lg">45°</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-4 text-sm text-slate-300 overflow-y-auto pr-2 flex-grow">
+                                    <p id="map-info-desc" class="leading-relaxed">Beschreibung hier...</p>
+                                    
+                                    <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5 mt-4">
+                                        <h4 class="font-bold text-brand-400 mb-2 flex items-center gap-2"><span class="text-lg">🔄</span> Rotations-Guide</h4>
+                                        <ul id="map-info-rotation" class="space-y-2 text-xs text-slate-400 list-disc list-inside">
+                                            <li>Tipp 1</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl text-xs text-amber-200/80 leading-relaxed">
+                            <strong class="text-amber-400 block mb-1">Achtung: Lipohypertrophie</strong>
+                            Ständige Injektionen an exakt der selben Stelle führen zu Knötchenbildung unter der Haut. Diese Gewebeveränderungen stören die Peptid-Aufnahme massiv und sehen unschön aus. Verschiebe den Einstichpunkt bei jeder Injektion um <strong>mindestens 2-3 cm</strong> ("Uhren-Methode").
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: BLUTBILD & BIOMARKER -->
+        <div id="view-blood" class="view-panel hidden space-y-8">
+            <div class="text-center space-y-4 mb-6">
+                <h2 class="text-4xl font-extrabold text-white tracking-tight">Klinisches <span class="text-gradient">Blutbild</span></h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">Sicherheit geht vor. Generiere präzise Labor-Checklisten (vor und nach dem Zyklus) basierend auf der gewählten Substanz.</p>
+            </div>
+            
+            <div class="glass-card rounded-3xl p-6 sm:p-10 max-w-4xl mx-auto">
+                <div class="space-y-6">
+                    
+                    <div class="bg-slate-900/50 p-4 rounded-2xl border border-brand-500/30">
+                        <label class="text-xs font-semibold text-brand-400 uppercase tracking-wider block mb-2">Substanz auswählen</label>
+                        <select id="blood-select" onchange="renderBloodPanel()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-3 px-4 text-sm text-white focus:border-brand-500 outline-none cursor-pointer">
+                            <option value="">-- Bitte wählen --</option>
+                        </select>
+                    </div>
+
+                    <div id="blood-results" class="hidden space-y-6 mt-8 animate-fade-in">
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <div class="flex-1 bg-slate-900/80 rounded-2xl border border-white/10 overflow-hidden">
+                                <div class="bg-slate-800/80 px-4 py-3 border-b border-white/5">
+                                    <h3 class="font-bold text-white flex items-center gap-2"><span class="text-slate-400">🩸</span> Großes Blutbild & Basis</h3>
+                                </div>
+                                <ul class="p-4 space-y-3 text-sm text-slate-300" id="blood-base-list">
+                                </ul>
+                            </div>
+                            <div class="flex-1 bg-brand-900/20 rounded-2xl border border-brand-500/30 overflow-hidden shadow-glow-brand">
+                                <div class="bg-brand-900/40 px-4 py-3 border-b border-brand-500/20">
+                                    <h3 class="font-bold text-brand-400 flex items-center gap-2"><span class="text-brand-400">🔬</span> Spezifische Biomarker</h3>
+                                </div>
+                                <ul class="p-4 space-y-3 text-sm text-white" id="blood-specific-list">
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="bg-rose-500/10 border border-rose-500/20 p-4 rounded-xl flex items-start gap-4">
+                            <div class="text-2xl">⚠️</div>
+                            <div>
+                                <h4 class="font-bold text-rose-400 text-sm mb-1">Medizinischer Disclaimer</h4>
+                                <p class="text-xs text-rose-200/70 leading-relaxed">Diese Liste dient ausschließlich Informationszwecken für klinische Forschung und ersetzt keinen ärztlichen Rat. Ein Ausgangsblutbild (Baseline) vor Beginn der Exposition ist zwingend erforderlich, um Veränderungen referenzieren zu können.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="blood-placeholder" class="py-12 text-center text-slate-500 text-sm">
+                        Bitte wähle oben ein Peptid oder SARM aus, um das benötigte Blutbild zu sehen.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: STABILITY (STORAGE) -->
+        <div id="view-storage" class="view-panel hidden space-y-8">
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    <div class="lg:col-span-5 space-y-8">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                Thermal Analysis
+                            </div>
+                            <h2 class="text-3xl font-bold text-white mb-2">Stabilitäts-Simulator</h2>
+                            <p class="text-slate-400 text-sm">Berechne den temperaturbedingten Molekularzerfall.</p>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="space-y-3">
+                                <label class="text-xs font-semibold text-slate-300">Aggregatzustand</label>
+                                <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
+                                    <button onclick="setStorageState('dry', this)" class="storage-state-btn flex-1 py-2.5 rounded-lg text-sm font-semibold bg-slate-700 text-white shadow-sm transition-all">Pulver (Lyo)</button>
+                                    <button onclick="setStorageState('liquid', this)" class="storage-state-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all">Flüssig</button>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <label class="text-xs font-semibold text-slate-300">Lagertemperatur</label>
+                                <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
+                                    <button onclick="setStorageTemp('room', this)" class="storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all">Raum</button>
+                                    <button onclick="setStorageTemp('fridge', this)" class="storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold bg-slate-700 text-white shadow-sm transition-all">Kühler</button>
+                                    <button onclick="setStorageTemp('freezer', this)" class="storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all">Frost</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-slate-900/50 rounded-xl border border-slate-800">
+                                <div>
+                                    <span class="text-sm font-semibold text-white block">UV-Exposition</span>
+                                    <span class="text-xs text-slate-500">Beschleunigt den photochemischen Zerfall</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="storage-light" onchange="updateStorageSimulation()" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-emerald-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 flex flex-col items-center justify-center space-y-8 bg-slate-900/30 p-8 rounded-3xl border border-slate-800/50">
+                        <div class="relative w-32 h-56 border-[3px] border-slate-600/50 rounded-3xl flex flex-col justify-between items-center py-2 px-1.5 bg-gradient-to-b from-white/5 to-white/0 shadow-2xl backdrop-blur-sm">
+                            <div class="absolute -top-4 w-20 h-6 bg-emerald-500 rounded-md shadow-[0_0_20px_rgba(16,185,129,0.4)]" id="vial-cap"></div>
+                            <div class="w-full h-full flex items-end justify-center relative overflow-hidden rounded-[18px]">
+                                <div id="vial-liquid" class="w-full h-[45%] bg-gradient-to-t from-emerald-500/40 to-emerald-400/20 border-t-2 border-emerald-400/50 transition-all duration-700" style="display: none;"></div>
+                                <div id="vial-powder" class="w-full h-[25%] bg-gradient-to-t from-white/80 to-white/40 border-t border-white/60 transition-all duration-700 rounded-b-[16px]"></div>
+                                <div id="vial-broken" class="absolute inset-0 flex items-center justify-center bg-rose-500/20 backdrop-blur-sm hidden transition-all duration-300"><span class="text-4xl">❄️💥</span></div>
+                            </div>
+                        </div>
+                        <div class="w-full max-w-sm text-center space-y-4">
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Erwartete Lebensdauer</span>
+                            <div class="text-4xl font-extrabold text-emerald-400 tracking-tight" id="sim-result-life">12 - 18 Monate</div>
+                            <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div id="sim-result-bar" class="h-full bg-emerald-500 transition-all duration-700 ease-out" style="width: 80%;"></div>
+                            </div>
+                            <p class="text-sm text-slate-400 leading-relaxed" id="sim-result-desc">Lyophilisiert im Kühlschrank optimal geschützt.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: PROTOKOLLE (SPORT) -->
+        <div id="view-sport" class="view-panel hidden space-y-8">
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-2">Sportmedizin & Protokolle</h2>
+                    <p class="text-slate-400 text-sm">Wähle ein Ziel, um die physiologischen Mechanismen zu verstehen.</p>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <button onclick="setSportChannel('heal', this)" class="sport-ch-btn p-4 rounded-xl border border-emerald-500/50 bg-emerald-500/10 text-left transition-all">
+                        <span class="text-2xl block mb-2">🩹</span>
+                        <h4 class="font-bold text-sm text-white">Regeneration</h4>
+                        <p class="text-[10px] text-slate-400 uppercase mt-1">Sehnen & Gelenke</p>
+                    </button>
+                    <button onclick="setSportChannel('muscle', this)" class="sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-brand-500/50 text-left transition-all">
+                        <span class="text-2xl block mb-2">💪</span>
+                        <h4 class="font-bold text-sm text-white">Hypertrophie</h4>
+                        <p class="text-[10px] text-slate-400 uppercase mt-1">Muskelaufbau</p>
+                    </button>
+                    <button onclick="setSportChannel('fat', this)" class="sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-amber-500/50 text-left transition-all">
+                        <span class="text-2xl block mb-2">🔥</span>
+                        <h4 class="font-bold text-sm text-white">Lipolyse</h4>
+                        <p class="text-[10px] text-slate-400 uppercase mt-1">Fettabbau</p>
+                    </button>
+                    <button onclick="setSportChannel('cell', this)" class="sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-purple-500/50 text-left transition-all">
+                        <span class="text-2xl block mb-2">🧬</span>
+                        <h4 class="font-bold text-sm text-white">Ausdauer</h4>
+                        <p class="text-[10px] text-slate-400 uppercase mt-1">Mitochondrien</p>
+                    </button>
+                </div>
+                
+                <div class="bg-slate-900/50 border border-white/5 rounded-2xl p-6">
+                    <div id="sport-ch-heal" class="sport-content block space-y-4">
+                        <h3 class="text-xl font-bold text-emerald-400">Gewebeheilung & Reparatur</h3>
+                        <p class="text-sm text-slate-300">Peptide wie BPC-157 (Angiogenese) und TB-500 (Zellmigration) sind der Goldstandard für die Heilung des passiven Bewegungsapparates.</p>
+                    </div>
+                    <div id="sport-ch-muscle" class="sport-content hidden space-y-4">
+                        <h3 class="text-xl font-bold text-brand-400">Anaboles Wachstum</h3>
+                        <p class="text-sm text-slate-300">GHRPs und GHRHs stimulieren natürliche Wachstumshormon-Pulse für Muskelaufbau, während Follistatin-344 die Myostatin-Bremse löst.</p>
+                    </div>
+                    <div id="sport-ch-fat" class="sport-content hidden space-y-4">
+                        <h3 class="text-xl font-bold text-amber-400">Metabolischer Fettabbau</h3>
+                        <p class="text-sm text-slate-300">GLP-1 Agonisten (Semaglutid) dämpfen den Appetit extrem, während HGH Frag 176-191 direkte Lipolyse in den Zellen anregt.</p>
+                    </div>
+                    <div id="sport-ch-cell" class="sport-content hidden space-y-4">
+                        <h3 class="text-xl font-bold text-purple-400">Zelluläre Ausdauer</h3>
+                        <p class="text-sm text-slate-300">Wirkstoffe wie SLU-PP-332, MOTS-c oder Cardarine optimieren die ATP-Gewinnung und erhöhen die VO2-Max drastisch.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: STACKER -->
+        <div id="view-stack" class="view-panel hidden space-y-8">
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-2">Synergie Stacker</h2>
+                    <p class="text-slate-400 text-sm">Wähle Moleküle aus, um ihre biochemische Überlagerung zu prüfen.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-5 space-y-4">
+                        <input type="text" id="stack-search" oninput="filterStack()" placeholder="Substanz suchen..." class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none">
+                        <div class="h-[300px] overflow-y-auto space-y-2 pr-2" id="stack-list">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
+                        <h3 class="text-lg font-bold text-white mb-4 border-b border-white/5 pb-4">Stack Analyse Report</h3>
+                        <div class="space-y-4 flex-grow">
+                            <div class="flex justify-between border-b border-white/5 pb-2 text-sm">
+                                <span class="text-slate-400">Gewählt:</span>
+                                <span class="text-white font-bold" id="stack-count-display">0 Moleküle</span>
+                            </div>
+                            <div class="flex justify-between border-b border-white/5 pb-2 text-sm">
+                                <span class="text-slate-400">Risikoprofil:</span>
+                                <span class="font-bold" id="stack-risk-display">-</span>
+                            </div>
+                            <div class="flex justify-between border-b border-white/5 pb-2 text-sm">
+                                <span class="text-slate-400">Synergie:</span>
+                                <span class="text-white font-bold" id="stack-syn-display">-</span>
+                            </div>
+                            <div class="p-4 bg-slate-800/50 rounded-xl mt-4">
+                                <p class="text-sm text-slate-300" id="stack-analysis-text">Bitte wähle Wirkstoffe aus der Liste, um die Analyse zu starten.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: TUTORIAL (MISCH-GUIDE) -->
+        <div id="view-tutorial" class="view-panel hidden space-y-8">
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-2">Rekonstitutions-Guide</h2>
+                    <p class="text-slate-400 text-sm">Schritt-für-Schritt Anleitung zum sterilen Anmischen von Peptiden.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
+                            <h4 class="font-bold text-brand-400">1. Vorbereitung</h4>
+                            <p class="text-sm text-slate-300 mt-1">Gummiverschlüsse (Vial & BAC-Wasser) mit Alkohol-Pads desinfizieren.</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
+                            <h4 class="font-bold text-brand-400">2. Druckausgleich</h4>
+                            <p class="text-sm text-slate-300 mt-1">Gewünschte Menge an Luft in die BAC-Flasche spritzen, dann Wasser aufziehen.</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
+                            <h4 class="font-bold text-brand-400">3. Sehr langsames Mischen</h4>
+                            <p class="text-sm text-slate-300 mt-1">Wasser schräg an die innere Glaswand des Peptid-Vials laufen lassen. NIEMALS den Strahl direkt auf das Pulver richten!</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
+                            <h4 class="font-bold text-brand-400">4. Lösen & Lagern</h4>
+                            <p class="text-sm text-slate-300 mt-1">Vial sanft zwischen den Fingern rollen (NICHT schütteln). Anschließend sofort im Kühlschrank lagern.</p>
+                        </div>
+                    </div>
+                    <div class="bg-rose-500/10 border border-rose-500/20 p-6 rounded-xl flex flex-col justify-center">
+                        <h4 class="font-bold text-rose-400 text-xl mb-4">Gefahren & Fehler</h4>
+                        <ul class="space-y-3 text-sm text-rose-200">
+                            <li>⚠️ <strong>Schütteln:</strong> Zerstört die Molekularstruktur sofort.</li>
+                            <li>⚠️ <strong>Falsches Wasser:</strong> Normales steriles Wasser keimt nach wenigen Tagen aus. Nutze immer BAC-Wasser (Benzylalkohol).</li>
+                            <li>⚠️ <strong>Wärme:</strong> Einmal gelöst, zerfällt das Peptid bei Zimmertemperatur rasant.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: COUPONS (URSPRUNGSZUSTAND) -->
+        <div id="view-coupons" class="view-panel hidden space-y-8">
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <div class="text-center max-w-2xl mx-auto mb-10 space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Community Benefits
+                    </div>
+                    <h2 class="text-3xl font-bold text-white">Verifizierte Labor-Partner</h2>
+                    <p class="text-slate-400 text-sm">Nutze die exklusiven Rabattcodes bei unseren Partner-Laboren. Ein Klick kopiert den Code direkt in deine Zwischenablage.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-amber-500/50 transition-colors group">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-xl shadow-lg">🇪🇺</div>
+                            <h3 class="text-lg font-bold text-white">Europa-Peptide</h3>
+                        </div>
+                        <div class="space-y-3">
+                            <button onclick="copyCoupon('OUTLAW15', this, 'amber')" class="w-full flex justify-between items-center bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
+                                <span>Code: OUTLAW15</span> <span class="bg-amber-500 text-white px-2 py-0.5 rounded text-[10px]">-15%</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-brand-500/50 transition-colors group">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-xl shadow-lg">🇩🇪</div>
+                            <h3 class="text-lg font-bold text-white">Peptid24</h3>
+                        </div>
+                        <div class="space-y-3">
+                            <button onclick="copyCoupon('OUTLAW15', this, 'brand')" class="w-full flex justify-between items-center bg-brand-500/10 border border-brand-500/30 text-brand-400 hover:bg-brand-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
+                                <span>Code: OUTLAW15</span> <span class="bg-brand-500 text-white px-2 py-0.5 rounded text-[10px]">-15%</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-rose-500/50 transition-colors group">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-xl shadow-lg">🐉</div>
+                            <h3 class="text-lg font-bold text-white">Drakon Peptides</h3>
+                        </div>
+                        <button onclick="copyCoupon('SIMONPROVES', this, 'rose')" class="w-full flex justify-between items-center bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
+                            <span>Code: SIMONPROVES</span> <span class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px]">-10%</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-emerald-500/50 transition-colors group">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-xl shadow-lg">🧬</div>
+                            <h3 class="text-lg font-bold text-white">Rebirth Labs</h3>
+                        </div>
+                        <button onclick="copyCoupon('SAM', this, 'emerald')" class="w-full flex justify-between items-center bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
+                            <span>Code: SAM</span> <span class="bg-emerald-500 text-white px-2 py-0.5 rounded text-[10px]">-10%</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-purple-500/50 transition-colors group">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-xl shadow-lg">✨</div>
+                            <h3 class="text-lg font-bold text-white">Verra Labs</h3>
+                        </div>
+                        <button onclick="copyCoupon('MORTY', this, 'purple')" class="w-full flex justify-between items-center bg-purple-500/10 border border-purple-500/30 text-purple-400 hover:bg-purple-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
+                            <span>Code: MORTY</span> <span class="bg-purple-500 text-white px-2 py-0.5 rounded text-[10px]">-10%</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-colors group">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center text-xl shadow-lg">🧪</div>
+                            <h3 class="text-lg font-bold text-white">RCpeptides</h3>
+                        </div>
+                        <button onclick="copyCoupon('FOLGT', this, 'cyan')" class="w-full flex justify-between items-center bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
+                            <span>Code: FOLGT</span> <span class="bg-cyan-500 text-white px-2 py-0.5 rounded text-[10px]">Wartet</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const RAW_DATA = [
+            ["bpc157","01/141","BPC-157","Body Protection Compound","heilung","REGENERATION","low",["Systemische Beschleunigung der Angiogenese (Gefäßneubildung) am Verletzungsherd", "Heilt therapieresistente Magen-Darm-Erkrankungen (Leaky Gut, Ulzera) durch Zellschutz", "Reguliert entzündliche Zytokine herunter, ohne das Immunsystem zu schwächen", "Fördert massiv die Fibroblasten-Ausbreitung für die Sehnenreparatur"],["Leichter Schwindel (Vasodilatation) bei zu schneller Injektion", "Theoretisches Risiko bei bestehenden Tumorerkrankungen (durch Gefäßneubildung)"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1-2x/Tag",form:"Subkutan/Oral",timing:"Morgens",cycle:"4-8 Wo",halflife:"4h"},"animal","Umfangreiche Tiermodelle belegen vollständige Reparatur von Achillessehnen.",[{shop:"Europa-Peptide",price:"32.90"},{shop:"Peptid24",price:"24.90"},{shop:"Drakon Peptides",price:"26.00"},{shop:"RCpeptides",price:"37.50"}]],
+            ["tb500","02/141","TB-500","Thymosin Beta-4","heilung","REGENERATION","low",["Induziert zelluläre Migration (Actin-Hochregulation) direkt an Mikrorissen", "Baut unelastisches Narbengewebe ab und erhöht die Gelenkflexibilität", "Wirkt massiv synergistisch mit BPC-157 für den passiven Bewegungsapparat", "Fördert das Haarwachstum durch Reaktivierung der Stammzellen"],["Milde Abgeschlagenheit oder Lethargie direkt nach der Injektion", "Kann wie BPC-157 bei bestehenden malignen Zellen das Wachstum stützen"],{starter:"2mg/Wo",normal:"5mg/Wo",max:"10mg/Wo",freq:"1-2x/Wo",form:"Subkutan",timing:"Abends",cycle:"6-8 Wo",halflife:"30h"},"pilot","Erfolgsraten bei Pferden im Rennsport hochgradig dokumentiert.",[{shop:"Europa-Peptide",price:"69.90"},{shop:"Peptid24",price:"32.00"},{shop:"Drakon Peptides",price:"36.00"},{shop:"RCpeptides",price:"37.50"}]],
+            ["ipamorelin","03/141","Ipamorelin","GH Secretagogue","wachstum","WACHSTUM","low",["Löst einen hochselektiven Puls der körpereigenen Wachstumshormon-Ausschüttung aus", "Verlängert und vertieft die regenerativen Delta-Schlafphasen massiv", "Erhöht die Muskelproteinsynthese bei gleichzeitigem Anti-Aging-Effekt", "Kein signifikanter Anstieg von Stresshormonen (Cortisol/Prolaktin)"],["Temporäre, milde Wassereinlagerungen (Ödeme) in den Gelenken", "Erhöhtes Hungergefühl kurz nach der Injektion möglich"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"1-2x/Tag",form:"Subkutan",timing:"Vor Schlaf",cycle:"8-12 Wo",halflife:"2h"},"human","Phase-II Humantrials belegen exzellentes Sicherheitsprofil.",[{shop:"Europa-Peptide",price:"32.90"},{shop:"Peptid24",price:"49.90"},{shop:"RCpeptides",price:"60.00"}]],
+            ["cjc1295","04/141","CJC-1295 no DAC","Mod GRF 1-29","wachstum","WACHSTUM","med",["Verstärkt die Amplitude der somatotropen Pulse (Synergie mit Ipamorelin)", "Verbessert die systemische Lipolyse (Fettverbrennung im Ruhezustand)", "Fördert extrem schnelle Regeneration nach harten Trainingseinheiten"],["Spürbarer 'Head Rush' (Gesichtsröte/Hitze) direkt nach der Gabe", "Gefahr der Insulinresistenz bei monatelanger ununterbrochener Nutzung"],{starter:"100mcg",normal:"100mcg",max:"300mcg",freq:"1-3x/Tag",form:"Subkutan",timing:"Nüchtern",cycle:"8-16 Wo",halflife:"30m"},"human","Klinischer Anstieg von freiem IGF-1 replizierbar.",[{shop:"Europa-Peptide",price:"49.90"},{shop:"Peptid24",price:"55.00"},{shop:"RCpeptides",price:"60.00"}]],
+            ["cjc1295dac","05/141","CJC-1295 DAC","GHRH-Analogon","wachstum","WACHSTUM","med",["Kontinuierlicher 'GH Bleed' über mehrere Tage hinweg", "Erhöht die HGH-Grundlinie ohne tägliche Injektionen"],["Starke Lethargie und Müdigkeit", "Hohes Risiko für Wasserretention"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"8-12 Wo",halflife:"7 Tage"},"human","Erhöhung des basalen GH-Spiegels.",[{shop:"Europa-Peptide",price:"64.90"},{shop:"RCpeptides",price:"50.00"}]],
+            ["semaglutide","06/141","Semaglutid","GLP-1 Agonist","gewicht","GEWICHT","med",["Verzögert die Magenentleerung extrem (langanhaltende Sättigung)", "Blockiert Heißhungerattacken und Cravings direkt im ZNS (Gehirn)", "Verbessert die Insulinsensitivität und senkt den Blutzuckerspiegel drastisch"],["Akute gastrointestinale Probleme (Übelkeit, Erbrechen, Verstopfung)", "Erhöhtes Risiko des Abbaus von magerer Muskelmasse bei mangelndem Protein", "Gallensteine bei extrem schnellem Gewichtsverlust"],{starter:"0.25mg",normal:"1.0mg",max:"2.4mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"Langzeit",halflife:"165h"},"human","STEP-Trials belegen 15% Fettreduktion.",[{shop:"Europa-Peptide",price:"37.90"},{shop:"Peptid24",price:"37.90"}]],
+            ["tirzepatide","07/141","Tirzepatid","GIP/GLP-1","gewicht","GEWICHT","med",["Dualer Agonismus (GIP & GLP-1) für noch radikaleren Fettabbau", "Deutlich stärkere Blutzuckerkontrolle als reines Semaglutid", "Reduziert viszerales Bauchfett und Leberfett hocheffizient"],["Magen-Darm-Beschwerden (oft milder als bei Semaglutid, aber existent)", "Verlust der Muskelmasse ('Ozempic-Face') ohne Krafttraining", "Herzrasen in der initialen Eindosierungsphase"],{starter:"2.5mg",normal:"5mg",max:"15mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"Langzeit",halflife:"120h"},"human","SURMOUNT-Studien belegen 20%+ Gewichtsverlust.",[{shop:"Europa-Peptide",price:"44.90"},{shop:"Peptid24",price:"32.90"},{shop:"Verra",price:"69.90"}]],
+            ["retatrutide","08/141","Retatrutid","Triple Agonist","gewicht","GEWICHT","high",["Triple-Agonist (GLP-1, GIP, Glucagon) für maximalen Gewichtsverlust", "Die Glucagon-Komponente verbrennt aktiv Fett und erhöht den Ruheumsatz", "Der aktuelle klinische Rekordhalter für pharmakologische Diäten"],["Glucagon-Komponente birgt höheres Risiko für Tachykardie (Herzrasen)", "Möglicher Blutdruckanstieg", "Extreme Appetitlosigkeit kann zu Mangelernährung führen"],{starter:"1mg",normal:"4mg",max:"12mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"Klinisch",halflife:"144h"},"human","Phase-II belegt 24% Gewichtsverlust.",[{shop:"Europa-Peptide",price:"49.90"},{shop:"Peptid24",price:"34.90"},{shop:"Verra",price:"79.90"},{shop:"RCpeptides",price:"65.00"}]],
+            ["hghfrag","09/141","HGH Frag 176-191","Lipolytisch","gewicht","GEWICHT","low",["Konzentriert sich isoliert auf die fettverbrennenden Eigenschaften von HGH", "Löst starke zelluläre Lipolyse (Fettfreisetzung) aus", "Absolut kein negativer Einfluss auf den Blutzucker oder die Insulinsensitivität"],["Besitzt eine extrem kurze Halbwertszeit (nur ~30 Minuten)", "Erfordert striktes Fasten (nüchterner Magen) für spürbare Wirkung"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"2x/Tag",form:"Subkutan",timing:"Vor Training",cycle:"8-12 Wo",halflife:"30m"},"animal","Sichere Fettgewebsreduktion in Tieren bewiesen.",[{shop:"Europa-Peptide",price:"94.90"},{shop:"RCpeptides",price:"50.00"}]],
+            ["aod9604","10/141","AOD-9604","Anti-Obesity","gewicht","GEWICHT","low",["Modifiziertes, stabileres HGH-Fragment", "Blockiert die Neuentstehung von Fettzellen (Lipogenese)", "Fördert Knorpelreparatur bei Arthrose"],["Lokale Rötungen an der Einstichstelle", "Milde Kopfschmerzen"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1-2x/Tag",form:"Subkutan",timing:"Morgens",cycle:"8-12 Wo",halflife:"40m"},"human","Australische Studien zeigen Fettreduktion.",[{shop:"Europa-Peptide",price:"35.00"},{shop:"RCpeptides",price:"30.00"}]],
+            ["mt2","11/141","Melanotan II","Bräunung","kosmetik","KOSMETIK","high",["Stimuliert die Melaninproduktion für eine extrem tiefe, schnelle Bräunung", "Steigert die Libido und sexuelle Erregbarkeit bei beiden Geschlechtern signifikant", "Besitzt stark appetitzügelnde Nebeneffekte"],["Verursacht oft starke akute Übelkeit und einen 'Flush' direkt nach der Gabe", "Kann zu unregelmäßiger Hyperpigmentierung und Nachdunkeln von Muttermalen führen", "Gefahr von Dauererektionen (Priapismus)"],{starter:"100mcg",normal:"250mcg",max:"1000mcg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"2-4 Wo",halflife:"2h"},"pilot","Gestoppt wegen Nebenwirkungen.",[{shop:"Europa-Peptide",price:"36.90"},{shop:"Peptid24",price:"29.90"},{shop:"RCpeptides",price:"35.00"}]],
+            ["mt1","12/141","Melanotan I","Afamelanotid","kosmetik","KOSMETIK","med",["Sicherere Bräunung durch milde Melaninproduktion", "Klinischer Lichtschutz bei empfindlicher weißer Haut"],["Temporäre Rötung & Hitzegefühl (Flush)", "Veränderung bestehender Pigmentflecke"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"2-4 Wo",halflife:"1.5h"},"human","EU-Zulassung (Scenesse).",[{shop:"Europa-Peptide",price:"44.90"},{shop:"RCpeptides",price:"35.00"}]],
+            ["pt141","13/141","PT-141","Bremelanotid","libido","LIBIDO","med",["Sexuelle Erregbarkeit via ZNS"],["Übelkeit"],{starter:"0.5mg",normal:"1.5mg",max:"3mg",freq:"Bei Bedarf",form:"Subkutan",timing:"2h vor Sex",cycle:"Bedarf",halflife:"2h"},"human","FDA-Zulassung (Vyleesi).",[{shop:"Europa-Peptide",price:"34.90"},{shop:"RCpeptides",price:"32.50"}]],
+            ["ghkcu","14/141","GHK-Cu","Kupferpeptid","kosmetik","KOSMETIK","low",["Kollagensynthese","Haarwachstum"],["Hautreizung"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"Dauerhaft",halflife:"Minuten"},"human","Reduktion der Faltentiefe.",[{shop:"Europa-Peptide",price:"37.99"},{shop:"Peptid24",price:"29.90"},{shop:"Verra",price:"34.90"},{shop:"RCpeptides",price:"37.50"}]],
+            ["kpv","15/141","KPV","Antientzündlich","heilung","REGENERATION","low",["Darmheilung","Antibakteriell"],["Geringe Stabilität"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1x/Tag",form:"Oral/Subkutan",timing:"Morgens",cycle:"4-8 Wo",halflife:"30m"},"animal","Colitis-Modelle.",[{shop:"Europa-Peptide",price:"62.90"},{shop:"RCpeptides",price:"37.50"}]],
+            ["epitalon","16/141","Epitalon","Telomerase","aging","ANTI-AGING","low",["Aktiviert Telomerase","Melatonin"],["Unbekannt"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"20 Tage",halflife:"Minuten"},"human","Russische Langzeittrials.",[{shop:"Europa-Peptide",price:"34.90"},{shop:"RCpeptides",price:"25.00"}]],
+            ["semax","17/141","Semax","Nootropikum","neuro","NEURO","low",["Erhöht BDNF","Fokus"],["Schlafprobleme"],{starter:"100mcg",normal:"300mcg",max:"1000mcg",freq:"1-2x/Tag",form:"Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"2h"},"human","Klinisch zugelassen.",[{shop:"Europa-Peptide",price:"57.90"},{shop:"Peptid24",price:"44.90"},{shop:"RCpeptides",price:"30.00"}]],
+            ["selank","18/141","Selank","Angstlöser","neuro","NEURO","low",["Angstlösend ohne Müdigkeit"],["Benommenheit"],{starter:"250mcg",normal:"500mcg",max:"3000mcg",freq:"1-3x/Tag",form:"Nasal",timing:"Bedarf",cycle:"4 Wo",halflife:"1.5h"},"human","Klinische Trials.",[{shop:"Europa-Peptide",price:"57.90"},{shop:"RCpeptides",price:"30.00"}]],
+            ["glutathione","19/141","Glutathion","Antioxidans","aging","ANTI-AGING","low",["Zellentgifter","Hautaufhellung"],["Schlechte orale Aufnahme"],{starter:"100mg",normal:"200mg",max:"600mg",freq:"1x/Tag",form:"IV/Subkutan",timing:"Morgens",cycle:"Dauerhaft",halflife:"Kurz"},"human","Leberstoffwechsel.",[{shop:"Rebirth Labs",price:"18.50"}]],
+            ["slupp332","20/141","SLU-PP-332","Exercise Mimetic","gewicht","GEWICHT","med",["Mitochondriendichte","Ausdauer"],["Oxidativer Stress"],{starter:"300mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4-8 Wo",halflife:"12h"},"invitro","Science 2023.",[{shop:"Europa-Peptide",price:"79.90"},{shop:"RCpeptides",price:"80.00"}]],
+            ["tesamorelin","21/141","Tesamorelin","Viszeralfett","wachstum","WACHSTUM","med",["Bauchfett-Abbau"],["Gelenkschmerz"],{starter:"1mg",normal:"2mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"12-24 Wo",halflife:"30m"},"human","FDA-Zulassung.",[{shop:"Europa-Peptide",price:"32.90"},{shop:"Peptid24",price:"49.90"}]],
+            ["igf1lr3","22/141","IGF-1 LR3","Hyperplasie","wachstum","WACHSTUM","high",["Neubildung von Muskelzellen"],["Hypoglykämie","Tumor-Risiko"],{starter:"20mcg",normal:"50mcg",max:"100mcg",freq:"Post-Workout",form:"Subkutan",timing:"Nach Training",cycle:"4-6 Wo",halflife:"30h"},"animal","Extremes Wachstum.",[{shop:"Europa-Peptide",price:"62.90"},{shop:"Peptid24",price:"44.90"},{shop:"RCpeptides",price:"65.00"}]],
+            ["motsc","23/141","MOTS-C","Mitochondrial","aging","ANTI-AGING","low",["Insulinsensitivität","Zellenergie"],["Regelmäßige Gabe"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"8-12 Wo",halflife:"4h"},"animal","Mäusetrials.",[{shop:"Europa-Peptide",price:"36.90"},{shop:"Peptid24",price:"99.90"},{shop:"Verra",price:"36.90"},{shop:"RCpeptides",price:"30.00"}]],
+            ["ta1","24/141","Thymosin Alpha-1","Immunsystem","aging","ANTI-AGING","low",["T-Helferzellen","Viren-Abwehr"],["Autoimmun-Risiko"],{starter:"1.6mg",normal:"1.6mg",max:"3.2mg",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"6-12 Wo",halflife:"2h"},"human","Klinisch zugelassen.",[{shop:"Europa-Peptide",price:"44.90"},{shop:"RCpeptides",price:"65.00"}]],
+            ["follistatin344","25/141","Follistatin-344","Myostatin-Hemmer","wachstum","WACHSTUM","high",["Blockt Myostatin","Extreme Kraft"],["Sehnenrisse"],{starter:"50mcg",normal:"100mcg",max:"150mcg",freq:"1x/Tag",form:"Lokal",timing:"Post-Workout",cycle:"10 Tage",halflife:"36h"},"animal","Primatentrials.",[{shop:"RCpeptides",price:"75.00"}]],
+            ["aicar","26/141","AICAR","AMPK","gewicht","GEWICHT","med",["Fettverbrennung","VO2max"],["WADA verboten"],{starter:"10mg",normal:"25mg",max:"100mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4-8 Wo",halflife:"2h"},"human","Kardiologie.",[{shop:"Europa-Peptide",price:"34.90"},{shop:"RCpeptides",price:"75.00"}]],
+            ["sermorelin","27/141","Sermorelin","GRF 1-29","wachstum","WACHSTUM","low",["HGH-Ausschüttung","Gelenke"],["Flush"],{starter:"100mcg",normal:"200mcg",max:"1000mcg",freq:"1x/Tag",form:"Subkutan",timing:"Vor Schlaf",cycle:"12-24 Wo",halflife:"15m"},"human","Zugelassenes Diagnostikum.",[{shop:"RCpeptides",price:"60.00"}]],
+            ["dsip","28/141","DSIP","Tiefschlaf","neuro","NEURO","low",["Delta-Schlaf","Cortisol senkend"],["Morgenmüdigkeit"],{starter:"50mcg",normal:"100mcg",max:"500mcg",freq:"1x/Abends",form:"Subkutan",timing:"Vor Schlaf",cycle:"2-4 Wo",halflife:"15m"},"human","Pilotstudien.",[{shop:"Europa-Peptide",price:"29.90"},{shop:"RCpeptides",price:"40.00"}]],
+            ["ghrp2","29/141","GHRP-2","Wachstum","wachstum","WACHSTUM","med",["Starker GH-Puls","Regeneration"],["Prolaktin"],{starter:"100mcg",normal:"200mcg",max:"500mcg",freq:"2x/Tag",form:"Subkutan",timing:"Nüchtern",cycle:"8-12 Wo",halflife:"30m"},"human","Klinische Studien.",[{shop:"Europa-Peptide",price:"39.90"},{shop:"RCpeptides",price:"35.00"}]],
+            ["ghrp6","30/141","GHRP-6","Wachstum & Hunger","wachstum","WACHSTUM","med",["GH-Ausschüttung","Heißhunger"],["Cortisol"],{starter:"100mcg",normal:"150mcg",max:"300mcg",freq:"2x/Tag",form:"Subkutan",timing:"Nüchtern",cycle:"8-12 Wo",halflife:"30m"},"human","Kardioprotektiv.",[{shop:"Europa-Peptide",price:"39.90"},{shop:"RCpeptides",price:"50.00"}]],
+            ["hexarelin","31/141","Hexarelin","Stärkstes GHRP","wachstum","WACHSTUM","high",["Stärkster GH-Puls","Herzschutz"],["Rezeptor-Desensibilisierung"],{starter:"50mcg",normal:"100mcg",max:"200mcg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"30m"},"human","Klinische Kardiologie.",[{shop:"Europa-Peptide",price:"29.90"},{shop:"RCpeptides",price:"50.00"}]],
+            ["kisspeptin","32/141","Kisspeptin-10","GnRH-Aktivator","libido","LIBIDO","med",["Steigert LH/FSH","Testosteron"],["Flush"],{starter:"10mcg",normal:"50mcg",max:"100mcg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4-8 Wo",halflife:"Kurz"},"human","Pilotstudien.",[{shop:"Europa-Peptide",price:"38.90"},{shop:"RCpeptides",price:"40.00"}]],
+            ["ara290","33/141","ARA-290","Neuropathie","heilung","REGENERATION","low",["Nervenschmerzen","Sarkoidose"],["Teuer"],{starter:"1mg",normal:"2mg",max:"8mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"20m"},"human","Phase-II.",[{shop:"RCpeptides",price:"60.00"}]],
+            ["oxytocin","34/141","Oxytocin","Kuschelhormon","neuro","NEURO","low",["Soziale Bindung","Stress"],["Überempfindlichkeit"],{starter:"10 IU",normal:"20 IU",max:"40 IU",freq:"Bedarf",form:"Nasal",timing:"Bedarf",cycle:"Bedarf",halflife:"5m"},"human","Klinische Psychologie.",[{shop:"Europa-Peptide",price:"24.90"},{shop:"RCpeptides",price:"70.00"}]],
+            ["hcg","35/141","HCG","Hoden","libido","LIBIDO","med",["Simuliert LH","Spermien"],["Gynäkomastie"],{starter:"250 IU",normal:"500 IU",max:"1500 IU",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"PCT",halflife:"36h"},"human","Reproduktionsmedizin.",[{shop:"Europa-Peptide",price:"42.90"},{shop:"RCpeptides",price:"32.50"}]],
+            ["snap8","36/141","SNAP-8","Botox-Ersatz","kosmetik","KOSMETIK","low",["Mimikfalten","Haut"],["Lokal"],{starter:"2%",normal:"5%",max:"10%",freq:"2x/Tag",form:"Topisch",timing:"Morgens",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik-Studien.",[{shop:"Europa-Peptide",price:"36.90"},{shop:"RCpeptides",price:"30.00"}]],
+            ["argireline","37/141","Argireline","Anti-Falten","kosmetik","KOSMETIK","low",["Entspannt Muskeln"],["Rötung"],{starter:"2%",normal:"5%",max:"10%",freq:"2x/Tag",form:"Topisch",timing:"Morgens",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik-Studien.",[{shop:"RCpeptides",price:"80.00"}]],
+            ["ghkcu100","38/141","GHK-Cu (100mg)","Großpackung","kosmetik","KOSMETIK","low",["Kollagen","Haare"],["Kupfertoxizität"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"Dauerhaft",halflife:"Kurz"},"human","Dermatologie.",[{shop:"RCpeptides",price:"47.50"}]],
+            ["glow","39/141","GLOW Stack","GHK+TB+BPC","kosmetik","KOSMETIK","low",["Skincare & Heilung","Narben"],["Einstichreizung"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Misch"},"pilot","Synergie.",[{shop:"Europa-Peptide",price:"164.90"},{shop:"Verra",price:"104.90"},{shop:"RCpeptides",price:"115.00"}]],
+            ["klow","40/141","KLOW Stack","GLOW+KPV","heilung","REGENERATION","low",["Heilung + Entzündung","Darm"],["Mischen aufwendig"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Misch"},"pilot","Ekzeme.",[{shop:"Europa-Peptide",price:"189.90"},{shop:"Verra",price:"129.90"},{shop:"RCpeptides",price:"135.00"}]],
+            ["nadplus","41/141","NAD+","Zellenergie","aging","ANTI-AGING","low",["ATP","Sirtuine"],["Flush bei Injektion"],{starter:"50mg",normal:"100mg",max:"500mg",freq:"1x/Wo",form:"IV/Subkutan",timing:"Morgens",cycle:"Kurweise",halflife:"Kurz"},"human","Klinisch.",[{shop:"Europa-Peptide",price:"49.90"},{shop:"RCpeptides",price:"70.00"}]],
+            ["ss31","42/141","SS-31","Mitochondrien","aging","ANTI-AGING","low",["Mitochondrienmembran","Radikale"],["Neu"],{starter:"2mg",normal:"4mg",max:"10mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"4h"},"human","Phase-II.",[{shop:"RCpeptides",price:"127.50"}]],
+            ["hgh","43/141","HGH","Somatropin","wachstum","WACHSTUM","high",["Muskelaufbau","Fettabbau"],["Insulinresistenz"],{starter:"2 IU",normal:"4 IU",max:"6 IU",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Langzeit",halflife:"3h"},"human","Zugelassen.",[{shop:"Europa-Peptide",price:"24.90"},{shop:"Peptid24",price:"34.90"}]],
+            ["pe2228","44/141","PE 22-28","Antidepressivum","neuro","NEURO","low",["Neurogenese Hippocampus"],["Frühe Forschung"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan/Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiermodelle.",[{shop:"Europa-Peptide",price:"49.90"},{shop:"RCpeptides",price:"40.00"}]],
+            ["epo","45/141","EPO","Erythropoetin","gewicht","PERFORMANCE","high",["Rote Blutkörperchen","VO2max"],["Thrombose"],{starter:"20 IU",normal:"50 IU",max:"300 IU",freq:"3x/Wo",form:"IV/Subkutan",timing:"Pre-Workout",cycle:"Kurz",halflife:"8h"},"human","Doping.",[{shop:"Europa-Peptide",price:"49.90"}]],
+            ["cagrilintide","46/141","Cagrilintid","Amylin","gewicht","GEWICHT","high",["Sättigung","Synergie Sema"],["Übelkeit"],{starter:"0.16mg",normal:"1mg",max:"2.4mg",freq:"1x/Wo",form:"Subkutan",timing:"Wöchentlich",cycle:"Klinisch",halflife:"165h"},"human","SCALE Phase III.",[{shop:"Europa-Peptide",price:"69.00"},{shop:"RCpeptides",price:"80.00"}]],
+            ["lcarnitin","47/141","L-Carnitin","Fetttransport","gewicht","GEWICHT","low",["Mitochondrien","Ausdauer"],["Geruch"],{starter:"500mg",normal:"1000mg",max:"2000mg",freq:"1x/Tag",form:"IM/IV",timing:"Vor Training",cycle:"Dauerhaft",halflife:"15h"},"human","Gut belegt.",[{shop:"Europa-Peptide",price:"29.90"},{shop:"RCpeptides",price:"20.00"}]],
+            ["pegmgf","48/141","PEG-MGF","Lokales MGF","wachstum","WACHSTUM","med",["Lokales Wachstum","Satellitenzellen"],["Nur Trainingstage"],{starter:"200mcg",normal:"400mcg",max:"600mcg",freq:"Post-Workout",form:"Lokal",timing:"Nach Training",cycle:"4 Wo",halflife:"48h"},"invitro","Hyperplasie.",[{shop:"RCpeptides",price:"45.00"}]],
+            ["igf1des","49/141","IGF-1 DES","Kurz wirkend","wachstum","WACHSTUM","high",["Potent","Lokaler Pump"],["Hypoglykämie"],{starter:"20mcg",normal:"50mcg",max:"100mcg",freq:"Pre-Workout",form:"Lokal",timing:"Vor Training",cycle:"4 Wo",halflife:"20m"},"animal","Hypertrophie.",[{shop:"RCpeptides",price:"90.00"}]],
+            ["adipotide","50/141","Adipotide","Fett-Tod","gewicht","GEWICHT","high",["Zerstört Blutgefäße von Fett"],["Nierenversagen"],{starter:"0.2mg/kg",normal:"0.4mg/kg",max:"0.5mg/kg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"2h"},"animal","Affen verloren 11%.",[{shop:"Europa-Peptide",price:"44.90"},{shop:"RCpeptides",price:"60.00"}]],
+            ["ll37","51/141","LL-37","Antibiotisch","heilung","REGENERATION","med",["Gegen Biofilme","Wundheilung"],["Brennen"],{starter:"50mcg",normal:"100mcg",max:"200mcg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"human","Dermatologie.",[{shop:"RCpeptides",price:"40.00"}]],
+            ["cerebro","52/141","Cerebrolysin","Gehirn","neuro","NEURO","low",["Neurogenese","Schlaganfall"],["Großes Volumen"],{starter:"2ml",normal:"5ml",max:"10ml",freq:"1x/Tag",form:"IM",timing:"Morgens",cycle:"4 Wo",halflife:"Stunden"},"human","Zugelassen.",[{shop:"RCpeptides",price:"75.00"}]],
+            ["triptorelin","53/141","Triptorelin","PCT Notfall","libido","LIBIDO","high",["Extremer LH Puls","Restart"],["Kastration bei Missbrauch"],{starter:"100mcg",normal:"100mcg",max:"100mcg",freq:"Einmalig",form:"Subkutan",timing:"PCT Beginn",cycle:"1 Tag",halflife:"Minuten"},"human","Endokrinologie.",[{shop:"RCpeptides",price:"75.00"}]],
+            ["dihexa","54/141","Dihexa","Neuro","neuro","NEURO","med",["Extreme Kognition"],["Tumorrisiko theoretisch"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral/Lokal",timing:"Morgens",cycle:"8 Wo",halflife:"Lang"},"animal","Präklinisch.",[{shop:"RCpeptides",price:"135.00"}]],
+            ["amino1mq","55/141","5-Amino-1MQ","NNMT","gewicht","GEWICHT","low",["Blockiert Fettspeicherung"],["Teuer"],{starter:"50mg",normal:"100mg",max:"150mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"3 Mo",halflife:"Stunden"},"animal","Mäuse verloren 30%.",[{shop:"Europa-Peptide",price:"139.00"},{shop:"RCpeptides",price:"160.00"}]],
+            ["mk677","56/141","MK-677","Ibutamoren","wachstum","WACHSTUM","med",["Oraler GHRP","Hunger"],["Insulinresistenz"],{starter:"10mg",normal:"15mg",max:"25mg",freq:"1x/Tag",form:"Oral",timing:"Vor Schlaf",cycle:"8-16 Wo",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"65.00"}]],
+            ["ostarine","57/141","Ostarine","MK-2866","wachstum","WACHSTUM","med",["Milder SARM","Gelenke"],["Suppression"],{starter:"10mg",normal:"20mg",max:"25mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"65.00"}]],
+            ["rad140","58/141","RAD-140","Testolone","wachstum","WACHSTUM","high",["Starker SARM","Kraft"],["Shutdown","Leber"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"20h"},"human","Phase I.",[{shop:"RCpeptides",price:"75.00"}]],
+            ["lgd4033","59/141","LGD-4033","Ligandrol","wachstum","WACHSTUM","high",["Masse SARM","Wasser"],["Shutdown"],{starter:"5mg",normal:"10mg",max:"10mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"80.00"}]],
+            ["cardarine","60/141","Cardarine","GW-501516","gewicht","GEWICHT","high",["Extreme Ausdauer"],["Krebsrisiko in Tieren"],{starter:"10mg",normal:"15mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Vor Training",cycle:"8 Wo",halflife:"24h"},"animal","Mäuse-Ausdauer.",[{shop:"RCpeptides",price:"60.00"}]],
+            ["sr9009","61/141","SR9009","Stenabolic","gewicht","GEWICHT","med",["Ruheumsatz"],["Schlechte orale Aufnahme"],{starter:"10mg",normal:"20mg",max:"40mg",freq:"3x/Tag",form:"Oral",timing:"Verteilt",cycle:"8 Wo",halflife:"2h"},"animal","Mäuse-Ausdauer.",[{shop:"RCpeptides",price:"70.00"}]],
+            ["yk11","62/141","YK-11","Myostatin SARM","wachstum","WACHSTUM","high",["DHT Derivat","Myostatin Hemmer"],["Leber","Gelenke"],{starter:"5mg",normal:"10mg",max:"15mg",freq:"1x/Tag",form:"Oral",timing:"Essen",cycle:"6 Wo",halflife:"8h"},"invitro","Zellstudien.",[{shop:"RCpeptides",price:"85.00"}]],
+            ["enclomiphene","63/141","Enclomiphene","SERM PCT","libido","LIBIDO","med",["PCT Goldstandard","LH Puls"],["Sehschärfe (selten)"],{starter:"6.25mg",normal:"12.5mg",max:"25mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"10h"},"human","Klinisch.",[{shop:"RCpeptides",price:"75.00"}]],
+            ["bacwater","64/141","BAC-Wasser","Bakteriostatisch","heilung","ZUBEHÖR","low",["Rekonstitution","Keimfrei"],["Nicht pur spritzen"],{starter:"1ml",normal:"2ml",max:"3ml",freq:"Bedarf",form:"Subkutan",timing:"Mischen",cycle:"Dauerhaft",halflife:"-"},"human","Standard.",[{shop:"Peptid24",price:"5.49"},{shop:"Verra",price:"5.90"}]],
+            ["ru58841","65/141","RU58841","Anti-Androgen","kosmetik","KOSMETIK","low",["Stoppt Haarausfall lokal"],["Kopfschmerz bei Systemik"],{starter:"20mg",normal:"50mg",max:"100mg",freq:"1x/Tag",form:"Topisch",timing:"Abends",cycle:"Dauerhaft",halflife:"1h"},"human","Klinisch.",[{shop:"RCpeptides",price:"45.00"}]],
+            ["noopept","66/141","Noopept","Kognition","neuro","NEURO","low",["BDNF","Gedächtnis"],["Brain-Fog"],{starter:"10mg",normal:"20mg",max:"40mg",freq:"2x/Tag",form:"Oral/Nasal",timing:"Tag",cycle:"4 Wo",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"30.00"}]],
+            ["tudca","67/141","TUDCA","Leberschutz","heilung","REGENERATION","low",["Stärkster Leberschutz"],["Magen"],{starter:"250mg",normal:"500mg",max:"1500mg",freq:"1x/Tag",form:"Oral",timing:"Essen",cycle:"Kur",halflife:"Mittel"},"human","Standard.",[{shop:"RCpeptides",price:"60.00"}]],
+            ["methyleneblue","68/141","Methylene Blue","Energie","neuro","NEURO","med",["ATP Produktion"],["Blauer Urin","SSRI Gefahr"],{starter:"0.5mg/kg",normal:"1mg/kg",max:"4mg/kg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"Kur",halflife:"5h"},"human","Standard.",[{shop:"RCpeptides",price:"60.00"}]],
+            ["rad150","69/141","RAD-150","TLB-150","wachstum","WACHSTUM","high",["Lange HWZ","Muskeln"],["Shutdown"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"48h"},"animal","Präklinisch.",[{shop:"RCpeptides",price:"77.50"}]],
+            ["pinealon","70/141","Pinealon","Gehirn","neuro","NEURO","low",["Zirkadianer Rhythmus"],["-"],{starter:"10mg",normal:"20mg",max:"40mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"10 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"55.00"}]],
+            ["bromantane","71/141","Bromantane","Ladasten","neuro","NEURO","low",["Stimulans ohne Crash"],["Schlaf"],{starter:"25mg",normal:"50mg",max:"150mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"11h"},"human","Russland.",[{shop:"RCpeptides",price:"60.00"}]],
+            ["phenibut","72/141","Phenibut","Angstlöser","neuro","NEURO","high",["Tiefschlaf","Sozial"],["Extreme Suchtgefahr"],{starter:"250mg",normal:"500mg",max:"1500mg",freq:"1x/Wo",form:"Oral",timing:"Bedarf",cycle:"Bedarf",halflife:"5h"},"human","Russland.",[{shop:"RCpeptides",price:"45.00"}]],
+            ["nsi189","73/141","NSI-189","Hippocampus","neuro","NEURO","med",["Neurogenese","Depression"],["Parästhesien"],{starter:"20mg",normal:"40mg",max:"80mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"15h"},"human","Phase II.",[{shop:"RCpeptides",price:"90.00"}]],
+            ["9mbc","74/141","9-MBC","Dopamin","neuro","NEURO","high",["Regeneriert Dopamin"],["Photosensibilität (Sonne!)"],{starter:"10mg",normal:"15mg",max:"30mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"Lang"},"invitro","Zellen.",[{shop:"RCpeptides",price:"80.00"}]],
+            ["vilon","75/141","Vilon","Thymus","aging","ANTI-AGING","low",["T-Zellen Produktion"],["Autoimmun"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"10 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"50.00"}]],
+            ["survodutide","76/141","Survodutide","Dual Agonist","gewicht","GEWICHT","high",["Glucagon + GLP1"],["Herzrasen"],{starter:"0.6mg",normal:"2.4mg",max:"4.8mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"Langzeit",halflife:"5 Tage"},"human","19% Abnahme.",[{shop:"RCpeptides",price:"90.00"}]],
+            ["ac262","77/141","AC-262","Milder SARM","wachstum","WACHSTUM","low",["Muskeln ohne Prostata"],["Schwach"],{starter:"10mg",normal:"20mg",max:"30mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"12h"},"animal","Tierstudien.",[{shop:"RCpeptides",price:"55.00"}]],
+            ["s4","78/141","S4 Andarine","Härte SARM","wachstum","WACHSTUM","med",["Muskelhärte","Fettabbau"],["Sehverschlechterung (Gelbstich)"],{starter:"25mg",normal:"50mg",max:"75mg",freq:"2x/Tag",form:"Oral",timing:"Verteilt",cycle:"8 Wo",halflife:"4h"},"human","Klinisch.",[{shop:"RCpeptides",price:"80.00"}]],
+            ["gw0742","79/141","GW0742","Super Cardarine","gewicht","GEWICHT","high",["Extreme Ausdauer"],["Herz (Tier)"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Training",cycle:"8 Wo",halflife:"24h"},"animal","Tiere.",[{shop:"RCpeptides",price:"75.00"}]],
+            ["acp105","80/141","ACP-105","SARM","wachstum","WACHSTUM","med",["Sicherer SARM"],["Suppression"],{starter:"10mg",normal:"15mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"5h"},"invitro","Zellen.",[{shop:"RCpeptides",price:"75.00"}]],
+            ["s23","81/141","S23","Stärkster SARM","wachstum","WACHSTUM","high",["Wettkampf-Härte"],["Verhütungsmittel (Männer)"],{starter:"10mg",normal:"20mg",max:"30mg",freq:"2x/Tag",form:"Oral",timing:"Verteilt",cycle:"8 Wo",halflife:"12h"},"animal","Tiere.",[{shop:"RCpeptides",price:"60.00"}]],
+            ["orexina","82/141","Orexin A","Fokus","neuro","NEURO","med",["Hellwach","Motivation"],["Schlafprobleme"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"Bedarf",form:"Nasal",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"120.00"}]],
+            ["larazotide","83/141","Larazotide","Leaky Gut","heilung","REGENERATION","low",["Schließt Darm (Tight Junctions)"],["Keine"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"3x/Tag",form:"Oral",timing:"Vor Essen",cycle:"4 Wo",halflife:"Lokal"},"human","Phase III.",[{shop:"RCpeptides",price:"95.00"}]],
+            ["colivelin","84/141","Colivelin","Neuroprotektiv","neuro","NEURO","med",["Schutz vor Alzheimer"],["Teuer"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"200.00"}]],
+            ["synake","85/141","Syn-Ake","Schlangengift","kosmetik","KOSMETIK","low",["Botox-Ersatz"],["Nur Topisch!"],{starter:"1%",normal:"4%",max:"5%",freq:"2x/Tag",form:"Topisch",timing:"Täglich",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik.",[{shop:"RCpeptides",price:"175.00"}]],
+            ["foxo4","86/141","FOXO4-DRI","Senolytikum","aging","ANTI-AGING","med",["Zerstört Zombie-Zellen"],["Niere"],{starter:"1mg",normal:"3mg",max:"5mg",freq:"3x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"Europa-Peptide",price:"189.90"},{shop:"RCpeptides",price:"50.00"}]],
+            ["mazdutide","87/141","Mazdutide","GLP/Glucagon","gewicht","GEWICHT","high",["Leberfett","Abnehmen"],["Herzrasen"],{starter:"1.5mg",normal:"3mg",max:"9mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"Lang",halflife:"7 Tage"},"human","Phase II.",[{shop:"RCpeptides",price:"80.00"}]],
+            ["thymalin","88/141","Thymalin","Thymus","aging","ANTI-AGING","low",["Immunsystem"],["Keine"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"Europa-Peptide",price:"24.90"},{shop:"RCpeptides",price:"40.00"}]],
+            ["bam15","89/141","BAM15","Entkoppler","gewicht","GEWICHT","high",["Verbrennt Kalorien als Hitze"],["Überhitzung"],{starter:"15mg",normal:"30mg",max:"50mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"125.00"}]],
+            ["p21","90/141","P21","BDNF Booster","neuro","NEURO","low",["Lernen","Neurogenese"],["Müdigkeit"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Stunden"},"animal","Mäuse.",[{shop:"RCpeptides",price:"70.00"}]],
+            ["adamax","91/141","Adamax","Super Semax","neuro","NEURO","low",["Extremer Fokus"],["Schlaf"],{starter:"100mcg",normal:"200mcg",max:"1000mcg",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"Kur",halflife:"Stunden"},"invitro","Zellen.",[{shop:"RCpeptides",price:"55.00"}]],
+            ["ace031","92/141","ACE-031","Myostatin","wachstum","WACHSTUM","high",["Extremer Muskelaufbau"],["Nasenbluten"],{starter:"1mg",normal:"3mg",max:"5mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"15 Tage"},"human","Phase II.",[{shop:"RCpeptides",price:"180.00"}]],
+            ["dermorphin","93/141","Dermorphin","Frosch-Opioid","neuro","NEURO","high",["30x Morphium"],["Sucht","Atemdepression"],{starter:"Klinisch",normal:"Klinisch",max:"Klinisch",freq:"Akut",form:"Subkutan",timing:"Akut",cycle:"Kurz",halflife:"Kurz"},"animal","Pferde.",[{shop:"RCpeptides",price:"140.00"}]],
+            ["astressinb","94/141","Astressin-B","Stress-Blocker","kosmetik","KOSMETIK","low",["Haarwuchs","Stress"],["-"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"150.00"}]],
+            ["lgd3033","95/141","LGD-3033","Dry SARM","wachstum","WACHSTUM","high",["Trockene Muskeln"],["Suppression"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"2x/Tag",form:"Oral",timing:"Tag",cycle:"8 Wo",halflife:"6h"},"invitro","Zellen.",[{shop:"RCpeptides",price:"80.00"}]],
+            ["hng","96/141","HNG","Humanin Analogon","aging","ANTI-AGING","med",["Schutz vor Alzheimer"],["Tumor (Kontraindikation)"],{starter:"1mg",normal:"5mg",max:"10mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"invitro","Zellen.",[{shop:"RCpeptides",price:"100.00"}]],
+            ["dnsp11","97/141","DNSP-11","Dopamin Neuronen","neuro","NEURO","med",["Parkinson Schutz"],["Teuer"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"125.00"}]],
+            ["pnc27","98/141","PNC-27","Anti-Cancer","heilung","REGENERATION","high",["Zerstört Krebszellen"],["Experimentell"],{starter:"1mg",normal:"3mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Kur",halflife:"Kurz"},"invitro","Zellen.",[{shop:"RCpeptides",price:"100.00"}]],
+            ["palghk","99/141","PAL-GHK","Palmitoyl","kosmetik","KOSMETIK","low",["Kollagen (Haut)"],["Topisch"],{starter:"1%",normal:"2%",max:"5%",freq:"2x/Tag",form:"Topisch",timing:"Tag",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik.",[{shop:"RCpeptides",price:"50.00"}]],
+            ["hep1","100/141","HEP-1","Verbrennungen","heilung","REGENERATION","med",["Wundheilung"],["Wenig Daten"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"140.00"}]],
+            ["fgl","101/141","FGL","NCAM Mimetic","neuro","NEURO","med",["Synapsenbildung"],["Teuer"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"200.00"}]],
+            ["orexinb","102/141","Orexin B","Wachheit","neuro","NEURO","med",["Fokus"],["Blutdruck"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"Bedarf",form:"Nasal",timing:"Morgens",cycle:"Kur",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"120.00"}]],
+            ["chrysalin","103/141","Chrysalin","TP508","heilung","REGENERATION","low",["Knochenbruch Heilung"],["Lokal spritzen"],{starter:"1mg",normal:"2mg",max:"10mg",freq:"2x/Wo",form:"Lokal",timing:"Post-Trauma",cycle:"Bedarf",halflife:"Kurz"},"human","Phase II.",[{shop:"RCpeptides",price:"200.00"}]],
+            ["tb4frag","104/141","Thymosin B4 Frag","Ac-LKKTETQ","heilung","REGENERATION","low",["Anti-Fibrose (Narbe)"],["Kurze HWZ"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"Alle 2 Tage",form:"Subkutan",timing:"Abends",cycle:"4 Wo",halflife:"Kurz"},"invitro","Zellen.",[{shop:"RCpeptides",price:"90.00"}]],
+            ["vesilute","105/141","Vesilute","Prostata","aging","ANTI-AGING","low",["Blase & Prostata"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"60.00"}]],
+            ["ace083","106/141","ACE-083","Lokales Myostatin","wachstum","WACHSTUM","high",["Muskel wächst nur lokal"],["Verhärtung"],{starter:"1mg",normal:"2mg",max:"3mg",freq:"2x/Wo",form:"IM",timing:"Training",cycle:"4 Wo",halflife:"Mittel"},"human","Klinisch.",[{shop:"RCpeptides",price:"180.00"}]],
+            ["sobetirome","107/141","Sobetirome","GC-1","gewicht","GEWICHT","med",["T3 ohne Herzbelastung"],["Schwitzen"],{starter:"10mcg",normal:"20mcg",max:"100mcg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"Tage"},"animal","Tiere.",[{shop:"RCpeptides",price:"120.00"}]],
+            ["livagen","108/141","Livagen","DNA Entfaltung","aging","ANTI-AGING","low",["Verjüngt Leber/Immun"],["-"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"60.00"}]],
+            ["prostamax","109/141","Prostamax","Prostata-Bio","aging","ANTI-AGING","low",["Verjüngt Prostata"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"50.00"}]],
+            ["gonadorelin","110/141","Gonadorelin","GnRH-Analogon","libido","LIBIDO","med",["Testosteron Produktion"],["Kastration bei Dauerinfusion"],{starter:"100mcg",normal:"100mcg",max:"300mcg",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"PCT",halflife:"Minuten"},"human","Klinisch.",[{shop:"RCpeptides",price:"50.00"}]],
+            ["hmg","111/141","HMG","LH & FSH","libido","LIBIDO","med",["Hoden (Besser als HCG)"],["Teuer"],{starter:"37.5 IU",normal:"75 IU",max:"150 IU",freq:"3x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Tage"},"human","Klinisch.",[{shop:"RCpeptides",price:"32.50"}]],
+            ["cartalax","112/141","Cartalax","Knorpel","heilung","REGENERATION","low",["Gelenk-Knorpel"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"40.00"}]],
+            ["testagen","113/141","Testagen","Hoden-Bio","libido","LIBIDO","low",["Spermienqualität"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"52.50"}]],
+            ["vip","114/141","VIP","CIRS/Schimmel","neuro","NEURO","med",["Heilt Biotoxin-Krankheit"],["Blutdruck"],{starter:"50mcg",normal:"50mcg",max:"100mcg",freq:"4x/Tag",form:"Nasal",timing:"Tag",cycle:"Dauerhaft",halflife:"Minuten"},"human","Klinisch.",[{shop:"RCpeptides",price:"57.50"}]],
+            ["b733","115/141","B7-33","Anti-Fibrose","heilung","REGENERATION","low",["Baut Narbengewebe (Herz) ab"],["Experimentell"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"6 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"50.00"}]],
+            ["vesugen","116/141","Vesugen","Blutgefäße","aging","ANTI-AGING","low",["Elastizität Gefäße"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"50.00"}]],
+            ["ovagen","117/141","Ovagen","Leber-Bio","aging","ANTI-AGING","low",["Leber Regeneration"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"55.00"}]],
+            ["crystagen","118/141","Crystagen","Immun-Bio","aging","ANTI-AGING","low",["T-Zellen nach Infekt"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"55.00"}]],
+            ["cortagen","119/141","Cortagen","ZNS-Bio","neuro","NEURO","low",["Gehirn Stress"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"50.00"}]],
+            ["pancragen","120/141","Pancragen","Pankreas","aging","ANTI-AGING","low",["Insulinresistenz"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"40.00"}]],
+            ["cardiogen","121/141","Cardiogen","Herz-Bio","aging","ANTI-AGING","low",["Herzmuskelzellen"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"47.50"}]],
+            ["teriparatide","122/141","Teriparatid","Forteo","heilung","REGENERATION","med",["Knochenaufbau massiv"],["Hyperkalzämie"],{starter:"20mcg",normal:"20mcg",max:"40mcg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"24 Mo",halflife:"1h"},"human","FDA.",[{shop:"RCpeptides",price:"80.00"}]],
+            ["ahkcu","123/141","AHK-Cu","Haar-Kupfer","kosmetik","KOSMETIK","low",["Besser als GHK für Haare"],["Topisch"],{starter:"1%",normal:"2%",max:"5%",freq:"1x/Tag",form:"Topisch",timing:"Tag",cycle:"Dauerhaft",halflife:"Lokal"},"invitro","Zellen.",[{shop:"Europa-Peptide",price:"47.90"},{shop:"RCpeptides",price:"52.50"}]],
+            ["tesofensine","124/141","Tesofensine","SNDRI","gewicht","GEWICHT","high",["Brutaler Appetitzügler"],["Puls/Blutdruck"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"12 Wo",halflife:"9 Tage"},"human","Phase II.",[{shop:"RCpeptides",price:"275.00"}]],
+            ["humanin","125/141","Humanin","Mito-Peptid","aging","ANTI-AGING","med",["Schützt vor Alzheimer"],["Tumor (Kontraindikation)"],{starter:"1mg",normal:"5mg",max:"10mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"125.00"}]],
+            ["retinalamin","126/141","Retinalamin","Augen-Bio","heilung","REGENERATION","low",["Netzhaut Heilung"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"10 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"125.00"}]],
+            ["bronchogen","127/141","Bronchogen","Lungen-Bio","heilung","REGENERATION","low",["Bronchitis/Raucher"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"50.00"}]],
+            ["matrixyl","128/141","Matrixyl","Anti-Falten","kosmetik","KOSMETIK","low",["Kollagen-1"],["Topisch"],{starter:"2%",normal:"5%",max:"10%",freq:"2x/Tag",form:"Topisch",timing:"Tag",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik.",[{shop:"RCpeptides",price:"30.00"}]],
+            ["bioglutide","129/141","Bioglutide","Oral GLP-1","gewicht","GEWICHT","med",["Semaglutid als Pille"],["Magen"],{starter:"100mg",normal:"100mg",max:"200mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"Langzeit",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"200.00"}]],
+            ["lipoc","130/141","Lipo-C","Lipotropic","gewicht","GEWICHT","low",["Fettverbrennung (Leber)"],["Rötung"],{starter:"1ml",normal:"2ml",max:"3ml",freq:"2x/Wo",form:"IM",timing:"Morgens",cycle:"Dauerhaft",halflife:"Stunden"},"human","Kliniken.",[{shop:"RCpeptides",price:"75.00"}]],
+            ["ptd1","131/141","PTD-DBM","Kopfhaut-Peptid","kosmetik","KOSMETIK","med",["Haarwachstum"],["Teuer"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Topisch",timing:"Abends",cycle:"Kurweise",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"80.00"}]],
+            ["gdf8","132/141","GDF-8","Myostatin-Pro","wachstum","WACHSTUM","high",["Autoimmun Wachstum"],["Sehnenrisse"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Lang"},"animal","Tiere.",[{shop:"RCpeptides",price:"100.00"}]],
+            ["thymalfasin","133/141","Thymalfasin","Hochdosis T-Alpha","aging","ANTI-AGING","low",["Maximales Immunsystem"],["Autoimmun"],{starter:"2mg",normal:"5mg",max:"10mg",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"Kur",halflife:"2h"},"human","Klinisch.",[{shop:"RCpeptides",price:"200.00"}]],
+            ["bpcpellets","134/141","BPC-157 Pellets","Oral BPC","heilung","REGENERATION","low",["Heilt Magen-Darm"],["-"],{starter:"500mcg",normal:"1000mcg",max:"2000mcg",freq:"2x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"4h"},"human","Klinisch.",[{shop:"RCpeptides",price:"125.00"}]],
+            ["kpvpellets","135/141","KPV Pellets","Oral KPV","heilung","REGENERATION","low",["Anti-Candida Darm"],["-"],{starter:"500mcg",normal:"1000mcg",max:"2000mcg",freq:"2x/Tag",form:"Oral",timing:"Essen",cycle:"4 Wo",halflife:"Kurz"},"animal","Darm.",[{shop:"RCpeptides",price:"125.00"}]],
+            ["tb500pellets","136/141","TB-500 Pellets","Oral TB500","heilung","REGENERATION","low",["Systemische Heilung"],["-"],{starter:"500mcg",normal:"1000mcg",max:"2000mcg",freq:"2x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"Mittel"},"pilot","Pilot.",[{shop:"RCpeptides",price:"100.00"}]],
+            ["aminonasal","137/141","5-Amino Nasal","Nasal 1MQ","gewicht","GEWICHT","med",["Stoffwechsel Boost"],["Nasenreizung"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"Mittel"},"animal","Tiere.",[{shop:"RCpeptides",price:"100.00"}]],
+            ["ll37nasal","138/141","LL-37 Nasal","Spray LL37","heilung","REGENERATION","med",["Gegen Sinusitis Keime"],["Brennen"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"human","Beobachtung.",[{shop:"RCpeptides",price:"40.00"}]],
+            ["semaxnasal","139/141","Semax Nasal","RC Spray","neuro","NEURO","low",["Fokus/Kognition"],["-"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"30.00"}]],
+            ["selanknasal","140/141","Selank Nasal","RC Angstlöser","neuro","NEURO","low",["Angstlöser"],["-"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Bedarf",cycle:"4 Wo",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"30.00"}]],
+            ["oxytocinacetate","141/141","Oxytocin Acetat","Soziales Peptid","neuro","NEURO","low",["Soziale Phobien"],["Empfindlichkeit"],{starter:"10 IU",normal:"20 IU",max:"40 IU",freq:"Bedarf",form:"Subkutan",timing:"Bedarf",cycle:"Bedarf",halflife:"Kurz"},"human","Psychologie.",[{shop:"RCpeptides",price:"70.00"}]]
+        ];
+
+        let loadedCount = RAW_DATA.length;
+
+        function router(viewId) {
+            document.querySelectorAll('.view-panel').forEach(p => { p.classList.add('hidden'); p.classList.remove('block'); });
+            const target = document.getElementById('view-' + viewId);
+            if(target) { target.classList.remove('hidden'); target.classList.add('block'); }
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.id !== 'nav-coupons') {
+                    btn.className = "nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300";
+                }
+            });
+            const activeBtn = document.getElementById('nav-' + viewId);
+            if(activeBtn && viewId !== 'coupons') {
+                activeBtn.className = "nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goHome() {
+            router('db');
+            const search = document.getElementById('searchInput');
+            if(search) search.value = '';
+            const cat = document.getElementById('catSelect');
+            if(cat) cat.value = 'all';
+            
+            document.querySelectorAll('.risk-f-btn').forEach(b => {
+                b.className = "risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all";
+            });
+            const allBtn = document.querySelector('.risk-f-btn[onclick*="all"]');
+            if(allBtn) allBtn.className = "risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-brand-500 bg-brand-500/10 text-brand-400 transition-all";
+            activeRiskFilter = 'all';
+            
+            applyFilters();
+        }
+
+        let activeRiskFilter = 'all';
+        function setRiskFilter(risk, btn) {
+            activeRiskFilter = risk;
+            document.querySelectorAll('.risk-f-btn').forEach(b => {
+                b.className = "risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all";
+            });
+            btn.className = "risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-brand-500 bg-brand-500/10 text-brand-400 transition-all";
+            applyFilters();
+        }
+
+        function getBiomarkers(name, cat) {
+            const n = name.toLowerCase();
+            
+            // SARMs
+            if (n.includes('sarm') || n.includes('rad') || n.includes('lgd') || n.includes('osta') || n.includes('yk') || n.includes('s23') || n.includes('andarine')) {
+                return {
+                    short: "Leber (AST/ALT), Lipide (HDL/LDL), Testosteron (Gesamt/Frei), LH/FSH, SHBG.",
+                    base: ["Großes Blutbild (Erythrozyten, Leukozyten, Thrombozyten)", "Nierenwerte (Kreatinin, eGFR)", "Leberwerte (AST, ALT, GGT, Bilirubin)", "Lipidprofil (HDL, LDL, Triglyceride)"],
+                    spec: ["Testosteron (Gesamt & Frei)", "Luteinisierendes Hormon (LH) & Follikelstimulierendes Hormon (FSH)", "SHBG (Sexualhormon-bindendes Globulin)", "Östradiol (E2)"]
+                };
+            }
+            // GH Peptides (HGH, GHRP, MK677)
+            if (n.includes('hgh') || n.includes('mk') || n.includes('ipamorelin') || n.includes('cjc') || n.includes('hexarelin') || n.includes('sermorelin')) {
+                return {
+                    short: "IGF-1 (Somatomedin C), Nüchternblutzucker, HbA1c, Insulin, Prolaktin.",
+                    base: ["Großes Blutbild", "Nierenwerte (Kreatinin, eGFR)", "Leberwerte (GGT, AST, ALT)", "Blutzucker (Nüchtern)"],
+                    spec: ["IGF-1 (Somatomedin C) - Indikator für HGH Level", "HbA1c (Langzeitzucker) & Nüchterninsulin", "Prolaktin (besonders bei GHRPs)", "Schilddrüsenpanel (TSH, fT3, fT4)"]
+                };
+            }
+            // Weight Loss (GLP-1)
+            if (cat === 'gewicht' || n.includes('sema') || n.includes('tirz') || n.includes('reta') || n.includes('aod') || n.includes('frag')) {
+                return {
+                    short: "HbA1c, Lipase & Amylase (Pankreas), Schilddrüse (TSH).",
+                    base: ["Großes Blutbild", "Nieren- & Leberwerte", "Blutzucker & Lipidprofil (Cholesterin)"],
+                    spec: ["HbA1c (Langzeitzucker)", "Lipase & Amylase (Pankreasgesundheit)", "Schilddrüsenpanel (TSH, fT3, fT4) - Risiko bei GLP1"]
+                };
+            }
+            // Healing / BPC / TB
+            if (cat === 'heilung' || n.includes('bpc') || n.includes('tb500')) {
+                return {
+                    short: "Entzündungsmarker (CRP, Blutsenkung), Nierenwerte.",
+                    base: ["Großes Blutbild", "Leberwerte", "Nierenwerte"],
+                    spec: ["hs-CRP (C-reaktives Protein - Entzündung)", "BSG (Blutsenkungsgeschwindigkeit)"]
+                };
+            }
+            
+            // Default
+            return {
+                short: "Großes Blutbild, Leber (AST/ALT), Nieren (Krea).",
+                base: ["Großes Blutbild", "Nierenwerte (Kreatinin, eGFR)", "Leberwerte (GGT, AST, ALT)", "Blutzucker (Nüchtern)"],
+                spec: ["hs-CRP (Entzündung)"]
+            };
+        }
+
+        function getLifestyleTips(cat) {
+            let tips = {
+                'heilung': { diet: "Kollagen, Vitamin C & Zink für optimale Gewebeneubildung.", water: "Starke Hydration hält verletzte Faszien geschmeidig.", sport: "Reha-Fokus! Mechanische Belastung extrem langsam steigern.", avoid: "Überlastung des Areals (Schmerzfreiheit durch Peptid bedeutet NICHT, dass alles zu 100% verheilt ist)." },
+                'wachstum': { diet: "Hohe Proteinzufuhr (mind. 2g/kg) für Muskelproteinsynthese.", water: "Viel Wasser für maximales zelluläres Volumen.", sport: "Progressiver Overload im Krafttraining ist Pflicht.", avoid: "Kohlenhydrate/Zucker direkt vor der Injektion (Insulin blockiert die GH-Ausschüttung massiv)." },
+                'gewicht': { diet: "Kaloriendefizit einhalten, sehr proteinreich essen (Muskelschutz).", water: "3+ Liter täglich, um die Nieren bei der Lipolyse zu entlasten.", sport: "Kombination aus hartem Kraft- und Ausdauertraining.", avoid: "Einfachzucker, Alkohol und 'leere' Kalorien bremsen die Wirkung sofort." },
+                'neuro': { diet: "Omega-3 Fettsäuren, Antioxidantien, Walnüsse für den Hirnstoffwechsel.", water: "Ausreichend Wasser für optimalen zerebralen Blutfluss.", sport: "Ausdauersport (fördert BDNF im Gehirn zusätzlich extrem).", avoid: "Schlafmangel, Alkohol und chronischen Dauerstress (zerstört Neurogenese)." },
+                'aging': { diet: "Antioxidantienreiche Kost (Dunkle Beeren, Gemüse), Intervallfasten.", water: "Stetige, hohe Hydration für Zellerneuerungsprozesse.", sport: "Moderate tägliche Bewegung, Yoga, leichtes Cardio.", avoid: "Übermäßigen UV-Einfluss (Zellalterung), Rauchen, oxidativen Stress." },
+                'kosmetik': { diet: "Gesunde Fette (Avocado, Olivenöl), Vitamine A/C/E für die Haut.", water: "Massiv wichtig für die Prallheit und Elastizität der Epidermis.", sport: "Durchblutungsförderndes Training für rosige Haut.", avoid: "Aggressive Säure-Peelings zeitgleich mit topischen Peptiden verwenden." },
+                'libido': { diet: "Zink, Maca, durchblutungsfördernde Lebensmittel (L-Arginin, Rote Bete).", water: "Regelmäßige Hydration für das Herz-Kreislaufsystem.", sport: "Cardio-Training für optimale Gefäßgesundheit & Durchblutung.", avoid: "Starken Alkoholkonsum (betäubt das zentrale Nervensystem)." },
+                'all': { diet: "Mikronährstoffreiche Vollwertkost für maximale Absorption.", water: "Viel Wasser unterstützt den Nierenstoffwechsel bei Peptidabbau.", sport: "Aktive Durchblutung verteilt die Wirkstoffe systemisch besser.", avoid: "Heftiges Schütteln der Vials (zerstört die Peptidketten sofort)." }
+            };
+            let t = tips[cat] || tips['all'];
+            return `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                    <div class="bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20">
+                        <span class="text-emerald-400 font-bold text-xs uppercase tracking-wider block mb-1 flex items-center gap-1.5"><span class="text-base">🥗</span> Ernährung</span>
+                        <p class="text-xs text-emerald-200/80 leading-relaxed">${t.diet}</p>
+                    </div>
+                    <div class="bg-accent/10 p-3 rounded-xl border border-accent/20">
+                        <span class="text-accent font-bold text-xs uppercase tracking-wider block mb-1 flex items-center gap-1.5"><span class="text-base">💧</span> Hydration</span>
+                        <p class="text-xs text-accent/80 leading-relaxed">${t.water}</p>
+                    </div>
+                    <div class="bg-brand-500/10 p-3 rounded-xl border border-brand-500/20">
+                        <span class="text-brand-400 font-bold text-xs uppercase tracking-wider block mb-1 flex items-center gap-1.5"><span class="text-base">🏋️</span> Sport Fokus</span>
+                        <p class="text-xs text-brand-200/80 leading-relaxed">${t.sport}</p>
+                    </div>
+                    <div class="bg-rose-500/10 p-3 rounded-xl border border-rose-500/20">
+                        <span class="text-rose-400 font-bold text-xs uppercase tracking-wider block mb-1 flex items-center gap-1.5"><span class="text-base">🚫</span> Zu vermeiden</span>
+                        <p class="text-xs text-rose-200/80 leading-relaxed">${t.avoid}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDatabase() {
+            const grid = document.getElementById('db-grid');
+            grid.innerHTML = '';
+            
+            RAW_DATA.forEach(item => {
+                const p = {
+                    id: item[0], nr: item[1], name: item[2], aka: item[3], cat: item[4], catText: item[5], risk: item[6],
+                    effects: item[7], risks: item[8], dosage: item[9], study: { level: item[10], text: item[11] }, prices: item[12]
+                };
+
+                let badgeColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                if(p.cat === 'wachstum') badgeColor = "bg-accent/10 text-accent border-accent/20";
+                if(p.cat === 'gewicht') badgeColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+                if(p.cat === 'neuro' || p.cat === 'aging') badgeColor = "bg-brand-500/10 text-brand-400 border-brand-500/20";
+                if(p.cat === 'kosmetik') badgeColor = "bg-rose-500/10 text-rose-400 border-rose-500/20";
+                if(p.cat === 'libido') badgeColor = "bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20";
+
+                let riskClass = "text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
+                let riskText = "Niedrig";
+                if(p.risk === 'med') { riskClass = "text-amber-400 border-amber-500/30 bg-amber-500/10"; riskText = "Mittel"; }
+                if(p.risk === 'high') { riskClass = "text-danger border-danger/30 bg-danger/10"; riskText = "Hoch"; }
+
+                let priceHtml = "";
+                if (p.prices) {
+                    p.prices.forEach(pr => {
+                        priceHtml += `<div class="flex justify-between text-xs py-1 border-b border-white/5 last:border-0"><span class="text-slate-400 font-bold">${pr.shop}</span><span class="font-bold text-white">${pr.price} €</span></div>`;
+                    });
+                }
+
+                const encName = encodeURIComponent(p.name.split(' ')[0]);
+                const pubMedLink = `https://pubmed.ncbi.nlm.nih.gov/?term=${encName}+peptide`;
+                const scholarLink = `https://scholar.google.de/scholar?hl=de&q=${encName}+Peptid+Studie`;
+                const ytLink = `https://www.youtube.com/results?search_query=${encName}+peptide+wirkung`;
+
+                let angle = "N/A";
+                let appType = p.dosage.form;
+                let angleColor = "text-slate-500";
+                
+                if(appType.toLowerCase().includes("subkutan")) { angle = "45° (Pinch-Technik)"; angleColor = "text-emerald-400"; }
+                if(appType.toLowerCase().includes("im") || appType.toLowerCase().includes("lokal")) { angle = "90° (Senkrecht)"; angleColor = "text-accent"; }
+                if(appType.toLowerCase().includes("nasal")) { angle = "Sprühstoß"; angleColor = "text-brand-400"; }
+                if(appType.toLowerCase().includes("oral") && !appType.toLowerCase().includes("subkutan")) { angle = "Schlucken"; angleColor = "text-amber-400"; }
+
+                const bio = getBiomarkers(p.name, p.cat);
+
+                const cardHTML = `
+                    <div class="peptide-card glass-panel rounded-3xl p-6 hover:border-brand-500/50 transition-all duration-300 group" data-cat="${p.cat}" data-risk="${p.risk}" data-search="${p.name.toLowerCase()} ${p.aka.toLowerCase()}">
+                        
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest block mb-1">REF // ${p.nr}</span>
+                                <h3 class="text-xl font-bold text-white">${p.name}</h3>
+                                <p class="text-xs text-slate-400">${p.aka}</p>
+                            </div>
+                            <div class="flex flex-col gap-1 items-end">
+                                <span class="px-2.5 py-1 rounded-full text-[9px] font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
+                                <span class="px-2 py-0.5 rounded text-[8px] font-bold border uppercase tracking-wider ${riskClass}">Risiko: ${riskText}</span>
+                            </div>
+                        </div>
+
+                        <!-- Tabs Header -->
+                        <div class="flex border-b border-white/10 mb-4 overflow-x-auto scrollbar-hide">
+                            <button onclick="toggleCardTab(this, '${p.id}-eff')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-brand-400 border-b-2 border-brand-500 transition-colors whitespace-nowrap shrink-0">Wirkung</button>
+                            <button onclick="toggleCardTab(this, '${p.id}-side')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Risiken</button>
+                            <button onclick="toggleCardTab(this, '${p.id}-dose')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Dosierung</button>
+                            <button onclick="toggleCardTab(this, '${p.id}-praxis')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0 flex items-center gap-1"><span class="text-sm">💡</span> Praxis-Guide</button>
+                            <button onclick="toggleCardTab(this, '${p.id}-study')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Studien</button>
+                            <button onclick="toggleCardTab(this, '${p.id}-price')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Preise</button>
+                        </div>
+
+                        <!-- Tab Content: Wirkung -->
+                        <div id="${p.id}-eff" class="card-tab-content block space-y-3 min-h-[120px]">
+                            <ul class="space-y-2 text-sm text-slate-300">
+                                ${p.effects.map(e => `<li class="flex items-start gap-2"><span class="text-success mt-0.5">●</span>${e}</li>`).join('')}
+                            </ul>
+                        </div>
+
+                        <!-- Tab Content: Risiken -->
+                        <div id="${p.id}-side" class="card-tab-content hidden space-y-3 min-h-[120px]">
+                            <ul class="space-y-2 text-sm text-slate-300">
+                                ${p.risks.map(r => `<li class="flex items-start gap-2"><span class="text-danger mt-0.5">✖</span>${r}</li>`).join('')}
+                            </ul>
+                        </div>
+
+                        <!-- Tab Content: Dosierung -->
+                        <div id="${p.id}-dose" class="card-tab-content hidden space-y-3 min-h-[120px]">
+                            <div class="bg-slate-900/50 rounded-xl p-3 border border-white/5 grid grid-cols-2 gap-3 text-xs">
+                                <div><span class="block text-[9px] text-slate-500 uppercase">Standard-Dosis</span><span class="font-semibold text-brand-400">${p.dosage.normal}</span></div>
+                                <div><span class="block text-[9px] text-slate-500 uppercase">Max. Limit</span><span class="font-semibold text-danger">${p.dosage.max}</span></div>
+                                <div><span class="block text-[9px] text-slate-500 uppercase">Applikation</span><span class="font-semibold text-white">${p.dosage.form}</span></div>
+                                <div><span class="block text-[9px] text-slate-500 uppercase">Häufigkeit</span><span class="font-semibold text-white">${p.dosage.freq}</span></div>
+                                <div><span class="block text-[9px] text-slate-500 uppercase">Zeitpunkt</span><span class="font-semibold text-white">${p.dosage.timing}</span></div>
+                                <div><span class="block text-[9px] text-slate-500 uppercase">Halbwertszeit</span><span class="font-semibold text-white">${p.dosage.halflife}</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content: Praxis & Lifestyle -->
+                        <div id="${p.id}-praxis" class="card-tab-content hidden space-y-3 min-h-[120px]">
+                            
+                            <!-- Applikation & Winkel -->
+                            <div class="bg-slate-900/80 rounded-xl p-4 border border-white/5 mb-3 flex flex-col md:flex-row justify-between md:items-center gap-4">
+                                <div>
+                                    <span class="block text-[9px] text-slate-500 uppercase tracking-widest mb-1">Applikation</span>
+                                    <span class="font-bold text-white">${appType}</span>
+                                </div>
+                                <div class="md:text-right">
+                                    <span class="block text-[9px] text-slate-500 uppercase tracking-widest mb-1">Winkel</span>
+                                    <span class="font-bold ${angleColor} text-sm flex items-center md:justify-end gap-1">📐 ${angle}</span>
+                                </div>
+                            </div>
+
+                            <!-- Biomarker Check -->
+                            <div class="bg-brand-500/10 rounded-xl p-3 border border-brand-500/20 mb-3 cursor-pointer hover:bg-brand-500/20 transition-all" onclick="router('blood'); document.getElementById('blood-select').value='${p.id}'; renderBloodPanel();">
+                                <span class="text-[10px] font-bold text-brand-400 uppercase tracking-wider block mb-1">🩸 Empfohlene Biomarker</span>
+                                <p class="text-xs text-slate-300 leading-relaxed mb-2">${bio.short}</p>
+                                <span class="text-[10px] text-brand-400 font-bold">Klicke für detaillierte Checkliste →</span>
+                            </div>
+
+                            <div class="bg-slate-900/50 rounded-xl p-3 border border-white/5">
+                                <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider block mb-2">Optimierung der Wirkung</span>
+                                ${getLifestyleTips(p.cat)}
+                            </div>
+                        </div>
+
+                        <!-- Tab Content: Studien & Quellen -->
+                        <div id="${p.id}-study" class="card-tab-content hidden space-y-3 min-h-[120px]">
+                            <div class="bg-brand-500/10 border-l-2 border-brand-500 p-3 rounded-r-xl">
+                                <span class="text-[10px] font-bold text-brand-400 uppercase tracking-wider block mb-1">Evidenz: ${p.study.level}</span>
+                                <p class="text-xs text-slate-300 leading-relaxed">${p.study.text}</p>
+                            </div>
+                            <div class="pt-2 flex flex-wrap gap-2">
+                                <a href="${pubMedLink}" target="_blank" class="px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[10px] text-slate-300 transition-colors">🇬🇧 PubMed (Int.)</a>
+                                <a href="${scholarLink}" target="_blank" class="px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[10px] text-slate-300 transition-colors">🇩🇪 Scholar (DE)</a>
+                                <a href="${ytLink}" target="_blank" class="px-2 py-1 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded text-[10px] text-red-400 transition-colors">▶ YouTube</a>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content: Preise -->
+                        <div id="${p.id}-price" class="card-tab-content hidden space-y-3 min-h-[120px]">
+                            <div class="bg-slate-900/50 rounded-xl p-4 border border-white/5">
+                                <span class="block text-[9px] text-slate-500 uppercase mb-2">Verifizierte Shops</span>
+                                <div class="space-y-1">
+                                    ${priceHtml || '<span class="text-xs text-slate-500">Keine Preise hinterlegt.</span>'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="mt-4 pt-4 border-t border-white/5 flex gap-2">
+                            <button onclick="router('calc'); loadDirectToCalc('${p.id}')" class="flex-1 py-2 rounded-xl text-[10px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
+                                🧪 Rechner
+                            </button>
+                            <button onclick="router('stack'); setTimeout(() => { const cb = document.querySelector('.stack-checkbox[value=\\'${p.name}\\']'); if(cb){ cb.checked = true; generateStackReport(); } }, 100);" class="flex-1 py-2 rounded-xl text-[10px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
+                                🧬 Stacker
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+            document.getElementById('db-count').innerText = RAW_DATA.length;
+            initCalcPresets();
+            initBloodPresets();
+            renderStackerList();
+        }
+
+        function toggleCardTab(btn, targetId) {
+            const card = btn.closest('.peptide-card');
+            card.querySelectorAll('.card-tab-btn').forEach(tab => {
+                tab.className = "card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0";
+            });
+            card.querySelectorAll('.card-tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+
+            btn.className = "card-tab-btn px-3 py-1.5 text-xs font-semibold text-brand-400 border-b-2 border-brand-500 transition-colors whitespace-nowrap shrink-0";
+            card.querySelector('#' + targetId).classList.remove('hidden');
+            card.querySelector('#' + targetId).classList.add('block');
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const cat = document.getElementById('catSelect').value;
+            const cards = document.querySelectorAll('.peptide-card');
+            let displayed = 0;
+
+            cards.forEach(card => {
+                const cCat = card.dataset.cat;
+                const cRisk = card.dataset.risk;
+                const search = card.dataset.search;
+
+                const matchCat = (cat === 'all' || cCat === cat);
+                const matchRisk = (activeRiskFilter === 'all' || cRisk === activeRiskFilter);
+                const matchQuery = (!query || search.includes(query));
+
+                if(matchCat && matchRisk && matchQuery) {
+                    card.classList.remove('hidden');
+                    displayed++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            document.getElementById('db-count').innerText = displayed;
+        }
+
+        // --- CALCULATOR LOGIC ---
+        function calculateSyringe() {
+            const mg = parseFloat(document.getElementById('calc-mg').value) || 0;
+            const ml = parseFloat(document.getElementById('calc-ml').value) || 0;
+            const mcg = parseFloat(document.getElementById('calc-mcg').value) || 0;
+
+            const resUnits = document.getElementById('res-units');
+            const resConc = document.getElementById('res-conc');
+            const resDoses = document.getElementById('res-doses');
+            const fluid = document.getElementById('syringe-fluid');
+
+            if(mg <= 0 || ml <= 0 || mcg <= 0) {
+                resUnits.innerText = "0.0";
+                resConc.innerText = "0.00 mg/ml";
+                resDoses.innerText = "0 Dosen";
+                fluid.style.width = "0%";
+                return;
+            }
+
+            const totalMcg = mg * 1000;
+            const conc = totalMcg / ml;
+            const units = (mcg / conc) * 100;
+            
+            resUnits.innerText = (Math.round(units * 10) / 10).toFixed(1);
+            resConc.innerText = (mg / ml).toFixed(2) + " mg/ml";
+            resDoses.innerText = Math.floor(totalMcg / mcg) + " Dosen";
+            fluid.style.width = Math.min(100, Math.max(0, units)) + "%";
+        }
+
+        function initCalcPresets() {
+            const s = document.getElementById('calcPreset');
+            s.innerHTML = '<option value="">-- Manuelle Eingabe --</option>';
+            RAW_DATA.forEach(item => {
+                const name = item[2];
+                const id = item[0];
+                const dose = item[9].normal;
+                s.innerHTML += `<option value="${id}">${name} (${dose})</option>`;
+            });
+        }
+
+        function loadPresetToCalc() {
+            const id = document.getElementById('calcPreset').value;
+            loadDirectToCalc(id);
+        }
+
+        function loadDirectToCalc(id) {
+            if(!id) return;
+            const pep = RAW_DATA.find(i => i[0] === id);
+            if(!pep) return;
+            
+            document.getElementById('calcPreset').value = id;
+            document.getElementById('calc-mg').value = 5;
+            document.getElementById('calc-ml').value = 2;
+            document.getElementById('calc-mcg').value = parseInt(pep[9].normal) || 250;
+            calculateSyringe();
+        }
+
+        // --- MAP LOGIC ---
+        function showMapInfo(zoneId) {
+            document.getElementById('map-info-default').classList.add('hidden');
+            document.getElementById('map-info-content').classList.remove('hidden');
+            document.getElementById('map-info-content').classList.add('flex');
+
+            const title = document.getElementById('map-info-title');
+            const desc = document.getElementById('map-info-desc');
+            const angle = document.getElementById('map-info-angle');
+            const badge = document.getElementById('map-info-badge');
+            const rot = document.getElementById('map-info-rotation');
+
+            let rotationText = `
+                <li><strong>Uhren-Methode:</strong> Nimm den Bauchnabel als Mitte und rotiere jeden Tag um 2-3 cm weiter (wie bei einem Ziffernblatt).</li>
+                <li><strong>Seitenwechsel:</strong> Wechsle täglich zwischen linker und rechter Körperhälfte.</li>
+                <li>Fühle vor der Injektion das Gewebe. Bei Verhärtungen (Knoten) die Stelle großräumig meiden.</li>
+            `;
+
+            if(zoneId === 'subq-bauch') {
+                title.innerText = "Abdomen (Bauchfett)";
+                badge.innerText = "Subkutan (SC)";
+                badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                angle.innerText = "45° (Pinch)";
+                angle.className = "font-bold text-emerald-400 text-lg";
+                desc.innerText = "Der Goldstandard für Peptid-Injektionen. Das subkutane Fettgewebe am Bauch (mindestens 5cm Abstand zum Bauchnabel halten!) hat wenig Schmerzrezeptoren und eine langsame, gleichmäßige Resorptionsrate. Bilde mit zwei Fingern eine Hautfalte (Pinch) und injiziere im 45° Winkel.";
+                rot.innerHTML = rotationText;
+            } 
+            else if(zoneId === 'subq-love') {
+                title.innerText = "Hüfte (Love Handles)";
+                badge.innerText = "Subkutan (SC)";
+                badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                angle.innerText = "45° (Pinch)";
+                angle.className = "font-bold text-emerald-400 text-lg";
+                desc.innerText = "Hervorragende Alternative zum Bauch, wenn dort bereits Gewebeirritationen (Lipohypertrophie) vorhanden sind. Das Fettgewebe seitlich der Hüfte eignet sich perfekt für wasserbasierte Peptide. Hautfalte bilden und zügig im 45° Winkel einstechen.";
+                rot.innerHTML = rotationText;
+            }
+            else if(zoneId === 'im-schulter') {
+                title.innerText = "Deltoid (Seitliche Schulter)";
+                badge.innerText = "Intramuskulär (IM)";
+                badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-accent/10 text-accent border-accent/20";
+                angle.innerText = "90° (Senkrecht)";
+                angle.className = "font-bold text-accent text-lg";
+                desc.innerText = "Geeignet für ölige Lösungen oder Peptide, die zwingend tief in den Muskel müssen. Die seitliche Schulter (Lateral Deltoid) hat wenig Nerven. Suche den mittleren Teil des Muskels. Haut NICHT falten (ggf. spannen) und die Nadel in einem raschen 90° Winkel komplett einführen.";
+                rot.innerHTML = `
+                    <li><strong>Z-Track-Methode:</strong> Haut leicht zur Seite ziehen, einstechen, injizieren, Nadel ziehen und Haut loslassen (verschließt den Stichkanal).</li>
+                    <li>Wechsle bei jeder Injektion strikt zwischen linker und rechter Schulter.</li>
+                    <li>Niemals mehr als 1-2 ml in die Schulter injizieren.</li>
+                `;
+            }
+            else if(zoneId === 'im-bein') {
+                title.innerText = "Vastus Lateralis (Außenschenkel)";
+                badge.innerText = "Intramuskulär (IM)";
+                badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block bg-accent/10 text-accent border-accent/20";
+                angle.innerText = "90° (Senkrecht)";
+                angle.className = "font-bold text-accent text-lg";
+                desc.innerText = "Der mittlere, äußere Teil des Oberschenkels. Hier verläuft der Vastus Lateralis. Er ist sehr massiv und nimmt auch größere Injektionsvolumina gut auf. Teile den Oberschenkel gedanklich von Hüfte bis Knie in drei Teile. Injiziere in das mittlere Drittel auf der Außenseite (90° Winkel).";
+                rot.innerHTML = `
+                    <li>Rotiere innerhalb des großen Muskelbauchs um einige Zentimeter hoch oder runter.</li>
+                    <li>Niemals auf die Bein-Innenseite (Oberschenkel-Arterie und Nerven!).</li>
+                    <li>Bein vor Injektion entlasten (nicht anspannen).</li>
+                `;
+            }
+        }
+
+        // --- BLOODWORK LOGIC ---
+        function initBloodPresets() {
+            const s = document.getElementById('blood-select');
+            s.innerHTML = '<option value="">-- Bitte wählen --</option>';
+            RAW_DATA.forEach(item => {
+                s.innerHTML += `<option value="${item[0]}">${item[2]} (${item[3]})</option>`;
+            });
+        }
+
+        function renderBloodPanel() {
+            const id = document.getElementById('blood-select').value;
+            const res = document.getElementById('blood-results');
+            const baseL = document.getElementById('blood-base-list');
+            const specL = document.getElementById('blood-specific-list');
+            const ph = document.getElementById('blood-placeholder');
+
+            if(!id) {
+                res.classList.add('hidden');
+                ph.classList.remove('hidden');
+                return;
+            }
+
+            const pep = RAW_DATA.find(i => i[0] === id);
+            const bio = getBiomarkers(pep[2], pep[4]);
+
+            baseL.innerHTML = bio.base.map(item => `<li class="flex items-start gap-2"><span class="text-slate-500 mt-0.5">▪</span> ${item}</li>`).join('');
+            specL.innerHTML = bio.spec.map(item => `<li class="flex items-start gap-2"><span class="text-brand-400 mt-0.5">●</span> <span class="font-bold">${item}</span></li>`).join('');
+
+            ph.classList.add('hidden');
+            res.classList.remove('hidden');
+        }
+
+        // --- STORAGE LOGIC ---
+        let sState = 'dry';
+        let sTemp = 'fridge';
+
+        function setStorageState(state, btn) {
+            sState = state;
+            document.querySelectorAll('.storage-state-btn').forEach(b => {
+                b.className = "storage-state-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all";
+            });
+            btn.className = "storage-state-btn flex-1 py-2.5 rounded-lg text-sm font-semibold bg-slate-700 text-white shadow-sm transition-all";
+            updateStorageSimulation();
+        }
+
+        function setStorageTemp(temp, btn) {
+            sTemp = temp;
+            document.querySelectorAll('.storage-temp-btn').forEach(b => {
+                b.className = "storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all";
+            });
+            btn.className = "storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold bg-slate-700 text-white shadow-sm transition-all";
+            updateStorageSimulation();
+        }
+
+        function updateStorageSimulation() {
+            const light = document.getElementById('storage-light').checked;
+            const vPowder = document.getElementById('vial-powder');
+            const vLiquid = document.getElementById('vial-liquid');
+            const vBroken = document.getElementById('vial-broken');
+            const cap = document.getElementById('vial-cap');
+            
+            const life = document.getElementById('sim-result-life');
+            const bar = document.getElementById('sim-result-bar');
+            const desc = document.getElementById('sim-result-desc');
+
+            vBroken.classList.add('hidden');
+            cap.className = "absolute -top-4 w-20 h-6 bg-emerald-500 rounded-md shadow-[0_0_20px_rgba(16,185,129,0.4)]";
+
+            let txt = "", d = "", perc = 100, color = "bg-emerald-500";
+
+            if(sState === 'dry') {
+                vPowder.style.display = 'block'; vLiquid.style.display = 'none';
+                if(sTemp === 'freezer') { txt = "Bis zu 24 Monate"; d = "Maximaler Schutz der lyophilisierten Proteinketten."; perc = 95; }
+                else if(sTemp === 'fridge') { txt = "12 - 18 Monate"; d = "Gekühltes Pulver bleibt exzellent erhalten."; perc = 80; }
+                else { txt = "ca. 4 Wochen"; d = "Raumtemperatur toleriert das Pulver kurzfristig."; perc = 40; color = "bg-amber-500"; }
+            } else {
+                vPowder.style.display = 'none'; vLiquid.style.display = 'block';
+                if(sTemp === 'freezer') { 
+                    txt = "ZERSTÖRT"; d = "Kristalle zerreißen die Ketten."; 
+                    perc = 0; color = "bg-rose-500"; vBroken.classList.remove('hidden');
+                    cap.className = "absolute -top-4 w-20 h-6 bg-rose-500 rounded-md shadow-[0_0_20px_rgba(244,63,94,0.4)]";
+                }
+                else if(sTemp === 'fridge') { txt = "3 - 4 Wochen"; d = "In BAC-Wasser gelöst im Kühlschrank ideal haltbar."; perc = 65; color = "bg-accent"; }
+                else { txt = "Max. 48 Stunden"; d = "Ungekühlt zerfallen gelöste Aminosäuren rasant."; perc = 10; color = "bg-rose-500"; }
+            }
+
+            if(light && perc > 0) {
+                perc = Math.max(5, perc - 20);
+                txt += " (UV Warnung)";
+                d += " UV-Licht bricht die Bindungen auf.";
+                if(color === 'bg-emerald-500') color = 'bg-amber-500';
+            }
+
+            life.innerText = txt;
+            desc.innerText = d;
+            bar.className = `h-full transition-all duration-700 ease-out ${color}`;
+            bar.style.width = perc + '%';
+            
+            if(color === 'bg-emerald-500') life.className = "text-4xl font-extrabold text-emerald-400 tracking-tight";
+            else if(color === 'bg-accent') life.className = "text-4xl font-extrabold text-accent tracking-tight";
+            else if(color === 'bg-amber-500') life.className = "text-4xl font-extrabold text-amber-400 tracking-tight";
+            else life.className = "text-4xl font-extrabold text-rose-400 tracking-tight";
+        }
+
+        // --- SPORT PROTOCOLS LOGIC ---
+        function setSportChannel(id, btn) {
+            document.querySelectorAll('.sport-ch-btn').forEach(b => {
+                b.className = "sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-slate-500 text-left transition-all";
+            });
+            document.querySelectorAll('.sport-content').forEach(c => c.classList.add('hidden'));
+            
+            let color = "emerald-500";
+            if(id === 'muscle') color = "brand-500";
+            if(id === 'fat') color = "amber-500";
+            if(id === 'cell') color = "purple-500";
+
+            btn.className = `sport-ch-btn p-4 rounded-xl border border-${color}/50 bg-${color}/10 text-left transition-all`;
+            document.getElementById('sport-ch-' + id).classList.remove('hidden');
+        }
+
+        // --- STACKER LOGIC ---
+        function renderStackerList() {
+            const list = document.getElementById('stack-list');
+            list.innerHTML = '';
+            RAW_DATA.forEach(item => {
+                const name = item[2];
+                const cat = item[5];
+                const risk = item[6] === 'low' ? 1 : item[6] === 'med' ? 2 : 3;
+                list.innerHTML += `
+                    <label class="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl border border-white/5 cursor-pointer hover:border-brand-500/30 transition-all stack-item" data-name="${name.toLowerCase()}">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" value="${name}" data-risk="${risk}" onchange="generateStackReport()" class="stack-checkbox w-4 h-4 text-brand-500 rounded bg-slate-900 border-white/10 focus:ring-brand-500">
+                            <div><span class="text-xs font-bold text-white block">${name}</span><span class="text-[9px] text-slate-500">${cat}</span></div>
+                        </div>
+                    </label>`;
+            });
+        }
+
+        function filterStack() {
+            const q = document.getElementById('stack-search').value.toLowerCase();
+            document.querySelectorAll('.stack-item').forEach(item => {
+                if(item.dataset.name.includes(q)) item.classList.remove('hidden');
+                else item.classList.add('hidden');
+            });
+        }
+
+        function generateStackReport() {
+            const boxes = document.querySelectorAll('.stack-checkbox:checked');
+            const count = document.getElementById('stack-count-display');
+            const riskD = document.getElementById('stack-risk-display');
+            const synD = document.getElementById('stack-syn-display');
+            const textD = document.getElementById('stack-analysis-text');
+
+            count.innerText = boxes.length + " Moleküle";
+
+            if(boxes.length === 0) {
+                riskD.innerText = "-"; riskD.className = "font-bold text-slate-400";
+                synD.innerText = "-"; textD.innerText = "Bitte wähle Wirkstoffe aus der Liste, um die Analyse zu starten.";
+                return;
+            }
+
+            let maxR = 1; let names = [];
+            boxes.forEach(b => {
+                const r = parseInt(b.dataset.risk);
+                if(r > maxR) maxR = r;
+                names.push(b.value);
+            });
+
+            if(maxR === 1) { riskD.innerText = "Niedrig"; riskD.className = "font-bold text-emerald-400"; }
+            else if(maxR === 2) { riskD.innerText = "Mittel"; riskD.className = "font-bold text-amber-400"; }
+            else { riskD.innerText = "Hoch"; riskD.className = "font-bold text-rose-400"; }
+
+            let syn = "Individuell"; let txt = "Mehrere Wirkstoffe aktiv. Achte auf zeitliche Abstände.";
+            const ns = names.join(" ");
+
+            if(ns.includes("BPC-157") && ns.includes("TB-500")) {
+                syn = "High Synergy"; txt = "Herausragende Gewebe- und Sehnenregeneration. Die Kombination aus Angiogenese (BPC) und Zellwanderung (TB) beschleunigt Heilung optimal.";
+            } else if(ns.includes("Ipamorelin") && ns.includes("CJC-1295")) {
+                syn = "Max Synergy"; txt = "Wachstumshormon-Verstärkerschleife. CJC erhöht Amplitude, Ipamorelin den Puls. Maximale Proteinsynthese.";
+            } else if(boxes.length === 1) {
+                syn = "Single Mode"; txt = `Isolierte Betrachtung von ${names[0]}. Perfekt zur Bestimmung der individuellen Verträglichkeit.`;
+            }
+
+            synD.innerText = syn; textD.innerText = txt;
+        }
+
+        // --- UTILS ---
+        function copyCoupon(text, btn, colorClass = 'brand') {
+            const tmp = document.createElement("textarea");
+            tmp.value = text;
+            document.body.appendChild(tmp);
+            tmp.select();
+            document.execCommand("copy");
+            document.body.removeChild(tmp);
+
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<span class="text-white">KOPIERT ✔</span>`;
+            btn.className = `w-full flex justify-center items-center bg-${colorClass}-500 border border-${colorClass}-500 text-white py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all shadow-glow-brand`;
+
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.className = `w-full flex justify-between items-center bg-${colorClass}-500/10 border border-${colorClass}-500/30 text-${colorClass}-400 hover:bg-${colorClass}-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all`;
+            }, 2000);
+        }
+
+        window.onload = function() {
+            renderDatabase();
+            calculateSyringe();
+            updateStorageSimulation();
+        }
+    </script>
+</body>
+</html>
