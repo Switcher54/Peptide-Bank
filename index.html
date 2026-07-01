@@ -40,11 +40,16 @@
                         'float': 'float 6s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'ping-slow': 'ping 3s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-10px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
                     }
                 }
@@ -58,9 +63,9 @@
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #334155; }
         
-        .view-panel { transition: opacity 0.3s ease, transform 0.3s ease; }
-        .view-panel.hidden { opacity: 0; transform: translateY(10px); display: none; }
-        .view-panel.block { opacity: 1; transform: translateY(0); display: block; }
+        .view-panel { opacity: 0; animation-fill-mode: forwards; }
+        .view-panel.hidden { display: none; }
+        .view-panel.block { display: block; }
         
         .glass-panel {
             background: rgba(15, 23, 42, 0.6);
@@ -131,8 +136,8 @@
 
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-8 py-10 relative z-10">
 
-        <!-- VIEW: DATABASE -->
-        <div id="view-db" class="view-panel block space-y-8">
+        <!-- VIEW: DATABASE (Mit initiellem Fade-In) -->
+        <div id="view-db" class="view-panel block animate-fade-in-up space-y-8">
             <div class="text-center space-y-4 mb-10">
                 <h2 class="text-4xl font-extrabold text-white tracking-tight">Molekulare <span class="text-gradient">Referenz</span></h2>
                 <p class="text-slate-400 text-sm max-w-2xl mx-auto">Durchsuche 141 verifizierte Peptid-Sequenzen, SARMs und Bioregulatoren inkl. Studien-Links, YouTube-Guides, Applikations-Winkel und Halbwertszeiten.</p>
@@ -951,9 +956,21 @@
         let loadedCount = RAW_DATA.length;
 
         function router(viewId) {
-            document.querySelectorAll('.view-panel').forEach(p => { p.classList.add('hidden'); p.classList.remove('block'); });
+            document.querySelectorAll('.view-panel').forEach(p => { 
+                p.classList.add('hidden'); 
+                p.classList.remove('block'); 
+                p.classList.remove('animate-fade-in-up'); // Animation zurücksetzen
+            });
             const target = document.getElementById('view-' + viewId);
-            if(target) { target.classList.remove('hidden'); target.classList.add('block'); }
+            if(target) { 
+                target.classList.remove('hidden'); 
+                target.classList.add('block'); 
+                
+                // Reflow erzwingen, damit der Browser die CSS-Animation sauber neu startet
+                void target.offsetWidth;
+                
+                target.classList.add('animate-fade-in-up');
+            }
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 if(btn.id !== 'nav-coupons') {
@@ -1844,7 +1861,6 @@
             }, 2000);
         }
 
-        // --- Initialisierung beim Laden der Seite ---
         window.onload = function() {
             renderDatabase();
             calculateSyringe();
