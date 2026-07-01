@@ -175,6 +175,7 @@
 
         <!-- VIEW: CALCULATOR -->
         <div id="view-calc" class="view-panel hidden space-y-8">
+            <!-- Misch-Rechner -->
             <div class="glass-card rounded-3xl p-6 sm:p-10">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                     <div class="lg:col-span-5 space-y-8">
@@ -253,8 +254,58 @@
                     </div>
                 </div>
             </div>
+
+            <!-- NEU: Zyklus-Planer Card -->
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <div class="mb-8">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Cycle Budget & Economics
+                    </div>
+                    <h2 class="text-3xl font-bold text-white mb-2">Zyklus-Planer</h2>
+                    <p class="text-slate-400 text-sm">Berechne den Gesamtbedarf und vergleiche die Zyklus-Kosten über alle verifizierten Shops.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    <div class="lg:col-span-5 space-y-5 bg-slate-900/50 p-6 rounded-2xl border border-slate-800 self-start">
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-slate-300">Geplante Zyklusdauer (Wochen)</label>
+                            <div class="relative">
+                                <input type="number" id="cycle-weeks" value="8" step="1" min="1" oninput="calculateCycleBudget()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-amber-500 outline-none font-mono">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">Wochen</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-slate-300">Gesamte Tagesdosis (mcg)</label>
+                            <div class="relative">
+                                <input type="number" id="cycle-mcg" value="500" step="50" min="10" oninput="calculateCycleBudget()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-amber-500 outline-none font-mono">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mcg/Tag</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2">Hinweis: Die Fläschchen-Größe (Vial mg) wird automatisch aus dem oberen Rechner übernommen.</p>
+                    </div>
+                    
+                    <div class="lg:col-span-7 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
+                        <h3 class="text-lg font-bold text-white mb-4 border-b border-white/5 pb-4">Wirtschaftlichkeits-Analyse</h3>
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center">
+                                <span class="text-slate-400 text-[10px] uppercase tracking-wider font-semibold block mb-1">Gesamtbedarf</span>
+                                <span class="text-white font-mono font-bold text-lg" id="cycle-res-mg">0 mg</span>
+                            </div>
+                            <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center">
+                                <span class="text-slate-400 text-[10px] uppercase tracking-wider font-semibold block mb-1">Benötigte Vials</span>
+                                <span class="text-amber-400 font-mono font-bold text-lg" id="cycle-res-vials">0 Stück</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-grow overflow-y-auto pr-2 space-y-2 max-h-[300px] scrollbar-hide" id="cycle-shop-list">
+                            <p class="text-sm text-slate-400 text-center py-4">Bitte wähle oben im Rechner ein Peptid aus (Preset), um die Shop-Preise zu vergleichen.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        
+
         <!-- VIEW: BODY MAP (INJEKTION) -->
         <div id="view-map" class="view-panel hidden space-y-8">
             <div class="text-center space-y-4 mb-6">
@@ -322,6 +373,15 @@
                                 </div>
                                 <div class="space-y-4 text-sm text-slate-300 overflow-y-auto pr-2 flex-grow">
                                     <p id="map-info-desc" class="leading-relaxed">Beschreibung hier...</p>
+                                    
+                                    <!-- NEU: Uhren-Methode Container -->
+                                    <div id="map-clock-container" class="hidden flex-col items-center justify-center bg-slate-800/50 p-6 rounded-xl border border-white/5 mt-4 shadow-inner relative">
+                                        <h4 class="font-bold text-brand-400 mb-6 flex items-center gap-2"><span class="text-lg">🕒</span> Interaktive Uhren-Methode</h4>
+                                        <div id="clock-ui" class="relative w-48 h-48 rounded-full border-2 border-dashed border-slate-600/50 flex items-center justify-center">
+                                            <!-- Spots werden via JS eingefügt -->
+                                        </div>
+                                        <p class="text-[10px] text-slate-500 mt-6 text-center leading-relaxed">Klicke nach der Injektion auf eine Zahl. Sie wird für 72 Stunden gesperrt (Rot), um Gewebeverhärtungen zu vermeiden.</p>
+                                    </div>
                                     
                                     <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5 mt-4">
                                         <h4 class="font-bold text-brand-400 mb-2 flex items-center gap-2"><span class="text-lg">🔄</span> Rotations-Guide</h4>
@@ -517,7 +577,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <div class="lg:col-span-5 space-y-4">
                         <input type="text" id="stack-search" oninput="filterStack()" placeholder="Substanz suchen..." class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none">
-                        <div class="h-[300px] overflow-y-auto space-y-2 pr-2" id="stack-list">
+                        <div class="h-[300px] overflow-y-auto space-y-2 pr-2 scrollbar-hide" id="stack-list">
                             <!-- Populated via JS -->
                         </div>
                     </div>
@@ -536,7 +596,7 @@
                                 <span class="text-slate-400">Synergie:</span>
                                 <span class="text-white font-bold" id="stack-syn-display">-</span>
                             </div>
-                            <div class="p-4 bg-slate-800/50 rounded-xl mt-4">
+                            <div class="p-4 bg-slate-800/50 rounded-xl mt-4 border border-transparent transition-all">
                                 <p class="text-sm text-slate-300" id="stack-analysis-text">Bitte wähle Wirkstoffe aus der Liste, um die Analyse zu starten.</p>
                             </div>
                         </div>
@@ -583,7 +643,7 @@
             </div>
         </div>
 
-        <!-- VIEW: COUPONS (URSPRUNGSZUSTAND) -->
+        <!-- VIEW: COUPONS -->
         <div id="view-coupons" class="view-panel hidden space-y-8">
             <div class="glass-card rounded-3xl p-6 sm:p-10">
                 <div class="text-center max-w-2xl mx-auto mb-10 space-y-4">
@@ -687,151 +747,205 @@
     </main>
 
     <script>
+        const STACK_RULES = [
+            // --- SUCCESS / SYNERGIE ---
+            {
+                peptides: ["BPC-157", "TB-500"],
+                type: "success",
+                title: "Wolverine Stack (High Synergy)",
+                description: "Herausragende Gewebe- und Sehnenregeneration. Die Kombination aus Angiogenese (BPC) und Zellwanderung (TB) beschleunigt die Heilung optimal."
+            },
+            {
+                peptides: ["Ipamorelin", "CJC-1295 no DAC"],
+                type: "success",
+                title: "GH-Puls Synergie (Max Synergy)",
+                description: "Wachstumshormon-Verstärkerschleife. CJC erhöht die Amplitude, Ipamorelin den Puls. Maximale Proteinsynthese ohne starken Cortisol-Anstieg."
+            },
+            {
+                peptides: ["GHK-Cu", "BPC-157", "TB-500"],
+                type: "success",
+                title: "Ultimate Healing & Glow",
+                description: "Maximale systemische Regeneration. GHK-Cu liefert das Kupfer für die Kollagensynthese, während BPC und TB das Gewebe reparieren und strukturieren."
+            },
+            // --- WARNING / GEGENLÄUFIG ---
+            {
+                peptides: ["MK-677", "Semaglutid"],
+                type: "warning",
+                title: "Wirkungsverlust (Gegenläufig)",
+                description: "MK-677 triggert extremen Hunger über den Ghrelin-Rezeptor, während Semaglutid den Appetit im ZNS unterdrückt. Die Wirkungen heben sich teilweise auf."
+            },
+            {
+                peptides: ["Melanotan II", "PT-141"],
+                type: "warning",
+                title: "Rezeptor-Überlagerung (Melanocortin)",
+                description: "Beide binden stark an Melanocortin-Rezeptoren. Die Kombination potenziert das Risiko für extreme Übelkeit, Blutdruckspitzen und Dauererektionen (Priapismus)."
+            },
+            // --- DANGER / GEFÄHRLICH ---
+            {
+                peptides: ["Hexarelin", "GHRP-2"],
+                type: "danger",
+                title: "Rezeptor-Sättigung (Danger)",
+                description: "Zwei starke GHRPs gleichzeitig desensibilisieren die Rezeptoren rasant ohne zusätzlichen Mehrwert. Stark erhöhtes Risiko für Prolaktin- und Cortisol-Spitzen."
+            },
+            {
+                peptides: ["Retatrutide", "Tirzepatid"],
+                type: "danger",
+                title: "Kritische Inkretin-Überlastung",
+                description: "Lebensgefährliche Überlagerung von starken GLP-1/GIP Mimetika. Extremes Risiko für schwere Hypoglykämie, Pankreatitis und gastrointestinalen Stillstand."
+            },
+            {
+                peptides: ["RAD-140", "LGD-4033"],
+                type: "danger",
+                title: "Androgen-Rezeptor Kompetitition",
+                description: "Das Stacking mehrerer SARMs bringt kaum additiven Muskelaufbau, potenziert aber die Lebertoxizität massiv und führt zum kompletten Shutdown der körpereigenen Testosteronproduktion."
+            }
+        ];
+
         const RAW_DATA = [
-            ["bpc157","001/144","BPC-157","Body Protection Compound","heilung","REGENERATION","low",["Systemische Beschleunigung der Angiogenese (Gefäßneubildung) am Verletzungsherd", "Heilt therapieresistente Magen-Darm-Erkrankungen (Leaky Gut, Ulzera) durch Zellschutz", "Reguliert entzündliche Zytokine herunter, ohne das Immunsystem zu schwächen", "Fördert massiv die Fibroblasten-Ausbreitung für die Sehnenreparatur"],["Leichter Schwindel (Vasodilatation) bei zu schneller Injektion", "Theoretisches Risiko bei bestehenden Tumorerkrankungen (durch Gefäßneubildung)"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1-2x/Tag",form:"Subkutan/Oral",timing:"Morgens",cycle:"4-8 Wo",halflife:"4h"},"animal","Umfangreiche Tiermodelle belegen vollständige Reparatur von Achillessehnen.",[{shop:"Europa-Peptide",price:"32.90"},{shop:"Peptid24",price:"24.90"},{shop:"Drakon Peptides",price:"34.90"},{shop:"RCpeptides",price:"37.50"},{shop:"Premium Research Peptides",price:"49.99"},{shop:"Rebirth Labs",price:"44.99"},{shop:"Austrian Peptides",price:"30.00"},{shop:"r-phase",price:"25.90"},{shop:"Kronen Peptide",price:"32.90"},{shop:"nova-biolabs",price:"44.99"}]],
-            ["tb500","002/144","TB-500","Thymosin Beta-4","heilung","REGENERATION","low",["Induziert zelluläre Migration (Actin-Hochregulation) direkt an Mikrorissen", "Baut unelastisches Narbengewebe ab und erhöht die Gelenkflexibilität", "Wirkt massiv synergistisch mit BPC-157 für den passiven Bewegungsapparat", "Fördert das Haarwachstum durch Reaktivierung der Stammzellen"],["Milde Abgeschlagenheit oder Lethargie direkt nach der Injektion", "Kann wie BPC-157 bei bestehenden malignen Zellen das Wachstum stützen"],{starter:"2mg/Wo",normal:"5mg/Wo",max:"10mg/Wo",freq:"1-2x/Wo",form:"Subkutan",timing:"Abends",cycle:"6-8 Wo",halflife:"30h"},"pilot","Erfolgsraten bei Pferden im Rennsport hochgradig dokumentiert.",[{shop:"Europa-Peptide",price:"69.90"},{shop:"Peptid24",price:"32.00"},{shop:"Drakon Peptides",price:"54.90"},{shop:"RCpeptides",price:"37.50"},{shop:"Premium Research Peptides",price:"59.99"},{shop:"Rebirth Labs",price:"44.99"},{shop:"Austrian Peptides",price:"35.00"},{shop:"r-phase",price:"28.99"},{shop:"Kronen Peptide",price:"34.90"},{shop:"nova-biolabs",price:"69.99"}]],
-            ["ipamorelin","003/144","Ipamorelin","GH Secretagogue","wachstum","WACHSTUM","low",["Löst einen hochselektiven Puls der körpereigenen Wachstumshormon-Ausschüttung aus", "Verlängert und vertieft die regenerativen Delta-Schlafphasen massiv", "Erhöht die Muskelproteinsynthese bei gleichzeitigem Anti-Aging-Effekt", "Kein signifikanter Anstieg von Stresshormonen (Cortisol/Prolaktin)"],["Temporäre, milde Wassereinlagerungen (Ödeme) in den Gelenken", "Erhöhtes Hungergefühl kurz nach der Injektion möglich"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"1-2x/Tag",form:"Subkutan",timing:"Vor Schlaf",cycle:"8-12 Wo",halflife:"2h"},"human","Phase-II Humantrials belegen exzellentes Sicherheitsprofil.",[{shop:"Europa-Peptide",price:"32.90"},{shop:"Peptid24",price:"49.90"},{shop:"Drakon Peptides",price:"34.90"},{shop:"RCpeptides",price:"60.00"},{shop:"Premium Research Peptides",price:"39.99"},{shop:"Rebirth Labs",price:"74.99"},{shop:"Austrian Peptides",price:"35.00"},{shop:"nova-biolabs",price:"54.99"}]],
-            ["cjc1295","004/144","CJC-1295 no DAC","Mod GRF 1-29","wachstum","WACHSTUM","med",["Verstärkt die Amplitude der somatotropen Pulse (Synergie mit Ipamorelin)", "Verbessert die systemische Lipolyse (Fettverbrennung im Ruhezustand)", "Fördert extrem schnelle Regeneration nach harten Trainingseinheiten"],["Spürbarer 'Head Rush' (Gesichtsröte/Hitze) direkt nach der Gabe", "Gefahr der Insulinresistenz bei monatelanger ununterbrochener Nutzung"],{starter:"100mcg",normal:"100mcg",max:"300mcg",freq:"1-3x/Tag",form:"Subkutan",timing:"Nüchtern",cycle:"8-16 Wo",halflife:"30m"},"human","Klinischer Anstieg von freiem IGF-1 replizierbar.",[{shop:"Europa-Peptide",price:"49.90"},{shop:"Peptid24",price:"55.00"},{shop:"Drakon Peptides",price:"39.90"},{shop:"RCpeptides",price:"60.00"},{shop:"Rebirth Labs",price:"39.99"},{shop:"Austrian Peptides",price:"35.00"},{shop:"nova-biolabs",price:"74.99"}]],
-            ["cjc1295dac","005/144","CJC-1295 DAC","GHRH-Analogon","wachstum","WACHSTUM","med",["Kontinuierlicher 'GH Bleed' über mehrere Tage hinweg", "Erhöht die HGH-Grundlinie ohne tägliche Injektionen"],["Starke Lethargie und Müdigkeit", "Hohes Risiko für Wasserretention"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"8-12 Wo",halflife:"7 Tage"},"human","Erhöhung des basalen GH-Spiegels.",[{shop:"Europa-Peptide",price:"64.90"},{shop:"RCpeptides",price:"50.00"},{shop:"Austrian Peptides",price:"50.00"}]],
-            ["semaglutide","006/144","Semaglutid","GLP-1 Agonist","gewicht","GEWICHT","med",["Verzögert die Magenentleerung extrem (langanhaltende Sättigung)", "Blockiert Heißhungerattacken und Cravings direkt im ZNS (Gehirn)", "Verbessert die Insulinsensitivität und senkt den Blutzuckerspiegel drastisch"],["Akute gastrointestinale Probleme (Übelkeit, Erbrechen, Verstopfung)", "Erhöhtes Risiko des Abbaus von magerer Muskelmasse bei mangelndem Protein", "Gallensteine bei extrem schnellem Gewichtsverlust"],{starter:"0.25mg",normal:"1.0mg",max:"2.4mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"Langzeit",halflife:"165h"},"human","STEP-Trials belegen 15% Fettreduktion.",[{shop:"Europa-Peptide",price:"37.90"},{shop:"Peptid24",price:"37.90"}]],
-            ["tirzepatide","007/144","Tirzepatid","GIP/GLP-1","gewicht","GEWICHT","med",["Dualer Agonismus (GIP & GLP-1) für noch radikaleren Fettabbau", "Deutlich stärkere Blutzuckerkontrolle als reines Semaglutid", "Reduziert viszerales Bauchfett und Leberfett hocheffizient"],["Magen-Darm-Beschwerden (oft milder als bei Semaglutid, aber existent)", "Verlust der Muskelmasse ('Ozempic-Face') ohne Krafttraining", "Herzrasen in der initialen Eindosierungsphase"],{starter:"2.5mg",normal:"5mg",max:"15mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"Langzeit",halflife:"120h"},"human","SURMOUNT-Studien belegen 20%+ Gewichtsverlust.",[{shop:"Europa-Peptide",price:"44.90"},{shop:"Peptid24",price:"32.90"},{shop:"Verra",price:"69.90"},{shop:"r-phase",price:"30.50"},{shop:"Kronen Peptide",price:"39.90"},{shop:"odipept",price:"99.00"}]],
-            ["retatrutide","008/144","Retatrutide","Triple Agonist","gewicht","GEWICHT","high",["Triple-Agonist (GLP-1, GIP, Glucagon) für maximalen Gewichtsverlust", "Die Glucagon-Komponente verbrennt aktiv Fett und erhöht den Ruheumsatz", "Der aktuelle klinische Rekordhalter für pharmakologische Diäten"],["Glucagon-Komponente birgt höheres Risiko für Tachykardie (Herzrasen)", "Möglicher Blutdruckanstieg", "Extreme Appetitlosigkeit kann zu Mangelernährung führen"],{starter:"1mg",normal:"4mg",max:"12mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"Klinisch",halflife:"144h"},"human","Phase-II belegt 24% Gewichtsverlust.",[{shop:"Europa-Peptide",price:"49.90"},{shop:"Peptid24",price:"34.90"},{shop:"Drakon Peptides",price:"79.90"},{shop:"Verra",price:"79.90"},{shop:"RCpeptides",price:"65.00"},{shop:"Premium Research Peptides",price:"117.00"},{shop:"Austrian Peptides",price:"40.00"},{shop:"r-phase",price:"35.90"},{shop:"Kronen Peptide",price:"49.90"},{shop:"nova-biolabs",price:"199.99"},{shop:"odipept",price:"44.00"}]],
-            ["hghfrag","009/144","HGH Frag 176-191","Lipolytisch","gewicht","GEWICHT","low",["Konzentriert sich isoliert auf die fettverbrennenden Eigenschaften von HGH", "Löst starke zelluläre Lipolyse (Fettfreisetzung) aus", "Absolut kein negativer Einfluss auf den Blutzucker oder die Insulinsensitivität"],["Besitzt eine extrem kurze Halbwertszeit (nur ~30 Minuten)", "Erfordert striktes Fasten (nüchterner Magen) für spürbare Wirkung"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"2x/Tag",form:"Subkutan",timing:"Vor Training",cycle:"8-12 Wo",halflife:"30m"},"animal","Sichere Fettgewebsreduktion in Tieren bewiesen.",[{shop:"Europa-Peptide",price:"94.90"},{shop:"RCpeptides",price:"50.00"}]],
-            ["aod9604","010/144","AOD-9604","Anti-Obesity","gewicht","GEWICHT","low",["Modifiziertes, stabileres HGH-Fragment", "Blockiert die Neuentstehung von Fettzellen (Lipogenese)", "Fördert Knorpelreparatur bei Arthrose"],["Lokale Rötungen an der Einstichstelle", "Milde Kopfschmerzen"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1-2x/Tag",form:"Subkutan",timing:"Morgens",cycle:"8-12 Wo",halflife:"40m"},"human","Australische Studien zeigen Fettreduktion.",[{shop:"Europa-Peptide",price:"35.00"},{shop:"RCpeptides",price:"30.00"},{shop:"Austrian Peptides",price:"50.00"}]],
-            ["mt2","011/144","Melanotan II","Bräunung","kosmetik","KOSMETIK","high",["Stimuliert die Melaninproduktion für eine extrem tiefe, schnelle Bräunung", "Steigert die Libido und sexuelle Erregbarkeit bei beiden Geschlechtern signifikant", "Besitzt stark appetitzügelnde Nebeneffekte"],["Verursacht oft starke akute Übelkeit und einen 'Flush' direkt nach der Gabe", "Kann zu unregelmäßiger Hyperpigmentierung und Nachdunkeln von Muttermalen führen", "Gefahr von Dauererektionen (Priapismus)"],{starter:"100mcg",normal:"250mcg",max:"1000mcg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"2-4 Wo",halflife:"2h"},"pilot","Gestoppt wegen Nebenwirkungen.",[{shop:"Europa-Peptide",price:"36.90"},{shop:"Peptid24",price:"29.90"},{shop:"Drakon Peptides",price:"29.90"},{shop:"RCpeptides",price:"35.00"},{shop:"Premium Research Peptides",price:"32.00"},{shop:"Rebirth Labs",price:"40.99"},{shop:"Austrian Peptides",price:"15.00"},{shop:"r-phase",price:"29.90"},{shop:"Kronen Peptide",price:"32.90"}]],
-            ["mt1","012/144","Melanotan I","Afamelanotid","kosmetik","KOSMETIK","med",["Sicherere Bräunung durch milde Melaninproduktion", "Klinischer Lichtschutz bei empfindlicher weißer Haut"],["Temporäre Rötung & Hitzegefühl (Flush)", "Veränderung bestehender Pigmentflecke"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"2-4 Wo",halflife:"1.5h"},"human","EU-Zulassung (Scenesse).",[{shop:"Europa-Peptide",price:"44.90"},{shop:"RCpeptides",price:"35.00"},{shop:"Rebirth Labs",price:"49.99"},{shop:"Austrian Peptides",price:"20.00"},{shop:"r-phase",price:"34.90"},{shop:"Kronen Peptide",price:"35.90"},{shop:"nova-biolabs",price:"39.99"}]],
-            ["pt141","013/144","PT-141","Bremelanotid","libido","LIBIDO","med",["Sexuelle Erregbarkeit via ZNS"],["Übelkeit"],{starter:"0.5mg",normal:"1.5mg",max:"3mg",freq:"Bei Bedarf",form:"Subkutan",timing:"2h vor Sex",cycle:"Bedarf",halflife:"2h"},"human","FDA-Zulassung (Vyleesi).",[{shop:"Europa-Peptide",price:"34.90"},{shop:"RCpeptides",price:"32.50"},{shop:"Premium Research Peptides",price:"27.20"},{shop:"Rebirth Labs",price:"69.99"},{shop:"Austrian Peptides",price:"25.00"}]],
-            ["ghkcu","014/144","GHK-Cu","Kupferpeptid","kosmetik","KOSMETIK","low",["Kollagensynthese","Haarwachstum"],["Hautreizung"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"Dauerhaft",halflife:"Minuten"},"human","Reduktion der Faltentiefe.",[{shop:"Europa-Peptide",price:"37.99"},{shop:"Peptid24",price:"29.90"},{shop:"Drakon Peptides",price:"34.90"},{shop:"Verra",price:"34.90"},{shop:"RCpeptides",price:"37.50"},{shop:"Premium Research Peptides",price:"29.99"},{shop:"Rebirth Labs",price:"44.99"},{shop:"Austrian Peptides",price:"15.00"},{shop:"r-phase",price:"16.99"},{shop:"Kronen Peptide",price:"24.90"},{shop:"nova-biolabs",price:"39.99"},{shop:"odipept",price:"49.00"}]],
-            ["kpv","015/144","KPV","Antientzündlich","heilung","REGENERATION","low",["Darmheilung","Antibakteriell"],["Geringe Stabilität"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1x/Tag",form:"Oral/Subkutan",timing:"Morgens",cycle:"4-8 Wo",halflife:"30m"},"animal","Colitis-Modelle.",[{shop:"Europa-Peptide",price:"62.90"},{shop:"RCpeptides",price:"37.50"},{shop:"Premium Research Peptides",price:"19.54"},{shop:"Rebirth Labs",price:"44.99"},{shop:"Austrian Peptides",price:"25.00"},{shop:"nova-biolabs",price:"44.99"}]],
-            ["epitalon","016/144","Epitalon","Telomerase","aging","ANTI-AGING","low",["Aktiviert Telomerase","Melatonin"],["Unbekannt"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"20 Tage",halflife:"Minuten"},"human","Russische Langzeittrials.",[{shop:"Europa-Peptide",price:"34.90"},{shop:"Drakon Peptides",price:"59.90"},{shop:"RCpeptides",price:"25.00"},{shop:"Premium Research Peptides",price:"34.99"},{shop:"Rebirth Labs",price:"54.99"},{shop:"Austrian Peptides",price:"60.00"},{shop:"r-phase",price:"21.95"},{shop:"Kronen Peptide",price:"29.90"},{shop:"nova-biolabs",price:"39.99"}]],
-            ["semax","017/144","Semax","Nootropikum","neuro","NEURO","low",["Erhöht BDNF","Fokus"],["Schlafprobleme"],{starter:"100mcg",normal:"300mcg",max:"1000mcg",freq:"1-2x/Tag",form:"Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"2h"},"human","Klinisch zugelassen.",[{shop:"Europa-Peptide",price:"57.90"},{shop:"Peptid24",price:"44.90"},{shop:"Drakon Peptides",price:"34.90"},{shop:"RCpeptides",price:"30.00"},{shop:"Rebirth Labs",price:"39.99"},{shop:"Austrian Peptides",price:"20.00"},{shop:"r-phase",price:"24.90"},{shop:"Kronen Peptide",price:"29.90"},{shop:"nova-biolabs",price:"49.99"}]],
-            ["selank","018/144","Selank","Angstlöser","neuro","NEURO","low",["Angstlösend ohne Müdigkeit"],["Benommenheit"],{starter:"250mcg",normal:"500mcg",max:"3000mcg",freq:"1-3x/Tag",form:"Nasal",timing:"Bedarf",cycle:"4 Wo",halflife:"1.5h"},"human","Klinische Trials.",[{shop:"Europa-Peptide",price:"57.90"},{shop:"Drakon Peptides",price:"39.90"},{shop:"RCpeptides",price:"30.00"},{shop:"Premium Research Peptides",price:"27.20"},{shop:"Rebirth Labs",price:"39.99"},{shop:"Austrian Peptides",price:"40.00"},{shop:"r-phase",price:"23.99"},{shop:"Kronen Peptide",price:"29.90"},{shop:"nova-biolabs",price:"49.99"}]],
-            ["glutathione","019/144","Glutathion","Antioxidans","aging","ANTI-AGING","low",["Zellentgifter","Hautaufhellung"],["Schlechte orale Aufnahme"],{starter:"100mg",normal:"200mg",max:"600mg",freq:"1x/Tag",form:"IV/Subkutan",timing:"Morgens",cycle:"Dauerhaft",halflife:"Kurz"},"human","Leberstoffwechsel.",[{shop:"Rebirth Labs",price:"40.00"},{shop:"Austrian Peptides",price:"30.00"}]],
-            ["slupp332","020/144","SLU-PP-332","Exercise Mimetic","gewicht","GEWICHT","med",["Mitochondriendichte","Ausdauer"],["Oxidativer Stress"],{starter:"300mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4-8 Wo",halflife:"12h"},"invitro","Science 2023.",[{shop:"Europa-Peptide",price:"79.90"},{shop:"RCpeptides",price:"80.00"},{shop:"Premium Research Peptides",price:"89.99"},{shop:"Rebirth Labs",price:"134.99"},{shop:"Austrian Peptides",price:"35.00"},{shop:"Kronen Peptide",price:"36.90"},{shop:"odipept",price:"119.00"}]],
-            ["tesamorelin","021/144","Tesamorelin","Viszeralfett","wachstum","WACHSTUM","med",["Bauchfett-Abbau"],["Gelenkschmerz"],{starter:"1mg",normal:"2mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"12-24 Wo",halflife:"30m"},"human","FDA-Zulassung.",[{shop:"Europa-Peptide",price:"32.90"},{shop:"Peptid24",price:"49.90"},{shop:"Drakon Peptides",price:"79.90"},{shop:"Premium Research Peptides",price:"81.85"},{shop:"Rebirth Labs",price:"50.00"},{shop:"Austrian Peptides",price:"70.00"},{shop:"r-phase",price:"35.99"},{shop:"Kronen Peptide",price:"39.90"},{shop:"nova-biolabs",price:"84.99"}]],
-            ["igf1lr3","022/144","IGF-1 LR3","Hyperplasie","wachstum","WACHSTUM","high",["Neubildung von Muskelzellen"],["Hypoglykämie","Tumor-Risiko"],{starter:"20mcg",normal:"50mcg",max:"100mcg",freq:"Post-Workout",form:"Subkutan",timing:"Nach Training",cycle:"4-6 Wo",halflife:"30h"},"animal","Extremes Wachstum.",[{shop:"Europa-Peptide",price:"62.90"},{shop:"Peptid24",price:"44.90"},{shop:"RCpeptides",price:"65.00"},{shop:"Rebirth Labs",price:"89.99"},{shop:"Austrian Peptides",price:"80.00"}]],
-            ["motsc","023/144","MOTS-C","Mitochondrial","aging","ANTI-AGING","low",["Insulinsensitivität","Zellenergie"],["Regelmäßige Gabe"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"8-12 Wo",halflife:"4h"},"animal","Mäusetrials.",[{shop:"Europa-Peptide",price:"36.90"},{shop:"Peptid24",price:"99.90"},{shop:"Drakon Peptides",price:"119.90"},{shop:"Verra",price:"36.90"},{shop:"RCpeptides",price:"30.00"},{shop:"Premium Research Peptides",price:"49.99"},{shop:"Rebirth Labs",price:"54.99"},{shop:"Austrian Peptides",price:"120.00"},{shop:"r-phase",price:"22.99"},{shop:"Kronen Peptide",price:"29.90"},{shop:"nova-biolabs",price:"49.99"},{shop:"odipept",price:"69.00"}]],
-            ["ta1","024/144","Thymosin Alpha-1","Immunsystem","aging","ANTI-AGING","low",["T-Helferzellen","Viren-Abwehr"],["Autoimmun-Risiko"],{starter:"1.6mg",normal:"1.6mg",max:"3.2mg",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"6-12 Wo",halflife:"2h"},"human","Klinisch zugelassen.",[{shop:"Europa-Peptide",price:"44.90"},{shop:"RCpeptides",price:"65.00"},{shop:"Premium Research Peptides",price:"31.83"},{shop:"Rebirth Labs",price:"119.99"},{shop:"Austrian Peptides",price:"50.00"},{shop:"Kronen Peptide",price:"39.90"},{shop:"nova-biolabs",price:"84.99"}]],
-            ["follistatin344","025/144","Follistatin-344","Myostatin-Hemmer","wachstum","WACHSTUM","high",["Blockt Myostatin","Extreme Kraft"],["Sehnenrisse"],{starter:"50mcg",normal:"100mcg",max:"150mcg",freq:"1x/Tag",form:"Lokal",timing:"Post-Workout",cycle:"10 Tage",halflife:"36h"},"animal","Primatentrials.",[{shop:"RCpeptides",price:"75.00"}]],
-            ["aicar","026/144","AICAR","AMPK","gewicht","GEWICHT","med",["Fettverbrennung","VO2max"],["WADA verboten"],{starter:"10mg",normal:"25mg",max:"100mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4-8 Wo",halflife:"2h"},"human","Kardiologie.",[{shop:"Europa-Peptide",price:"34.90"},{shop:"RCpeptides",price:"75.00"},{shop:"Austrian Peptides",price:"25.00"}]],
-            ["sermorelin","027/144","Sermorelin","GRF 1-29","wachstum","WACHSTUM","low",["HGH-Ausschüttung","Gelenke"],["Flush"],{starter:"100mcg",normal:"200mcg",max:"1000mcg",freq:"1x/Tag",form:"Subkutan",timing:"Vor Schlaf",cycle:"12-24 Wo",halflife:"15m"},"human","Zugelassenes Diagnostikum.",[{shop:"RCpeptides",price:"60.00"}]],
-            ["dsip","028/144","DSIP","Tiefschlaf","neuro","NEURO","low",["Delta-Schlaf","Cortisol senkend"],["Morgenmüdigkeit"],{starter:"50mcg",normal:"100mcg",max:"500mcg",freq:"1x/Abends",form:"Subkutan",timing:"Vor Schlaf",cycle:"2-4 Wo",halflife:"15m"},"human","Pilotstudien.",[{shop:"Europa-Peptide",price:"29.90"},{shop:"Drakon Peptides",price:"39.90"},{shop:"RCpeptides",price:"40.00"},{shop:"Premium Research Peptides",price:"27.20"},{shop:"Rebirth Labs",price:"59.99"},{shop:"Austrian Peptides",price:"20.00"},{shop:"nova-biolabs",price:"39.99"}]],
-            ["ghrp2","029/144","GHRP-2","Wachstum","wachstum","WACHSTUM","med",["Starker GH-Puls","Regeneration"],["Prolaktin"],{starter:"100mcg",normal:"200mcg",max:"500mcg",freq:"2x/Tag",form:"Subkutan",timing:"Nüchtern",cycle:"8-12 Wo",halflife:"30m"},"human","Klinische Studien.",[{shop:"Europa-Peptide",price:"39.90"},{shop:"RCpeptides",price:"35.00"},{shop:"Austrian Peptides",price:"20.00"}]],
-            ["ghrp6","030/144","GHRP-6","Wachstum & Hunger","wachstum","WACHSTUM","med",["GH-Ausschüttung","Heißhunger"],["Cortisol"],{starter:"100mcg",normal:"150mcg",max:"300mcg",freq:"2x/Tag",form:"Subkutan",timing:"Nüchtern",cycle:"8-12 Wo",halflife:"30m"},"human","Kardioprotektiv.",[{shop:"Europa-Peptide",price:"39.90"},{shop:"RCpeptides",price:"50.00"},{shop:"Austrian Peptides",price:"20.00"}]],
-            ["hexarelin","031/144","Hexarelin","Stärkstes GHRP","wachstum","WACHSTUM","high",["Stärkster GH-Puls","Herzschutz"],["Rezeptor-Desensibilisierung"],{starter:"50mcg",normal:"100mcg",max:"200mcg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"30m"},"human","Klinische Kardiologie.",[{shop:"Europa-Peptide",price:"29.90"},{shop:"RCpeptides",price:"50.00"},{shop:"Austrian Peptides",price:"30.00"}]],
-            ["kisspeptin","032/144","Kisspeptin-10","GnRH-Aktivator","libido","LIBIDO","med",["Steigert LH/FSH","Testosteron"],["Flush"],{starter:"10mcg",normal:"50mcg",max:"100mcg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4-8 Wo",halflife:"Kurz"},"human","Pilotstudien.",[{shop:"Europa-Peptide",price:"38.90"},{shop:"RCpeptides",price:"40.00"},{shop:"Rebirth Labs",price:"34.99"},{shop:"Austrian Peptides",price:"30.00"}]],
-            ["ara290","033/144","ARA-290","Neuropathie","heilung","REGENERATION","low",["Nervenschmerzen","Sarkoidose"],["Teuer"],{starter:"1mg",normal:"2mg",max:"8mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"20m"},"human","Phase-II.",[{shop:"RCpeptides",price:"60.00"},{shop:"Rebirth Labs",price:"67.99"}]],
-            ["oxytocin","034/144","Oxytocin","Kuschelhormon","neuro","NEURO","low",["Soziale Bindung","Stress"],["Überempfindlichkeit"],{starter:"10 IU",normal:"20 IU",max:"40 IU",freq:"Bedarf",form:"Nasal",timing:"Bedarf",cycle:"Bedarf",halflife:"5m"},"human","Klinische Psychologie.",[{shop:"Europa-Peptide",price:"24.90"},{shop:"RCpeptides",price:"70.00"}]],
-            ["hcg","035/144","HCG","Hoden","libido","LIBIDO","med",["Simuliert LH","Spermien"],["Gynäkomastie"],{starter:"250 IU",normal:"500 IU",max:"1500 IU",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"PCT",halflife:"36h"},"human","Reproduktionsmedizin.",[{shop:"Europa-Peptide",price:"42.90"},{shop:"RCpeptides",price:"32.50"},{shop:"Rebirth Labs",price:"99.99"}]],
-            ["snap8","036/144","SNAP-8","Botox-Ersatz","kosmetik","KOSMETIK","low",["Mimikfalten","Haut"],["Lokal"],{starter:"2%",normal:"5%",max:"10%",freq:"2x/Tag",form:"Topisch",timing:"Morgens",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik-Studien.",[{shop:"Europa-Peptide",price:"36.90"},{shop:"RCpeptides",price:"30.00"}]],
-            ["argireline","037/144","Argireline","Anti-Falten","kosmetik","KOSMETIK","low",["Entspannt Muskeln"],["Rötung"],{starter:"2%",normal:"5%",max:"10%",freq:"2x/Tag",form:"Topisch",timing:"Morgens",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik-Studien.",[{shop:"RCpeptides",price:"80.00"}]],
-            ["ghkcu100","038/144","GHK-Cu (100mg)","Großpackung","kosmetik","KOSMETIK","low",["Kollagen","Haare"],["Kupfertoxizität"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"Dauerhaft",halflife:"Kurz"},"human","Dermatologie.",[{shop:"RCpeptides",price:"47.50"},{shop:"odipept",price:"49.00"}]],
-            ["glow","039/144","GLOW Stack","GHK+TB+BPC","kosmetik","KOSMETIK","low",["Skincare & Heilung","Narben"],["Einstichreizung"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Misch"},"pilot","Synergie.",[{shop:"Europa-Peptide",price:"164.90"},{shop:"Drakon Peptides",price:"109.90"},{shop:"Verra",price:"104.90"},{shop:"RCpeptides",price:"115.00"},{shop:"Premium Research Peptides",price:"152.15"},{shop:"Rebirth Labs",price:"100.00"},{shop:"Kronen Peptide",price:"84.90"},{shop:"nova-biolabs",price:"114.99"},{shop:"odipept",price:"89.90"}]],
-            ["klow","040/144","KLOW Stack","GLOW+KPV","heilung","REGENERATION","low",["Heilung + Entzündung","Darm"],["Mischen aufwendig"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Misch"},"pilot","Ekzeme.",[{shop:"Europa-Peptide",price:"189.90"},{shop:"Drakon Peptides",price:"119.90"},{shop:"Verra",price:"129.90"},{shop:"RCpeptides",price:"135.00"},{shop:"Premium Research Peptides",price:"174.25"},{shop:"Rebirth Labs",price:"112.00"},{shop:"Kronen Peptide",price:"94.90"},{shop:"nova-biolabs",price:"124.99"}]],
-            ["nadplus","041/144","NAD+","Zellenergie","aging","ANTI-AGING","low",["ATP","Sirtuine"],["Flush bei Injektion"],{starter:"50mg",normal:"100mg",max:"500mg",freq:"1x/Wo",form:"IV/Subkutan",timing:"Morgens",cycle:"Kurweise",halflife:"Kurz"},"human","Klinisch.",[{shop:"Europa-Peptide",price:"49.90"},{shop:"RCpeptides",price:"70.00"},{shop:"Premium Research Peptides",price:"44.09"},{shop:"Rebirth Labs",price:"74.99"},{shop:"Austrian Peptides",price:"30.00"},{shop:"r-phase",price:"50.90"},{shop:"Kronen Peptide",price:"64.90"},{shop:"nova-biolabs",price:"59.99"}]],
-            ["ss31","042/144","SS-31","Mitochondrien","aging","ANTI-AGING","low",["Mitochondrienmembran","Radikale"],["Neu"],{starter:"2mg",normal:"4mg",max:"10mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"4h"},"human","Phase-II.",[{shop:"RCpeptides",price:"127.50"},{shop:"Premium Research Peptides",price:"106.24"},{shop:"Rebirth Labs",price:"55.99"},{shop:"Austrian Peptides",price:"125.00"},{shop:"nova-biolabs",price:"59.99"}]],
-            ["hgh","043/144","HGH","Somatropin","wachstum","WACHSTUM","high",["Muskelaufbau","Fettabbau"],["Insulinresistenz"],{starter:"2 IU",normal:"4 IU",max:"6 IU",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Langzeit",halflife:"3h"},"human","Zugelassen.",[{shop:"Europa-Peptide",price:"24.90"},{shop:"Peptid24",price:"34.90"}]],
-            ["pe2228","044/144","PE 22-28","Antidepressivum","neuro","NEURO","low",["Neurogenese Hippocampus"],["Frühe Forschung"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan/Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiermodelle.",[{shop:"Europa-Peptide",price:"49.90"},{shop:"RCpeptides",price:"40.00"}]],
-            ["epo","045/144","EPO","Erythropoetin","gewicht","PERFORMANCE","high",["Rote Blutkörperchen","VO2max"],["Thrombose"],{starter:"20 IU",normal:"50 IU",max:"300 IU",freq:"3x/Wo",form:"IV/Subkutan",timing:"Pre-Workout",cycle:"Kurz",halflife:"8h"},"human","Doping.",[{shop:"Europa-Peptide",price:"49.90"}]],
-            ["cagrilintide","046/144","Cagrilintid","Amylin","gewicht","GEWICHT","high",["Sättigung","Synergie Sema"],["Übelkeit"],{starter:"0.16mg",normal:"1mg",max:"2.4mg",freq:"1x/Wo",form:"Subkutan",timing:"Wöchentlich",cycle:"Klinisch",halflife:"165h"},"human","SCALE Phase III.",[{shop:"Europa-Peptide",price:"69.00"},{shop:"RCpeptides",price:"80.00"},{shop:"Rebirth Labs",price:"119.99"},{shop:"Austrian Peptides",price:"45.00"},{shop:"nova-biolabs",price:"94.99"}]],
-            ["lcarnitin","047/144","L-Carnitin","Fetttransport","gewicht","GEWICHT","low",["Mitochondrien","Ausdauer"],["Geruch"],{starter:"500mg",normal:"1000mg",max:"2000mg",freq:"1x/Tag",form:"IM/IV",timing:"Vor Training",cycle:"Dauerhaft",halflife:"15h"},"human","Gut belegt.",[{shop:"Europa-Peptide",price:"29.90"},{shop:"RCpeptides",price:"20.00"},{shop:"Premium Research Peptides",price:"42.99"}]],
-            ["pegmgf","048/144","PEG-MGF","Lokales MGF","wachstum","WACHSTUM","med",["Lokales Wachstum","Satellitenzellen"],["Nur Trainingstage"],{starter:"200mcg",normal:"400mcg",max:"600mcg",freq:"Post-Workout",form:"Lokal",timing:"Nach Training",cycle:"4 Wo",halflife:"48h"},"invitro","Hyperplasie.",[{shop:"RCpeptides",price:"45.00"},{shop:"Rebirth Labs",price:"99.99"},{shop:"Austrian Peptides",price:"35.00"}]],
-            ["igf1des","049/144","IGF-1 DES","Kurz wirkend","wachstum","WACHSTUM","high",["Potent","Lokaler Pump"],["Hypoglykämie"],{starter:"20mcg",normal:"50mcg",max:"100mcg",freq:"Pre-Workout",form:"Lokal",timing:"Vor Training",cycle:"4 Wo",halflife:"20m"},"animal","Hypertrophie.",[{shop:"RCpeptides",price:"90.00"}]],
-            ["adipotide","050/144","Adipotide","Fett-Tod","gewicht","GEWICHT","high",["Zerstört Blutgefäße von Fett"],["Nierenversagen"],{starter:"0.2mg/kg",normal:"0.4mg/kg",max:"0.5mg/kg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"2h"},"animal","Affen verloren 11%.",[{shop:"Europa-Peptide",price:"44.90"},{shop:"RCpeptides",price:"60.00"}]],
-            ["ll37","051/144","LL-37","Antibiotisch","heilung","REGENERATION","med",["Gegen Biofilme","Wundheilung"],["Brennen"],{starter:"50mcg",normal:"100mcg",max:"200mcg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"human","Dermatologie.",[{shop:"RCpeptides",price:"40.00"},{shop:"Rebirth Labs",price:"89.99"},{shop:"Austrian Peptides",price:"40.00"}]],
-            ["cerebro","052/144","Cerebrolysin","Gehirn","neuro","NEURO","low",["Neurogenese","Schlaganfall"],["Großes Volumen"],{starter:"2ml",normal:"5ml",max:"10ml",freq:"1x/Tag",form:"IM",timing:"Morgens",cycle:"4 Wo",halflife:"Stunden"},"human","Zugelassen.",[{shop:"RCpeptides",price:"75.00"},{shop:"Rebirth Labs",price:"44.99"}]],
-            ["triptorelin","053/144","Triptorelin","PCT Notfall","libido","LIBIDO","high",["Extremer LH Puls","Restart"],["Kastration bei Missbrauch"],{starter:"100mcg",normal:"100mcg",max:"100mcg",freq:"Einmalig",form:"Subkutan",timing:"PCT Beginn",cycle:"1 Tag",halflife:"Minuten"},"human","Endokrinologie.",[{shop:"RCpeptides",price:"75.00"}]],
-            ["dihexa","054/144","Dihexa","Neuro","neuro","NEURO","med",["Extreme Kognition"],["Tumorrisiko theoretisch"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral/Lokal",timing:"Morgens",cycle:"8 Wo",halflife:"Lang"},"animal","Präklinisch.",[{shop:"RCpeptides",price:"135.00"},{shop:"Austrian Peptides",price:"70.00"}]],
-            ["amino1mq","055/144","5-Amino-1MQ","NNMT","gewicht","GEWICHT","low",["Blockiert Fettspeicherung"],["Teuer"],{starter:"50mg",normal:"100mg",max:"150mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"3 Mo",halflife:"Stunden"},"animal","Mäuse verloren 30%.",[{shop:"Europa-Peptide",price:"139.00"},{shop:"RCpeptides",price:"160.00"},{shop:"Premium Research Peptides",price:"59.99"},{shop:"Rebirth Labs",price:"39.99"},{shop:"Austrian Peptides",price:"100.00"},{shop:"r-phase",price:"30.99"},{shop:"Kronen Peptide",price:"34.90"},{shop:"nova-biolabs",price:"44.99"}]],
-            ["mk677","056/144","MK-677","Ibutamoren","wachstum","WACHSTUM","med",["Oraler GHRP","Hunger"],["Insulinresistenz"],{starter:"10mg",normal:"15mg",max:"25mg",freq:"1x/Tag",form:"Oral",timing:"Vor Schlaf",cycle:"8-16 Wo",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"65.00"},{shop:"Premium Research Peptides",price:"74.99"},{shop:"Austrian Peptides",price:"25.00"}]],
-            ["ostarine","057/144","Ostarine","MK-2866","wachstum","WACHSTUM","med",["Milder SARM","Gelenke"],["Suppression"],{starter:"10mg",normal:"20mg",max:"25mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"65.00"}]],
-            ["rad140","058/144","RAD-140","Testolone","wachstum","WACHSTUM","high",["Starker SARM","Kraft"],["Shutdown","Leber"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"20h"},"human","Phase I.",[{shop:"RCpeptides",price:"75.00"}]],
-            ["lgd4033","059/144","LGD-4033","Ligandrol","wachstum","WACHSTUM","high",["Masse SARM","Wasser"],["Shutdown"],{starter:"5mg",normal:"10mg",max:"10mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"80.00"}]],
-            ["cardarine","060/144","Cardarine","GW-501516","gewicht","GEWICHT","high",["Extreme Ausdauer"],["Krebsrisiko in Tieren"],{starter:"10mg",normal:"15mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Vor Training",cycle:"8 Wo",halflife:"24h"},"animal","Mäuse-Ausdauer.",[{shop:"RCpeptides",price:"60.00"},{shop:"Austrian Peptides",price:"30.00"}]],
-            ["sr9009","061/144","SR9009","Stenabolic","gewicht","GEWICHT","med",["Ruheumsatz"],["Schlechte orale Aufnahme"],{starter:"10mg",normal:"20mg",max:"40mg",freq:"3x/Tag",form:"Oral",timing:"Verteilt",cycle:"8 Wo",halflife:"2h"},"animal","Mäuse-Ausdauer.",[{shop:"RCpeptides",price:"70.00"}]],
-            ["yk11","062/144","YK-11","Myostatin SARM","wachstum","WACHSTUM","high",["DHT Derivat","Myostatin Hemmer"],["Leber","Gelenke"],{starter:"5mg",normal:"10mg",max:"15mg",freq:"1x/Tag",form:"Oral",timing:"Essen",cycle:"6 Wo",halflife:"8h"},"invitro","Zellstudien.",[{shop:"RCpeptides",price:"85.00"}]],
-            ["enclomiphene","063/144","Enclomiphene","SERM PCT","libido","LIBIDO","med",["PCT Goldstandard","LH Puls"],["Sehschärfe (selten)"],{starter:"6.25mg",normal:"12.5mg",max:"25mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"10h"},"human","Klinisch.",[{shop:"RCpeptides",price:"75.00"}]],
-            ["bacwater","064/144","BAC-Wasser","Bakteriostatisch","heilung","ZUBEHÖR","low",["Rekonstitution","Keimfrei"],["Nicht pur spritzen"],{starter:"1ml",normal:"2ml",max:"3ml",freq:"Bedarf",form:"Subkutan",timing:"Mischen",cycle:"Dauerhaft",halflife:"-"},"human","Standard.",[{shop:"Peptid24",price:"5.49"},{shop:"Verra",price:"5.90"},{shop:"Drakon Peptides",price:"19.99"},{shop:"Premium Research Peptides",price:"8.49"},{shop:"Rebirth Labs",price:"19.99"},{shop:"Austrian Peptides",price:"10.00"},{shop:"r-phase",price:"3.90"},{shop:"Kronen Peptide",price:"4.90"},{shop:"nova-biolabs",price:"19.99"},{shop:"odipept",price:"9.95"}]],
-            ["ru58841","065/144","RU58841","Anti-Androgen","kosmetik","KOSMETIK","low",["Stoppt Haarausfall lokal"],["Kopfschmerz bei Systemik"],{starter:"20mg",normal:"50mg",max:"100mg",freq:"1x/Tag",form:"Topisch",timing:"Abends",cycle:"Dauerhaft",halflife:"1h"},"human","Klinisch.",[{shop:"RCpeptides",price:"45.00"},{shop:"Austrian Peptides",price:"40.00"}]],
-            ["noopept","066/144","Noopept","Kognition","neuro","NEURO","low",["BDNF","Gedächtnis"],["Brain-Fog"],{starter:"10mg",normal:"20mg",max:"40mg",freq:"2x/Tag",form:"Oral/Nasal",timing:"Tag",cycle:"4 Wo",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"30.00"},{shop:"Austrian Peptides",price:"30.00"}]],
-            ["tudca","067/144","TUDCA","Leberschutz","heilung","REGENERATION","low",["Stärkster Leberschutz"],["Magen"],{starter:"250mg",normal:"500mg",max:"1500mg",freq:"1x/Tag",form:"Oral",timing:"Essen",cycle:"Kur",halflife:"Mittel"},"human","Standard.",[{shop:"RCpeptides",price:"60.00"}]],
-            ["methyleneblue","068/144","Methylene Blue","Energie","neuro","NEURO","med",["ATP Produktion"],["Blauer Urin","SSRI Gefahr"],{starter:"0.5mg/kg",normal:"1mg/kg",max:"4mg/kg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"Kur",halflife:"5h"},"human","Standard.",[{shop:"RCpeptides",price:"60.00"},{shop:"Premium Research Peptides",price:"54.57"},{shop:"Austrian Peptides",price:"20.00"}]],
-            ["rad150","069/144","RAD-150","TLB-150","wachstum","WACHSTUM","high",["Lange HWZ","Muskeln"],["Shutdown"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"48h"},"animal","Präklinisch.",[{shop:"RCpeptides",price:"77.50"}]],
-            ["pinealon","070/144","Pinealon","Gehirn","neuro","NEURO","low",["Zirkadianer Rhythmus"],["-"],{starter:"10mg",normal:"20mg",max:"40mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"10 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"55.00"},{shop:"Rebirth Labs",price:"54.99"}]],
-            ["bromantane","071/144","Bromantane","Ladasten","neuro","NEURO","low",["Stimulans ohne Crash"],["Schlaf"],{starter:"25mg",normal:"50mg",max:"150mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"11h"},"human","Russland.",[{shop:"RCpeptides",price:"60.00"},{shop:"Premium Research Peptides",price:"36.38"},{shop:"Austrian Peptides",price:"45.00"}]],
-            ["phenibut","072/144","Phenibut","Angstlöser","neuro","NEURO","high",["Tiefschlaf","Sozial"],["Extreme Suchtgefahr"],{starter:"250mg",normal:"500mg",max:"1500mg",freq:"1x/Wo",form:"Oral",timing:"Bedarf",cycle:"Bedarf",halflife:"5h"},"human","Russland.",[{shop:"RCpeptides",price:"45.00"},{shop:"Austrian Peptides",price:"20.00"}]],
-            ["nsi189","073/144","NSI-189","Hippocampus","neuro","NEURO","med",["Neurogenese","Depression"],["Parästhesien"],{starter:"20mg",normal:"40mg",max:"80mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"15h"},"human","Phase II.",[{shop:"RCpeptides",price:"90.00"}]],
-            ["9mbc","074/144","9-MBC","Dopamin","neuro","NEURO","high",["Regeneriert Dopamin"],["Photosensibilität (Sonne!)"],{starter:"10mg",normal:"15mg",max:"30mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"Lang"},"invitro","Zellen.",[{shop:"RCpeptides",price:"80.00"},{shop:"Austrian Peptides",price:"50.00"}]],
-            ["vilon","075/144","Vilon","Thymus","aging","ANTI-AGING","low",["T-Zellen Produktion"],["Autoimmun"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"10 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"50.00"}]],
-            ["survodutide","076/144","Survodutide","Dual Agonist","gewicht","GEWICHT","high",["Glucagon + GLP1"],["Herzrasen"],{starter:"0.6mg",normal:"2.4mg",max:"4.8mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"Langzeit",halflife:"5 Tage"},"human","19% Abnahme.",[{shop:"RCpeptides",price:"90.00"}]],
-            ["ac262","077/144","AC-262","Milder SARM","wachstum","WACHSTUM","low",["Muskeln ohne Prostata"],["Schwach"],{starter:"10mg",normal:"20mg",max:"30mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"12h"},"animal","Tierstudien.",[{shop:"RCpeptides",price:"55.00"}]],
-            ["s4","078/144","S4 Andarine","Härte SARM","wachstum","WACHSTUM","med",["Muskelhärte","Fettabbau"],["Sehverschlechterung (Gelbstich)"],{starter:"25mg",normal:"50mg",max:"75mg",freq:"2x/Tag",form:"Oral",timing:"Verteilt",cycle:"8 Wo",halflife:"4h"},"human","Klinisch.",[{shop:"RCpeptides",price:"80.00"}]],
-            ["gw0742","079/144","GW0742","Super Cardarine","gewicht","GEWICHT","high",["Extreme Ausdauer"],["Herz (Tier)"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Training",cycle:"8 Wo",halflife:"24h"},"animal","Tiere.",[{shop:"RCpeptides",price:"75.00"}]],
-            ["acp105","080/144","ACP-105","SARM","wachstum","WACHSTUM","med",["Sicherer SARM"],["Suppression"],{starter:"10mg",normal:"15mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"5h"},"invitro","Zellen.",[{shop:"RCpeptides",price:"75.00"}]],
-            ["s23","081/144","S23","Stärkster SARM","wachstum","WACHSTUM","high",["Wettkampf-Härte"],["Verhütungsmittel (Männer)"],{starter:"10mg",normal:"20mg",max:"30mg",freq:"2x/Tag",form:"Oral",timing:"Verteilt",cycle:"8 Wo",halflife:"12h"},"animal","Tiere.",[{shop:"RCpeptides",price:"60.00"}]],
-            ["orexina","082/144","Orexin A","Fokus","neuro","NEURO","med",["Hellwach","Motivation"],["Schlafprobleme"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"Bedarf",form:"Nasal",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"120.00"}]],
-            ["larazotide","083/144","Larazotide","Leaky Gut","heilung","REGENERATION","low",["Schließt Darm (Tight Junctions)"],["Keine"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"3x/Tag",form:"Oral",timing:"Vor Essen",cycle:"4 Wo",halflife:"Lokal"},"human","Phase III.",[{shop:"RCpeptides",price:"95.00"}]],
-            ["colivelin","084/144","Colivelin","Neuroprotektiv","neuro","NEURO","med",["Schutz vor Alzheimer"],["Teuer"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"200.00"}]],
-            ["synake","085/144","Syn-Ake","Schlangengift","kosmetik","KOSMETIK","low",["Botox-Ersatz"],["Nur Topisch!"],{starter:"1%",normal:"4%",max:"5%",freq:"2x/Tag",form:"Topisch",timing:"Täglich",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik.",[{shop:"RCpeptides",price:"175.00"}]],
-            ["foxo4","086/144","FOXO4-DRI","Senolytikum","aging","ANTI-AGING","med",["Zerstört Zombie-Zellen"],["Niere"],{starter:"1mg",normal:"3mg",max:"5mg",freq:"3x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"Europa-Peptide",price:"189.90"},{shop:"RCpeptides",price:"50.00"},{shop:"Rebirth Labs",price:"179.99"},{shop:"Austrian Peptides",price:"100.00"}]],
-            ["mazdutide","087/144","Mazdutide","GLP/Glucagon","gewicht","GEWICHT","high",["Leberfett","Abnehmen"],["Herzrasen"],{starter:"1.5mg",normal:"3mg",max:"9mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"Lang",halflife:"7 Tage"},"human","Phase II.",[{shop:"RCpeptides",price:"80.00"}]],
-            ["thymalin","088/144","Thymalin","Thymus","aging","ANTI-AGING","low",["Immunsystem"],["Keine"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"Europa-Peptide",price:"24.90"},{shop:"RCpeptides",price:"40.00"},{shop:"Austrian Peptides",price:"20.00"}]],
-            ["bam15","089/144","BAM15","Entkoppler","gewicht","GEWICHT","high",["Verbrennt Kalorien als Hitze"],["Überhitzung"],{starter:"15mg",normal:"30mg",max:"50mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"125.00"}]],
-            ["p21","090/144","P21","BDNF Booster","neuro","NEURO","low",["Lernen","Neurogenese"],["Müdigkeit"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Stunden"},"animal","Mäuse.",[{shop:"RCpeptides",price:"70.00"}]],
-            ["adamax","091/144","Adamax","Super Semax","neuro","NEURO","low",["Extremer Fokus"],["Schlaf"],{starter:"100mcg",normal:"200mcg",max:"1000mcg",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"Kur",halflife:"Stunden"},"invitro","Zellen.",[{shop:"RCpeptides",price:"55.00"},{shop:"Rebirth Labs",price:"65.99"},{shop:"Austrian Peptides",price:"40.00"}]],
-            ["ace031","092/144","ACE-031","Myostatin","wachstum","WACHSTUM","high",["Extremer Muskelaufbau"],["Nasenbluten"],{starter:"1mg",normal:"3mg",max:"5mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"15 Tage"},"human","Phase II.",[{shop:"RCpeptides",price:"180.00"}]],
-            ["dermorphin","093/144","Dermorphin","Frosch-Opioid","neuro","NEURO","high",["30x Morphium"],["Sucht","Atemdepression"],{starter:"Klinisch",normal:"Klinisch",max:"Klinisch",freq:"Akut",form:"Subkutan",timing:"Akut",cycle:"Kurz",halflife:"Kurz"},"animal","Pferde.",[{shop:"RCpeptides",price:"140.00"}]],
-            ["astressinb","094/144","Astressin-B","Stress-Blocker","kosmetik","KOSMETIK","low",["Haarwuchs","Stress"],["-"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"150.00"}]],
-            ["lgd3033","095/144","LGD-3033","Dry SARM","wachstum","WACHSTUM","high",["Trockene Muskeln"],["Suppression"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"2x/Tag",form:"Oral",timing:"Tag",cycle:"8 Wo",halflife:"6h"},"invitro","Zellen.",[{shop:"RCpeptides",price:"80.00"}]],
-            ["hng","096/144","HNG","Humanin Analogon","aging","ANTI-AGING","med",["Schutz vor Alzheimer"],["Tumor (Kontraindikation)"],{starter:"1mg",normal:"5mg",max:"10mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"invitro","Zellen.",[{shop:"RCpeptides",price:"100.00"}]],
-            ["dnsp11","097/144","DNSP-11","Dopamin Neuronen","neuro","NEURO","med",["Parkinson Schutz"],["Teuer"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"125.00"}]],
-            ["pnc27","098/144","PNC-27","Anti-Cancer","heilung","REGENERATION","high",["Zerstört Krebszellen"],["Experimentell"],{starter:"1mg",normal:"3mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Kur",halflife:"Kurz"},"invitro","Zellen.",[{shop:"RCpeptides",price:"100.00"}]],
-            ["palghk","099/144","PAL-GHK","Palmitoyl","kosmetik","KOSMETIK","low",["Kollagen (Haut)"],["Topisch"],{starter:"1%",normal:"2%",max:"5%",freq:"2x/Tag",form:"Topisch",timing:"Tag",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik.",[{shop:"RCpeptides",price:"50.00"}]],
-            ["hep1","100/144","HEP-1","Verbrennungen","heilung","REGENERATION","med",["Wundheilung"],["Wenig Daten"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"140.00"}]],
-            ["fgl","101/144","FGL","NCAM Mimetic","neuro","NEURO","med",["Synapsenbildung"],["Teuer"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"200.00"}]],
-            ["orexinb","102/144","Orexin B","Wachheit","neuro","NEURO","med",["Fokus"],["Blutdruck"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"Bedarf",form:"Nasal",timing:"Morgens",cycle:"Kur",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"120.00"}]],
-            ["chrysalin","103/144","Chrysalin","TP508","heilung","REGENERATION","low",["Knochenbruch Heilung"],["Lokal spritzen"],{starter:"1mg",normal:"2mg",max:"10mg",freq:"2x/Wo",form:"Lokal",timing:"Post-Trauma",cycle:"Bedarf",halflife:"Kurz"},"human","Phase II.",[{shop:"RCpeptides",price:"200.00"}]],
-            ["tb4frag","104/144","Thymosin B4 Frag","Ac-LKKTETQ","heilung","REGENERATION","low",["Anti-Fibrose (Narbe)"],["Kurze HWZ"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"Alle 2 Tage",form:"Subkutan",timing:"Abends",cycle:"4 Wo",halflife:"Kurz"},"invitro","Zellen.",[{shop:"RCpeptides",price:"90.00"}]],
-            ["vesilute","105/144","Vesilute","Prostata","aging","ANTI-AGING","low",["Blase & Prostata"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"60.00"}]],
-            ["ace083","106/144","ACE-083","Lokales Myostatin","wachstum","WACHSTUM","high",["Muskel wächst nur lokal"],["Verhärtung"],{starter:"1mg",normal:"2mg",max:"3mg",freq:"2x/Wo",form:"IM",timing:"Training",cycle:"4 Wo",halflife:"Mittel"},"human","Klinisch.",[{shop:"RCpeptides",price:"180.00"}]],
-            ["sobetirome","107/144","Sobetirome","GC-1","gewicht","GEWICHT","med",["T3 ohne Herzbelastung"],["Schwitzen"],{starter:"10mcg",normal:"20mcg",max:"100mcg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"Tage"},"animal","Tiere.",[{shop:"RCpeptides",price:"120.00"}]],
-            ["livagen","108/144","Livagen","DNA Entfaltung","aging","ANTI-AGING","low",["Verjüngt Leber/Immun"],["-"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"60.00"}]],
-            ["prostamax","109/144","Prostamax","Prostata-Bio","aging","ANTI-AGING","low",["Verjüngt Prostata"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"50.00"}]],
-            ["gonadorelin","110/144","Gonadorelin","GnRH-Analogon","libido","LIBIDO","med",["Testosteron Produktion"],["Kastration bei Dauerinfusion"],{starter:"100mcg",normal:"100mcg",max:"300mcg",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"PCT",halflife:"Minuten"},"human","Klinisch.",[{shop:"RCpeptides",price:"50.00"}]],
-            ["hmg","111/144","HMG","LH & FSH","libido","LIBIDO","med",["Hoden (Besser als HCG)"],["Teuer"],{starter:"37.5 IU",normal:"75 IU",max:"150 IU",freq:"3x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Tage"},"human","Klinisch.",[{shop:"RCpeptides",price:"32.50"}]],
-            ["cartalax","112/144","Cartalax","Knorpel","heilung","REGENERATION","low",["Gelenk-Knorpel"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"40.00"},{shop:"Premium Research Peptides",price:"58.85"}]],
-            ["testagen","113/144","Testagen","Hoden-Bio","libido","LIBIDO","low",["Spermienqualität"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"52.50"}]],
-            ["vip","114/144","VIP","CIRS/Schimmel","neuro","NEURO","med",["Heilt Biotoxin-Krankheit"],["Blutdruck"],{starter:"50mcg",normal:"50mcg",max:"100mcg",freq:"4x/Tag",form:"Nasal",timing:"Tag",cycle:"Dauerhaft",halflife:"Minuten"},"human","Klinisch.",[{shop:"RCpeptides",price:"57.50"},{shop:"nova-biolabs",price:"79.99"}]],
-            ["b733","115/144","B7-33","Anti-Fibrose","heilung","REGENERATION","low",["Baut Narbengewebe (Herz) ab"],["Experimentell"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"6 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"50.00"}]],
-            ["vesugen","116/144","Vesugen","Blutgefäße","aging","ANTI-AGING","low",["Elastizität Gefäße"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"50.00"}]],
-            ["ovagen","117/144","Ovagen","Leber-Bio","aging","ANTI-AGING","low",["Leber Regeneration"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"55.00"}]],
-            ["crystagen","118/144","Crystagen","Immun-Bio","aging","ANTI-AGING","low",["T-Zellen nach Infekt"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"55.00"}]],
-            ["cortagen","119/144","Cortagen","ZNS-Bio","neuro","NEURO","low",["Gehirn Stress"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"50.00"}]],
-            ["pancragen","120/144","Pancragen","Pankreas","aging","ANTI-AGING","low",["Insulinresistenz"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"40.00"}]],
-            ["cardiogen","121/144","Cardiogen","Herz-Bio","aging","ANTI-AGING","low",["Herzmuskelzellen"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"47.50"}]],
-            ["teriparatide","122/144","Teriparatid","Forteo","heilung","REGENERATION","med",["Knochenaufbau massiv"],["Hyperkalzämie"],{starter:"20mcg",normal:"20mcg",max:"40mcg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"24 Mo",halflife:"1h"},"human","FDA.",[{shop:"RCpeptides",price:"80.00"}]],
-            ["ahkcu","123/144","AHK-Cu","Haar-Kupfer","kosmetik","KOSMETIK","low",["Besser als GHK für Haare"],["Topisch"],{starter:"1%",normal:"2%",max:"5%",freq:"1x/Tag",form:"Topisch",timing:"Tag",cycle:"Dauerhaft",halflife:"Lokal"},"invitro","Zellen.",[{shop:"Europa-Peptide",price:"47.90"},{shop:"RCpeptides",price:"52.50"},{shop:"Rebirth Labs",price:"89.99"},{shop:"Austrian Peptides",price:"35.00"}]],
-            ["tesofensine","124/144","Tesofensine","SNDRI","gewicht","GEWICHT","high",["Brutaler Appetitzügler"],["Puls/Blutdruck"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"12 Wo",halflife:"9 Tage"},"human","Phase II.",[{shop:"RCpeptides",price:"275.00"}]],
-            ["humanin","125/144","Humanin","Mito-Peptid","aging","ANTI-AGING","med",["Schützt vor Alzheimer"],["Tumor (Kontraindikation)"],{starter:"1mg",normal:"5mg",max:"10mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"125.00"}]],
-            ["retinalamin","126/144","Retinalamin","Augen-Bio","heilung","REGENERATION","low",["Netzhaut Heilung"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"10 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"125.00"}]],
-            ["bronchogen","127/144","Bronchogen","Lungen-Bio","heilung","REGENERATION","low",["Bronchitis/Raucher"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"50.00"}]],
-            ["matrixyl","128/144","Matrixyl","Anti-Falten","kosmetik","KOSMETIK","low",["Kollagen-1"],["Topisch"],{starter:"2%",normal:"5%",max:"10%",freq:"2x/Tag",form:"Topisch",timing:"Tag",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik.",[{shop:"RCpeptides",price:"30.00"}]],
-            ["bioglutide","129/144","Bioglutide","Oral GLP-1","gewicht","GEWICHT","med",["Semaglutid als Pille"],["Magen"],{starter:"100mg",normal:"100mg",max:"200mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"Langzeit",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"200.00"}]],
-            ["lipoc","130/144","Lipo-C","Lipotropic","gewicht","GEWICHT","low",["Fettverbrennung (Leber)"],["Rötung"],{starter:"1ml",normal:"2ml",max:"3ml",freq:"2x/Wo",form:"IM",timing:"Morgens",cycle:"Dauerhaft",halflife:"Stunden"},"human","Kliniken.",[{shop:"RCpeptides",price:"75.00"}]],
-            ["ptd1","131/144","PTD-DBM","Kopfhaut-Peptid","kosmetik","KOSMETIK","med",["Haarwachstum"],["Teuer"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Topisch",timing:"Abends",cycle:"Kurweise",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"80.00"}]],
-            ["gdf8","132/144","GDF-8","Myostatin-Pro","wachstum","WACHSTUM","high",["Autoimmun Wachstum"],["Sehnenrisse"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Lang"},"animal","Tiere.",[{shop:"RCpeptides",price:"100.00"}]],
-            ["thymalfasin","133/144","Thymalfasin","Hochdosis T-Alpha","aging","ANTI-AGING","low",["Maximales Immunsystem"],["Autoimmun"],{starter:"2mg",normal:"5mg",max:"10mg",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"Kur",halflife:"2h"},"human","Klinisch.",[{shop:"RCpeptides",price:"200.00"}]],
-            ["bpcpellets","134/144","BPC-157 Pellets","Oral BPC","heilung","REGENERATION","low",["Heilt Magen-Darm"],["-"],{starter:"500mcg",normal:"1000mcg",max:"2000mcg",freq:"2x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"4h"},"human","Klinisch.",[{shop:"RCpeptides",price:"125.00"},{shop:"Premium Research Peptides",price:"64.20"}]],
-            ["kpvpellets","135/144","KPV Pellets","Oral KPV","heilung","REGENERATION","low",["Anti-Candida Darm"],["-"],{starter:"500mcg",normal:"1000mcg",max:"2000mcg",freq:"2x/Tag",form:"Oral",timing:"Essen",cycle:"4 Wo",halflife:"Kurz"},"animal","Darm.",[{shop:"RCpeptides",price:"125.00"}]],
-            ["tb500pellets","136/144","TB-500 Pellets","Oral TB500","heilung","REGENERATION","low",["Systemische Heilung"],["-"],{starter:"500mcg",normal:"1000mcg",max:"2000mcg",freq:"2x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"Mittel"},"pilot","Pilot.",[{shop:"RCpeptides",price:"100.00"}]],
-            ["aminonasal","137/144","5-Amino Nasal","Nasal 1MQ","gewicht","GEWICHT","med",["Stoffwechsel Boost"],["Nasenreizung"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"Mittel"},"animal","Tiere.",[{shop:"RCpeptides",price:"100.00"}]],
-            ["ll37nasal","138/144","LL-37 Nasal","Spray LL37","heilung","REGENERATION","med",["Gegen Sinusitis Keime"],["Brennen"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"human","Beobachtung.",[{shop:"RCpeptides",price:"40.00"}]],
-            ["semaxnasal","139/144","Semax Nasal","RC Spray","neuro","NEURO","low",["Fokus/Kognition"],["-"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"30.00"}]],
-            ["selanknasal","140/144","Selank Nasal","RC Angstlöser","neuro","NEURO","low",["Angstlöser"],["-"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Bedarf",cycle:"4 Wo",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"30.00"}]],
-            ["oxytocinacetate","141/144","Oxytocin Acetat","Soziales Peptid","neuro","NEURO","low",["Soziale Phobien"],["Empfindlichkeit"],{starter:"10 IU",normal:"20 IU",max:"40 IU",freq:"Bedarf",form:"Subkutan",timing:"Bedarf",cycle:"Bedarf",halflife:"Kurz"},"human","Psychologie.",[{shop:"RCpeptides",price:"70.00"}]],
-            ["cjcipa","142/144","CJC-1295 / Ipamorelin Blend","Synergy Stack","wachstum","WACHSTUM","low",["Synergistische HGH-Ausschüttung durch Überlagerung","Verbesserte Tiefschlafphasen","Starker Anti-Aging Effekt"],["Wassereinlagerungen"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"1-2x/Tag",form:"Subkutan",timing:"Vor Schlaf",cycle:"8-12 Wo",halflife:"2h"},"human","Standard-Protokoll in Anti-Aging Kliniken.",[{shop:"Premium Research Peptides",price:"49.99"},{shop:"Rebirth Labs",price:"74.99"},{shop:"r-phase",price:"33.90"},{shop:"Kronen Peptide",price:"39.90"},{shop:"nova-biolabs",price:"69.99"}]],
-            ["bpctb","143/144","BPC-157 / TB-500 Blend","Wolverine Stack","heilung","REGENERATION","low",["Extreme Synergie für Sehnen, Bänder & Muskelrisse","Beschleunigte Angiogenese & Zellmigration"],["Leichtes Hitzegefühl an Einstichstelle"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"4-8 Wo",halflife:"Misch"},"pilot","Goldstandard in der Sport-Reha.",[{shop:"Premium Research Peptides",price:"64.99"},{shop:"Rebirth Labs",price:"89.99"},{shop:"nova-biolabs",price:"69.99"},{shop:"odipept",price:"59.00"}]],
-            ["glp2","144/144","GLP-2","Teduglutid","heilung","REGENERATION","med",["Darmzotten-Wachstum","Heilung Leaky Gut"],["Magenbeschwerden"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"human","Zugelassen für Kurzdarmsyndrom.",[{shop:"Rebirth Labs",price:"49.99"},{shop:"nova-biolabs",price:"79.99"}]]
+            ["bpc157","001/144","BPC-157","Body Protection Compound","heilung","REGENERATION","low",["Systemische Beschleunigung der Angiogenese (Gefäßneubildung) am Verletzungsherd", "Heilt therapieresistente Magen-Darm-Erkrankungen (Leaky Gut, Ulzera) durch Zellschutz", "Reguliert entzündliche Zytokine herunter, ohne das Immunsystem zu schwächen", "Fördert massiv die Fibroblasten-Ausbreitung für die Sehnenreparatur"],["Leichter Schwindel (Vasodilatation) bei zu schneller Injektion", "Theoretisches Risiko bei bestehenden Tumorerkrankungen (durch Gefäßneubildung)"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1-2x/Tag",form:"Subkutan/Oral",timing:"Morgens",cycle:"4-8 Wo",halflife:"4h"},"animal","Umfangreiche Tiermodelle belegen vollständige Reparatur von Achillessehnen.",[{shop:"Europa-Peptide",price:"32.90",origin:"EU"},{shop:"Peptid24",price:"24.90",origin:"DE"},{shop:"Drakon Peptides",price:"34.90",origin:"EU"},{shop:"RCpeptides",price:"37.50",origin:"US"},{shop:"Premium Research Peptides",price:"49.99",origin:"EU"},{shop:"Rebirth Labs",price:"44.99",origin:"US"},{shop:"Austrian Peptides",price:"30.00",origin:"EU"},{shop:"r-phase",price:"25.90",origin:"EU"},{shop:"Kronen Peptide",price:"32.90",origin:"DE"},{shop:"nova-biolabs",price:"44.99",origin:"EU"}]],
+            ["tb500","002/144","TB-500","Thymosin Beta-4","heilung","REGENERATION","low",["Induziert zelluläre Migration (Actin-Hochregulation) direkt an Mikrorissen", "Baut unelastisches Narbengewebe ab und erhöht die Gelenkflexibilität", "Wirkt massiv synergistisch mit BPC-157 für den passiven Bewegungsapparat", "Fördert das Haarwachstum durch Reaktivierung der Stammzellen"],["Milde Abgeschlagenheit oder Lethargie direkt nach der Injektion", "Kann wie BPC-157 bei bestehenden malignen Zellen das Wachstum stützen"],{starter:"2mg/Wo",normal:"5mg/Wo",max:"10mg/Wo",freq:"1-2x/Wo",form:"Subkutan",timing:"Abends",cycle:"6-8 Wo",halflife:"30h"},"pilot","Erfolgsraten bei Pferden im Rennsport hochgradig dokumentiert.",[{shop:"Europa-Peptide",price:"69.90",origin:"EU"},{shop:"Peptid24",price:"32.00",origin:"DE"},{shop:"Drakon Peptides",price:"54.90",origin:"EU"},{shop:"RCpeptides",price:"37.50",origin:"US"},{shop:"Premium Research Peptides",price:"59.99",origin:"EU"},{shop:"Rebirth Labs",price:"44.99",origin:"US"},{shop:"Austrian Peptides",price:"35.00",origin:"EU"},{shop:"r-phase",price:"28.99",origin:"EU"},{shop:"Kronen Peptide",price:"34.90",origin:"DE"},{shop:"nova-biolabs",price:"69.99",origin:"EU"}]],
+            ["ipamorelin","003/144","Ipamorelin","GH Secretagogue","wachstum","WACHSTUM","low",["Löst einen hochselektiven Puls der körpereigenen Wachstumshormon-Ausschüttung aus", "Verlängert und vertieft die regenerativen Delta-Schlafphasen massiv", "Erhöht die Muskelproteinsynthese bei gleichzeitigem Anti-Aging-Effekt", "Kein signifikanter Anstieg von Stresshormonen (Cortisol/Prolaktin)"],["Temporäre, milde Wassereinlagerungen (Ödeme) in den Gelenken", "Erhöhtes Hungergefühl kurz nach der Injektion möglich"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"1-2x/Tag",form:"Subkutan",timing:"Vor Schlaf",cycle:"8-12 Wo",halflife:"2h"},"human","Phase-II Humantrials belegen exzellentes Sicherheitsprofil.",[{shop:"Europa-Peptide",price:"32.90",origin:"EU"},{shop:"Peptid24",price:"49.90",origin:"DE"},{shop:"Drakon Peptides",price:"34.90",origin:"EU"},{shop:"RCpeptides",price:"60.00",origin:"US"},{shop:"Premium Research Peptides",price:"39.99",origin:"EU"},{shop:"Rebirth Labs",price:"74.99",origin:"US"},{shop:"Austrian Peptides",price:"35.00",origin:"EU"},{shop:"nova-biolabs",price:"54.99",origin:"EU"}]],
+            ["cjc1295","004/144","CJC-1295 no DAC","Mod GRF 1-29","wachstum","WACHSTUM","med",["Verstärkt die Amplitude der somatotropen Pulse (Synergie mit Ipamorelin)", "Verbessert die systemische Lipolyse (Fettverbrennung im Ruhezustand)", "Fördert extrem schnelle Regeneration nach harten Trainingseinheiten"],["Spürbarer 'Head Rush' (Gesichtsröte/Hitze) direkt nach der Gabe", "Gefahr der Insulinresistenz bei monatelanger ununterbrochener Nutzung"],{starter:"100mcg",normal:"100mcg",max:"300mcg",freq:"1-3x/Tag",form:"Subkutan",timing:"Nüchtern",cycle:"8-16 Wo",halflife:"30m"},"human","Klinischer Anstieg von freiem IGF-1 replizierbar.",[{shop:"Europa-Peptide",price:"49.90",origin:"EU"},{shop:"Peptid24",price:"55.00",origin:"DE"},{shop:"Drakon Peptides",price:"39.90",origin:"EU"},{shop:"RCpeptides",price:"60.00",origin:"US"},{shop:"Rebirth Labs",price:"39.99",origin:"US"},{shop:"Austrian Peptides",price:"35.00",origin:"EU"},{shop:"nova-biolabs",price:"74.99",origin:"EU"}]],
+            ["cjc1295dac","005/144","CJC-1295 DAC","GHRH-Analogon","wachstum","WACHSTUM","med",["Kontinuierlicher 'GH Bleed' über mehrere Tage hinweg", "Erhöht die HGH-Grundlinie ohne tägliche Injektionen"],["Starke Lethargie und Müdigkeit", "Hohes Risiko für Wasserretention"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"8-12 Wo",halflife:"7 Tage"},"human","Erhöhung des basalen GH-Spiegels.",[{shop:"Europa-Peptide",price:"64.90",origin:"EU"},{shop:"RCpeptides",price:"50.00",origin:"US"},{shop:"Austrian Peptides",price:"50.00",origin:"EU"}]],
+            ["semaglutide","006/144","Semaglutid","GLP-1 Agonist","gewicht","GEWICHT","med",["Verzögert die Magenentleerung extrem (langanhaltende Sättigung)", "Blockiert Heißhungerattacken und Cravings direkt im ZNS (Gehirn)", "Verbessert die Insulinsensitivität und senkt den Blutzuckerspiegel drastisch"],["Akute gastrointestinale Probleme (Übelkeit, Erbrechen, Verstopfung)", "Erhöhtes Risiko des Abbaus von magerer Muskelmasse bei mangelndem Protein", "Gallensteine bei extrem schnellem Gewichtsverlust"],{starter:"0.25mg",normal:"1.0mg",max:"2.4mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"Langzeit",halflife:"165h"},"human","STEP-Trials belegen 15% Fettreduktion.",[{shop:"Europa-Peptide",price:"37.90",origin:"EU"},{shop:"Peptid24",price:"37.90",origin:"DE"}]],
+            ["tirzepatide","007/144","Tirzepatid","GIP/GLP-1","gewicht","GEWICHT","med",["Dualer Agonismus (GIP & GLP-1) für noch radikaleren Fettabbau", "Deutlich stärkere Blutzuckerkontrolle als reines Semaglutid", "Reduziert viszerales Bauchfett und Leberfett hocheffizient"],["Magen-Darm-Beschwerden (oft milder als bei Semaglutid, aber existent)", "Verlust der Muskelmasse ('Ozempic-Face') ohne Krafttraining", "Herzrasen in der initialen Eindosierungsphase"],{starter:"2.5mg",normal:"5mg",max:"15mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"Langzeit",halflife:"120h"},"human","SURMOUNT-Studien belegen 20%+ Gewichtsverlust.",[{shop:"Europa-Peptide",price:"44.90",origin:"EU"},{shop:"Peptid24",price:"32.90",origin:"DE"},{shop:"Verra",price:"69.90",origin:"EU"},{shop:"r-phase",price:"30.50",origin:"EU"},{shop:"Kronen Peptide",price:"39.90",origin:"DE"},{shop:"odipept",price:"99.00",origin:"DE"}]],
+            ["retatrutide","008/144","Retatrutide","Triple Agonist","gewicht","GEWICHT","high",["Triple-Agonist (GLP-1, GIP, Glucagon) für maximalen Gewichtsverlust", "Die Glucagon-Komponente verbrennt aktiv Fett und erhöht den Ruheumsatz", "Der aktuelle klinische Rekordhalter für pharmakologische Diäten"],["Glucagon-Komponente birgt höheres Risiko für Tachykardie (Herzrasen)", "Möglicher Blutdruckanstieg", "Extreme Appetitlosigkeit kann zu Mangelernährung führen"],{starter:"1mg",normal:"4mg",max:"12mg",freq:"1x/Wo",form:"Subkutan",timing:"1x Woche",cycle:"Klinisch",halflife:"144h"},"human","Phase-II belegt 24% Gewichtsverlust.",[{shop:"Europa-Peptide",price:"49.90",origin:"EU"},{shop:"Peptid24",price:"34.90",origin:"DE"},{shop:"Drakon Peptides",price:"79.90",origin:"EU"},{shop:"Verra",price:"79.90",origin:"EU"},{shop:"RCpeptides",price:"65.00",origin:"US"},{shop:"Premium Research Peptides",price:"117.00",origin:"EU"},{shop:"Austrian Peptides",price:"40.00",origin:"EU"},{shop:"r-phase",price:"35.90",origin:"EU"},{shop:"Kronen Peptide",price:"49.90",origin:"DE"},{shop:"nova-biolabs",price:"199.99",origin:"EU"},{shop:"odipept",price:"44.00",origin:"DE"}]],
+            ["hghfrag","009/144","HGH Frag 176-191","Lipolytisch","gewicht","GEWICHT","low",["Konzentriert sich isoliert auf die fettverbrennenden Eigenschaften von HGH", "Löst starke zelluläre Lipolyse (Fettfreisetzung) aus", "Absolut kein negativer Einfluss auf den Blutzucker oder die Insulinsensitivität"],["Besitzt eine extrem kurze Halbwertszeit (nur ~30 Minuten)", "Erfordert striktes Fasten (nüchterner Magen) für spürbare Wirkung"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"2x/Tag",form:"Subkutan",timing:"Vor Training",cycle:"8-12 Wo",halflife:"30m"},"animal","Sichere Fettgewebsreduktion in Tieren bewiesen.",[{shop:"Europa-Peptide",price:"94.90",origin:"EU"},{shop:"RCpeptides",price:"50.00",origin:"US"}]],
+            ["aod9604","010/144","AOD-9604","Anti-Obesity","gewicht","GEWICHT","low",["Modifiziertes, stabileres HGH-Fragment", "Blockiert die Neuentstehung von Fettzellen (Lipogenese)", "Fördert Knorpelreparatur bei Arthrose"],["Lokale Rötungen an der Einstichstelle", "Milde Kopfschmerzen"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1-2x/Tag",form:"Subkutan",timing:"Morgens",cycle:"8-12 Wo",halflife:"40m"},"human","Australische Studien zeigen Fettreduktion.",[{shop:"Europa-Peptide",price:"35.00",origin:"EU"},{shop:"RCpeptides",price:"30.00",origin:"US"},{shop:"Austrian Peptides",price:"50.00",origin:"EU"}]],
+            ["mt2","011/144","Melanotan II","Bräunung","kosmetik","KOSMETIK","high",["Stimuliert die Melaninproduktion für eine extrem tiefe, schnelle Bräunung", "Steigert die Libido und sexuelle Erregbarkeit bei beiden Geschlechtern signifikant", "Besitzt stark appetitzügelnde Nebeneffekte"],["Verursacht oft starke akute Übelkeit und einen 'Flush' direkt nach der Gabe", "Kann zu unregelmäßiger Hyperpigmentierung und Nachdunkeln von Muttermalen führen", "Gefahr von Dauererektionen (Priapismus)"],{starter:"100mcg",normal:"250mcg",max:"1000mcg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"2-4 Wo",halflife:"2h"},"pilot","Gestoppt wegen Nebenwirkungen.",[{shop:"Europa-Peptide",price:"36.90",origin:"EU"},{shop:"Peptid24",price:"29.90",origin:"DE"},{shop:"Drakon Peptides",price:"29.90",origin:"EU"},{shop:"RCpeptides",price:"35.00",origin:"US"},{shop:"Premium Research Peptides",price:"32.00",origin:"EU"},{shop:"Rebirth Labs",price:"40.99",origin:"US"},{shop:"Austrian Peptides",price:"15.00",origin:"EU"},{shop:"r-phase",price:"29.90",origin:"EU"},{shop:"Kronen Peptide",price:"32.90",origin:"DE"}]],
+            ["mt1","012/144","Melanotan I","Afamelanotid","kosmetik","KOSMETIK","med",["Sicherere Bräunung durch milde Melaninproduktion", "Klinischer Lichtschutz bei empfindlicher weißer Haut"],["Temporäre Rötung & Hitzegefühl (Flush)", "Veränderung bestehender Pigmentflecke"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"2-4 Wo",halflife:"1.5h"},"human","EU-Zulassung (Scenesse).",[{shop:"Europa-Peptide",price:"44.90",origin:"EU"},{shop:"RCpeptides",price:"35.00",origin:"US"},{shop:"Rebirth Labs",price:"49.99",origin:"US"},{shop:"Austrian Peptides",price:"20.00",origin:"EU"},{shop:"r-phase",price:"34.90",origin:"EU"},{shop:"Kronen Peptide",price:"35.90",origin:"DE"},{shop:"nova-biolabs",price:"39.99",origin:"EU"}]],
+            ["pt141","013/144","PT-141","Bremelanotid","libido","LIBIDO","med",["Sexuelle Erregbarkeit via ZNS"],["Übelkeit"],{starter:"0.5mg",normal:"1.5mg",max:"3mg",freq:"Bei Bedarf",form:"Subkutan",timing:"2h vor Sex",cycle:"Bedarf",halflife:"2h"},"human","FDA-Zulassung (Vyleesi).",[{shop:"Europa-Peptide",price:"34.90",origin:"EU"},{shop:"RCpeptides",price:"32.50",origin:"US"},{shop:"Premium Research Peptides",price:"27.20",origin:"EU"},{shop:"Rebirth Labs",price:"69.99",origin:"US"},{shop:"Austrian Peptides",price:"25.00",origin:"EU"}]],
+            ["ghkcu","014/144","GHK-Cu","Kupferpeptid","kosmetik","KOSMETIK","low",["Kollagensynthese","Haarwachstum"],["Hautreizung"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"Dauerhaft",halflife:"Minuten"},"human","Reduktion der Faltentiefe.",[{shop:"Europa-Peptide",price:"37.99",origin:"EU"},{shop:"Peptid24",price:"29.90",origin:"DE"},{shop:"Drakon Peptides",price:"34.90",origin:"EU"},{shop:"Verra",price:"34.90",origin:"EU"},{shop:"RCpeptides",price:"37.50",origin:"US"},{shop:"Premium Research Peptides",price:"29.99",origin:"EU"},{shop:"Rebirth Labs",price:"44.99",origin:"US"},{shop:"Austrian Peptides",price:"15.00",origin:"EU"},{shop:"r-phase",price:"16.99",origin:"EU"},{shop:"Kronen Peptide",price:"24.90",origin:"DE"},{shop:"nova-biolabs",price:"39.99",origin:"EU"},{shop:"odipept",price:"49.00",origin:"DE"}]],
+            ["kpv","015/144","KPV","Antientzündlich","heilung","REGENERATION","low",["Darmheilung","Antibakteriell"],["Geringe Stabilität"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1x/Tag",form:"Oral/Subkutan",timing:"Morgens",cycle:"4-8 Wo",halflife:"30m"},"animal","Colitis-Modelle.",[{shop:"Europa-Peptide",price:"62.90",origin:"EU"},{shop:"RCpeptides",price:"37.50",origin:"US"},{shop:"Premium Research Peptides",price:"19.54",origin:"EU"},{shop:"Rebirth Labs",price:"44.99",origin:"US"},{shop:"Austrian Peptides",price:"25.00",origin:"EU"},{shop:"nova-biolabs",price:"44.99",origin:"EU"}]],
+            ["epitalon","016/144","Epitalon","Telomerase","aging","ANTI-AGING","low",["Aktiviert Telomerase","Melatonin"],["Unbekannt"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"20 Tage",halflife:"Minuten"},"human","Russische Langzeittrials.",[{shop:"Europa-Peptide",price:"34.90",origin:"EU"},{shop:"Drakon Peptides",price:"59.90",origin:"EU"},{shop:"RCpeptides",price:"25.00",origin:"US"},{shop:"Premium Research Peptides",price:"34.99",origin:"EU"},{shop:"Rebirth Labs",price:"54.99",origin:"US"},{shop:"Austrian Peptides",price:"60.00",origin:"EU"},{shop:"r-phase",price:"21.95",origin:"EU"},{shop:"Kronen Peptide",price:"29.90",origin:"DE"},{shop:"nova-biolabs",price:"39.99",origin:"EU"}]],
+            ["semax","017/144","Semax","Nootropikum","neuro","NEURO","low",["Erhöht BDNF","Fokus"],["Schlafprobleme"],{starter:"100mcg",normal:"300mcg",max:"1000mcg",freq:"1-2x/Tag",form:"Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"2h"},"human","Klinisch zugelassen.",[{shop:"Europa-Peptide",price:"57.90",origin:"EU"},{shop:"Peptid24",price:"44.90",origin:"DE"},{shop:"Drakon Peptides",price:"34.90",origin:"EU"},{shop:"RCpeptides",price:"30.00",origin:"US"},{shop:"Rebirth Labs",price:"39.99",origin:"US"},{shop:"Austrian Peptides",price:"20.00",origin:"EU"},{shop:"r-phase",price:"24.90",origin:"EU"},{shop:"Kronen Peptide",price:"29.90",origin:"DE"},{shop:"nova-biolabs",price:"49.99",origin:"EU"}]],
+            ["selank","018/144","Selank","Angstlöser","neuro","NEURO","low",["Angstlösend ohne Müdigkeit"],["Benommenheit"],{starter:"250mcg",normal:"500mcg",max:"3000mcg",freq:"1-3x/Tag",form:"Nasal",timing:"Bedarf",cycle:"4 Wo",halflife:"1.5h"},"human","Klinische Trials.",[{shop:"Europa-Peptide",price:"57.90",origin:"EU"},{shop:"Drakon Peptides",price:"39.90",origin:"EU"},{shop:"RCpeptides",price:"30.00",origin:"US"},{shop:"Premium Research Peptides",price:"27.20",origin:"EU"},{shop:"Rebirth Labs",price:"39.99",origin:"US"},{shop:"Austrian Peptides",price:"40.00",origin:"EU"},{shop:"r-phase",price:"23.99",origin:"EU"},{shop:"Kronen Peptide",price:"29.90",origin:"DE"},{shop:"nova-biolabs",price:"49.99",origin:"EU"}]],
+            ["glutathione","019/144","Glutathion","Antioxidans","aging","ANTI-AGING","low",["Zellentgifter","Hautaufhellung"],["Schlechte orale Aufnahme"],{starter:"100mg",normal:"200mg",max:"600mg",freq:"1x/Tag",form:"IV/Subkutan",timing:"Morgens",cycle:"Dauerhaft",halflife:"Kurz"},"human","Leberstoffwechsel.",[{shop:"Rebirth Labs",price:"40.00",origin:"US"},{shop:"Austrian Peptides",price:"30.00",origin:"EU"}]],
+            ["slupp332","020/144","SLU-PP-332","Exercise Mimetic","gewicht","GEWICHT","med",["Mitochondriendichte","Ausdauer"],["Oxidativer Stress"],{starter:"300mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4-8 Wo",halflife:"12h"},"invitro","Science 2023.",[{shop:"Europa-Peptide",price:"79.90",origin:"EU"},{shop:"RCpeptides",price:"80.00",origin:"US"},{shop:"Premium Research Peptides",price:"89.99",origin:"EU"},{shop:"Rebirth Labs",price:"134.99",origin:"US"},{shop:"Austrian Peptides",price:"35.00",origin:"EU"},{shop:"Kronen Peptide",price:"36.90",origin:"DE"},{shop:"odipept",price:"119.00",origin:"DE"}]],
+            ["tesamorelin","021/144","Tesamorelin","Viszeralfett","wachstum","WACHSTUM","med",["Bauchfett-Abbau"],["Gelenkschmerz"],{starter:"1mg",normal:"2mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"12-24 Wo",halflife:"30m"},"human","FDA-Zulassung.",[{shop:"Europa-Peptide",price:"32.90",origin:"EU"},{shop:"Peptid24",price:"49.90",origin:"DE"},{shop:"Drakon Peptides",price:"79.90",origin:"EU"},{shop:"Premium Research Peptides",price:"81.85",origin:"EU"},{shop:"Rebirth Labs",price:"50.00",origin:"US"},{shop:"Austrian Peptides",price:"70.00",origin:"EU"},{shop:"r-phase",price:"35.99",origin:"EU"},{shop:"Kronen Peptide",price:"39.90",origin:"DE"},{shop:"nova-biolabs",price:"84.99",origin:"EU"}]],
+            ["igf1lr3","022/144","IGF-1 LR3","Hyperplasie","wachstum","WACHSTUM","high",["Neubildung von Muskelzellen"],["Hypoglykämie","Tumor-Risiko"],{starter:"20mcg",normal:"50mcg",max:"100mcg",freq:"Post-Workout",form:"Subkutan",timing:"Nach Training",cycle:"4-6 Wo",halflife:"30h"},"animal","Extremes Wachstum.",[{shop:"Europa-Peptide",price:"62.90",origin:"EU"},{shop:"Peptid24",price:"44.90",origin:"DE"},{shop:"RCpeptides",price:"65.00",origin:"US"},{shop:"Rebirth Labs",price:"89.99",origin:"US"},{shop:"Austrian Peptides",price:"80.00",origin:"EU"}]],
+            ["motsc","023/144","MOTS-C","Mitochondrial","aging","ANTI-AGING","low",["Insulinsensitivität","Zellenergie"],["Regelmäßige Gabe"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"8-12 Wo",halflife:"4h"},"animal","Mäusetrials.",[{shop:"Europa-Peptide",price:"36.90",origin:"EU"},{shop:"Peptid24",price:"99.90",origin:"DE"},{shop:"Drakon Peptides",price:"119.90",origin:"EU"},{shop:"Verra",price:"36.90",origin:"EU"},{shop:"RCpeptides",price:"30.00",origin:"US"},{shop:"Premium Research Peptides",price:"49.99",origin:"EU"},{shop:"Rebirth Labs",price:"54.99",origin:"US"},{shop:"Austrian Peptides",price:"120.00",origin:"EU"},{shop:"r-phase",price:"22.99",origin:"EU"},{shop:"Kronen Peptide",price:"29.90",origin:"DE"},{shop:"nova-biolabs",price:"49.99",origin:"EU"},{shop:"odipept",price:"69.00",origin:"DE"}]],
+            ["ta1","024/144","Thymosin Alpha-1","Immunsystem","aging","ANTI-AGING","low",["T-Helferzellen","Viren-Abwehr"],["Autoimmun-Risiko"],{starter:"1.6mg",normal:"1.6mg",max:"3.2mg",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"6-12 Wo",halflife:"2h"},"human","Klinisch zugelassen.",[{shop:"Europa-Peptide",price:"44.90",origin:"EU"},{shop:"RCpeptides",price:"65.00",origin:"US"},{shop:"Premium Research Peptides",price:"31.83",origin:"EU"},{shop:"Rebirth Labs",price:"119.99",origin:"US"},{shop:"Austrian Peptides",price:"50.00",origin:"EU"},{shop:"Kronen Peptide",price:"39.90",origin:"DE"},{shop:"nova-biolabs",price:"84.99",origin:"EU"}]],
+            ["follistatin344","025/144","Follistatin-344","Myostatin-Hemmer","wachstum","WACHSTUM","high",["Blockt Myostatin","Extreme Kraft"],["Sehnenrisse"],{starter:"50mcg",normal:"100mcg",max:"150mcg",freq:"1x/Tag",form:"Lokal",timing:"Post-Workout",cycle:"10 Tage",halflife:"36h"},"animal","Primatentrials.",[{shop:"RCpeptides",price:"75.00",origin:"US"}]],
+            ["aicar","026/144","AICAR","AMPK","gewicht","GEWICHT","med",["Fettverbrennung","VO2max"],["WADA verboten"],{starter:"10mg",normal:"25mg",max:"100mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4-8 Wo",halflife:"2h"},"human","Kardiologie.",[{shop:"Europa-Peptide",price:"34.90",origin:"EU"},{shop:"RCpeptides",price:"75.00",origin:"US"},{shop:"Austrian Peptides",price:"25.00",origin:"EU"}]],
+            ["sermorelin","027/144","Sermorelin","GRF 1-29","wachstum","WACHSTUM","low",["HGH-Ausschüttung","Gelenke"],["Flush"],{starter:"100mcg",normal:"200mcg",max:"1000mcg",freq:"1x/Tag",form:"Subkutan",timing:"Vor Schlaf",cycle:"12-24 Wo",halflife:"15m"},"human","Zugelassenes Diagnostikum.",[{shop:"RCpeptides",price:"60.00",origin:"US"}]],
+            ["dsip","028/144","DSIP","Tiefschlaf","neuro","NEURO","low",["Delta-Schlaf","Cortisol senkend"],["Morgenmüdigkeit"],{starter:"50mcg",normal:"100mcg",max:"500mcg",freq:"1x/Abends",form:"Subkutan",timing:"Vor Schlaf",cycle:"2-4 Wo",halflife:"15m"},"human","Pilotstudien.",[{shop:"Europa-Peptide",price:"29.90",origin:"EU"},{shop:"Drakon Peptides",price:"39.90",origin:"EU"},{shop:"RCpeptides",price:"40.00",origin:"US"},{shop:"Premium Research Peptides",price:"27.20",origin:"EU"},{shop:"Rebirth Labs",price:"59.99",origin:"US"},{shop:"Austrian Peptides",price:"20.00",origin:"EU"},{shop:"nova-biolabs",price:"39.99",origin:"EU"}]],
+            ["ghrp2","029/144","GHRP-2","Wachstum","wachstum","WACHSTUM","med",["Starker GH-Puls","Regeneration"],["Prolaktin"],{starter:"100mcg",normal:"200mcg",max:"500mcg",freq:"2x/Tag",form:"Subkutan",timing:"Nüchtern",cycle:"8-12 Wo",halflife:"30m"},"human","Klinische Studien.",[{shop:"Europa-Peptide",price:"39.90",origin:"EU"},{shop:"RCpeptides",price:"35.00",origin:"US"},{shop:"Austrian Peptides",price:"20.00",origin:"EU"}]],
+            ["ghrp6","030/144","GHRP-6","Wachstum & Hunger","wachstum","WACHSTUM","med",["GH-Ausschüttung","Heißhunger"],["Cortisol"],{starter:"100mcg",normal:"150mcg",max:"300mcg",freq:"2x/Tag",form:"Subkutan",timing:"Nüchtern",cycle:"8-12 Wo",halflife:"30m"},"human","Kardioprotektiv.",[{shop:"Europa-Peptide",price:"39.90",origin:"EU"},{shop:"RCpeptides",price:"50.00",origin:"US"},{shop:"Austrian Peptides",price:"20.00",origin:"EU"}]],
+            ["hexarelin","031/144","Hexarelin","Stärkstes GHRP","wachstum","WACHSTUM","high",["Stärkster GH-Puls","Herzschutz"],["Rezeptor-Desensibilisierung"],{starter:"50mcg",normal:"100mcg",max:"200mcg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"30m"},"human","Klinische Kardiologie.",[{shop:"Europa-Peptide",price:"29.90",origin:"EU"},{shop:"RCpeptides",price:"50.00",origin:"US"},{shop:"Austrian Peptides",price:"30.00",origin:"EU"}]],
+            ["kisspeptin","032/144","Kisspeptin-10","GnRH-Aktivator","libido","LIBIDO","med",["Steigert LH/FSH","Testosteron"],["Flush"],{starter:"10mcg",normal:"50mcg",max:"100mcg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4-8 Wo",halflife:"Kurz"},"human","Pilotstudien.",[{shop:"Europa-Peptide",price:"38.90",origin:"EU"},{shop:"RCpeptides",price:"40.00",origin:"US"},{shop:"Rebirth Labs",price:"34.99",origin:"US"},{shop:"Austrian Peptides",price:"30.00",origin:"EU"}]],
+            ["ara290","033/144","ARA-290","Neuropathie","heilung","REGENERATION","low",["Nervenschmerzen","Sarkoidose"],["Teuer"],{starter:"1mg",normal:"2mg",max:"8mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"20m"},"human","Phase-II.",[{shop:"RCpeptides",price:"60.00",origin:"US"},{shop:"Rebirth Labs",price:"67.99",origin:"US"}]],
+            ["oxytocin","034/144","Oxytocin","Kuschelhormon","neuro","NEURO","low",["Soziale Bindung","Stress"],["Überempfindlichkeit"],{starter:"10 IU",normal:"20 IU",max:"40 IU",freq:"Bedarf",form:"Nasal",timing:"Bedarf",cycle:"Bedarf",halflife:"5m"},"human","Klinische Psychologie.",[{shop:"Europa-Peptide",price:"24.90",origin:"EU"},{shop:"RCpeptides",price:"70.00",origin:"US"}]],
+            ["hcg","035/144","HCG","Hoden","libido","LIBIDO","med",["Simuliert LH","Spermien"],["Gynäkomastie"],{starter:"250 IU",normal:"500 IU",max:"1500 IU",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"PCT",halflife:"36h"},"human","Reproduktionsmedizin.",[{shop:"Europa-Peptide",price:"42.90",origin:"EU"},{shop:"RCpeptides",price:"32.50",origin:"US"},{shop:"Rebirth Labs",price:"99.99",origin:"US"}]],
+            ["snap8","036/144","SNAP-8","Botox-Ersatz","kosmetik","KOSMETIK","low",["Mimikfalten","Haut"],["Lokal"],{starter:"2%",normal:"5%",max:"10%",freq:"2x/Tag",form:"Topisch",timing:"Morgens",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik-Studien.",[{shop:"Europa-Peptide",price:"36.90",origin:"EU"},{shop:"RCpeptides",price:"30.00",origin:"US"}]],
+            ["argireline","037/144","Argireline","Anti-Falten","kosmetik","KOSMETIK","low",["Entspannt Muskeln"],["Rötung"],{starter:"2%",normal:"5%",max:"10%",freq:"2x/Tag",form:"Topisch",timing:"Morgens",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik-Studien.",[{shop:"RCpeptides",price:"80.00",origin:"US"}]],
+            ["ghkcu100","038/144","GHK-Cu (100mg)","Großpackung","kosmetik","KOSMETIK","low",["Kollagen","Haare"],["Kupfertoxizität"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"Dauerhaft",halflife:"Kurz"},"human","Dermatologie.",[{shop:"RCpeptides",price:"47.50",origin:"US"},{shop:"odipept",price:"49.00",origin:"DE"}]],
+            ["glow","039/144","GLOW Stack","GHK+TB+BPC","kosmetik","KOSMETIK","low",["Skincare & Heilung","Narben"],["Einstichreizung"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Misch"},"pilot","Synergie.",[{shop:"Europa-Peptide",price:"164.90",origin:"EU"},{shop:"Drakon Peptides",price:"109.90",origin:"EU"},{shop:"Verra",price:"104.90",origin:"EU"},{shop:"RCpeptides",price:"115.00",origin:"US"},{shop:"Premium Research Peptides",price:"152.15",origin:"EU"},{shop:"Rebirth Labs",price:"100.00",origin:"US"},{shop:"Kronen Peptide",price:"84.90",origin:"DE"},{shop:"nova-biolabs",price:"114.99",origin:"EU"},{shop:"odipept",price:"89.90",origin:"DE"}]],
+            ["klow","040/144","KLOW Stack","GLOW+KPV","heilung","REGENERATION","low",["Heilung + Entzündung","Darm"],["Mischen aufwendig"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Misch"},"pilot","Ekzeme.",[{shop:"Europa-Peptide",price:"189.90",origin:"EU"},{shop:"Drakon Peptides",price:"119.90",origin:"EU"},{shop:"Verra",price:"129.90",origin:"EU"},{shop:"RCpeptides",price:"135.00",origin:"US"},{shop:"Premium Research Peptides",price:"174.25",origin:"EU"},{shop:"Rebirth Labs",price:"112.00",origin:"US"},{shop:"Kronen Peptide",price:"94.90",origin:"DE"},{shop:"nova-biolabs",price:"124.99",origin:"EU"}]],
+            ["nadplus","041/144","NAD+","Zellenergie","aging","ANTI-AGING","low",["ATP","Sirtuine"],["Flush bei Injektion"],{starter:"50mg",normal:"100mg",max:"500mg",freq:"1x/Wo",form:"IV/Subkutan",timing:"Morgens",cycle:"Kurweise",halflife:"Kurz"},"human","Klinisch.",[{shop:"Europa-Peptide",price:"49.90",origin:"EU"},{shop:"RCpeptides",price:"70.00",origin:"US"},{shop:"Premium Research Peptides",price:"44.09",origin:"EU"},{shop:"Rebirth Labs",price:"74.99",origin:"US"},{shop:"Austrian Peptides",price:"30.00",origin:"EU"},{shop:"r-phase",price:"50.90",origin:"EU"},{shop:"Kronen Peptide",price:"64.90",origin:"DE"},{shop:"nova-biolabs",price:"59.99",origin:"EU"}]],
+            ["ss31","042/144","SS-31","Mitochondrien","aging","ANTI-AGING","low",["Mitochondrienmembran","Radikale"],["Neu"],{starter:"2mg",normal:"4mg",max:"10mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"4h"},"human","Phase-II.",[{shop:"RCpeptides",price:"127.50",origin:"US"},{shop:"Premium Research Peptides",price:"106.24",origin:"EU"},{shop:"Rebirth Labs",price:"55.99",origin:"US"},{shop:"Austrian Peptides",price:"125.00",origin:"EU"},{shop:"nova-biolabs",price:"59.99",origin:"EU"}]],
+            ["hgh","043/144","HGH","Somatropin","wachstum","WACHSTUM","high",["Muskelaufbau","Fettabbau"],["Insulinresistenz"],{starter:"2 IU",normal:"4 IU",max:"6 IU",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Langzeit",halflife:"3h"},"human","Zugelassen.",[{shop:"Europa-Peptide",price:"24.90",origin:"EU"},{shop:"Peptid24",price:"34.90",origin:"DE"}]],
+            ["pe2228","044/144","PE 22-28","Antidepressivum","neuro","NEURO","low",["Neurogenese Hippocampus"],["Frühe Forschung"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan/Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiermodelle.",[{shop:"Europa-Peptide",price:"49.90",origin:"EU"},{shop:"RCpeptides",price:"40.00",origin:"US"}]],
+            ["epo","045/144","EPO","Erythropoetin","gewicht","PERFORMANCE","high",["Rote Blutkörperchen","VO2max"],["Thrombose"],{starter:"20 IU",normal:"50 IU",max:"300 IU",freq:"3x/Wo",form:"IV/Subkutan",timing:"Pre-Workout",cycle:"Kurz",halflife:"8h"},"human","Doping.",[{shop:"Europa-Peptide",price:"49.90",origin:"EU"}]],
+            ["cagrilintide","046/144","Cagrilintid","Amylin","gewicht","GEWICHT","high",["Sättigung","Synergie Sema"],["Übelkeit"],{starter:"0.16mg",normal:"1mg",max:"2.4mg",freq:"1x/Wo",form:"Subkutan",timing:"Wöchentlich",cycle:"Klinisch",halflife:"165h"},"human","SCALE Phase III.",[{shop:"Europa-Peptide",price:"69.00",origin:"EU"},{shop:"RCpeptides",price:"80.00",origin:"US"},{shop:"Rebirth Labs",price:"119.99",origin:"US"},{shop:"Austrian Peptides",price:"45.00",origin:"EU"},{shop:"nova-biolabs",price:"94.99",origin:"EU"}]],
+            ["lcarnitin","047/144","L-Carnitin","Fetttransport","gewicht","GEWICHT","low",["Mitochondrien","Ausdauer"],["Geruch"],{starter:"500mg",normal:"1000mg",max:"2000mg",freq:"1x/Tag",form:"IM/IV",timing:"Vor Training",cycle:"Dauerhaft",halflife:"15h"},"human","Gut belegt.",[{shop:"Europa-Peptide",price:"29.90",origin:"EU"},{shop:"RCpeptides",price:"20.00",origin:"US"},{shop:"Premium Research Peptides",price:"42.99",origin:"EU"}]],
+            ["pegmgf","048/144","PEG-MGF","Lokales MGF","wachstum","WACHSTUM","med",["Lokales Wachstum","Satellitenzellen"],["Nur Trainingstage"],{starter:"200mcg",normal:"400mcg",max:"600mcg",freq:"Post-Workout",form:"Lokal",timing:"Nach Training",cycle:"4 Wo",halflife:"48h"},"invitro","Hyperplasie.",[{shop:"RCpeptides",price:"45.00",origin:"US"},{shop:"Rebirth Labs",price:"99.99",origin:"US"},{shop:"Austrian Peptides",price:"35.00",origin:"EU"}]],
+            ["igf1des","049/144","IGF-1 DES","Kurz wirkend","wachstum","WACHSTUM","high",["Potent","Lokaler Pump"],["Hypoglykämie"],{starter:"20mcg",normal:"50mcg",max:"100mcg",freq:"Pre-Workout",form:"Lokal",timing:"Vor Training",cycle:"4 Wo",halflife:"20m"},"animal","Hypertrophie.",[{shop:"RCpeptides",price:"90.00",origin:"US"}]],
+            ["adipotide","050/144","Adipotide","Fett-Tod","gewicht","GEWICHT","high",["Zerstört Blutgefäße von Fett"],["Nierenversagen"],{starter:"0.2mg/kg",normal:"0.4mg/kg",max:"0.5mg/kg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"2h"},"animal","Affen verloren 11%.",[{shop:"Europa-Peptide",price:"44.90",origin:"EU"},{shop:"RCpeptides",price:"60.00",origin:"US"}]],
+            ["ll37","051/144","LL-37","Antibiotisch","heilung","REGENERATION","med",["Gegen Biofilme","Wundheilung"],["Brennen"],{starter:"50mcg",normal:"100mcg",max:"200mcg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"human","Dermatologie.",[{shop:"RCpeptides",price:"40.00",origin:"US"},{shop:"Rebirth Labs",price:"89.99",origin:"US"},{shop:"Austrian Peptides",price:"40.00",origin:"EU"}]],
+            ["cerebro","052/144","Cerebrolysin","Gehirn","neuro","NEURO","low",["Neurogenese","Schlaganfall"],["Großes Volumen"],{starter:"2ml",normal:"5ml",max:"10ml",freq:"1x/Tag",form:"IM",timing:"Morgens",cycle:"4 Wo",halflife:"Stunden"},"human","Zugelassen.",[{shop:"RCpeptides",price:"75.00",origin:"US"},{shop:"Rebirth Labs",price:"44.99",origin:"US"}]],
+            ["triptorelin","053/144","Triptorelin","PCT Notfall","libido","LIBIDO","high",["Extremer LH Puls","Restart"],["Kastration bei Missbrauch"],{starter:"100mcg",normal:"100mcg",max:"100mcg",freq:"Einmalig",form:"Subkutan",timing:"PCT Beginn",cycle:"1 Tag",halflife:"Minuten"},"human","Endokrinologie.",[{shop:"RCpeptides",price:"75.00",origin:"US"}]],
+            ["dihexa","054/144","Dihexa","Neuro","neuro","NEURO","med",["Extreme Kognition"],["Tumorrisiko theoretisch"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral/Lokal",timing:"Morgens",cycle:"8 Wo",halflife:"Lang"},"animal","Präklinisch.",[{shop:"RCpeptides",price:"135.00",origin:"US"},{shop:"Austrian Peptides",price:"70.00",origin:"EU"}]],
+            ["amino1mq","055/144","5-Amino-1MQ","NNMT","gewicht","GEWICHT","low",["Blockiert Fettspeicherung"],["Teuer"],{starter:"50mg",normal:"100mg",max:"150mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"3 Mo",halflife:"Stunden"},"animal","Mäuse verloren 30%.",[{shop:"Europa-Peptide",price:"139.00",origin:"EU"},{shop:"RCpeptides",price:"160.00",origin:"US"},{shop:"Premium Research Peptides",price:"59.99",origin:"EU"},{shop:"Rebirth Labs",price:"39.99",origin:"US"},{shop:"Austrian Peptides",price:"100.00",origin:"EU"},{shop:"r-phase",price:"30.99",origin:"EU"},{shop:"Kronen Peptide",price:"34.90",origin:"DE"},{shop:"nova-biolabs",price:"44.99",origin:"EU"}]],
+            ["mk677","056/144","MK-677","Ibutamoren","wachstum","WACHSTUM","med",["Oraler GHRP","Hunger"],["Insulinresistenz"],{starter:"10mg",normal:"15mg",max:"25mg",freq:"1x/Tag",form:"Oral",timing:"Vor Schlaf",cycle:"8-16 Wo",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"65.00",origin:"US"},{shop:"Premium Research Peptides",price:"74.99",origin:"EU"},{shop:"Austrian Peptides",price:"25.00",origin:"EU"}]],
+            ["ostarine","057/144","Ostarine","MK-2866","wachstum","WACHSTUM","med",["Milder SARM","Gelenke"],["Suppression"],{starter:"10mg",normal:"20mg",max:"25mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"65.00",origin:"US"}]],
+            ["rad140","058/144","RAD-140","Testolone","wachstum","WACHSTUM","high",["Starker SARM","Kraft"],["Shutdown","Leber"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"20h"},"human","Phase I.",[{shop:"RCpeptides",price:"75.00",origin:"US"}]],
+            ["lgd4033","059/144","LGD-4033","Ligandrol","wachstum","WACHSTUM","high",["Masse SARM","Wasser"],["Shutdown"],{starter:"5mg",normal:"10mg",max:"10mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"80.00",origin:"US"}]],
+            ["cardarine","060/144","Cardarine","GW-501516","gewicht","GEWICHT","high",["Extreme Ausdauer"],["Krebsrisiko in Tieren"],{starter:"10mg",normal:"15mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Vor Training",cycle:"8 Wo",halflife:"24h"},"animal","Mäuse-Ausdauer.",[{shop:"RCpeptides",price:"60.00",origin:"US"},{shop:"Austrian Peptides",price:"30.00",origin:"EU"}]],
+            ["sr9009","061/144","SR9009","Stenabolic","gewicht","GEWICHT","med",["Ruheumsatz"],["Schlechte orale Aufnahme"],{starter:"10mg",normal:"20mg",max:"40mg",freq:"3x/Tag",form:"Oral",timing:"Verteilt",cycle:"8 Wo",halflife:"2h"},"animal","Mäuse-Ausdauer.",[{shop:"RCpeptides",price:"70.00",origin:"US"}]],
+            ["yk11","062/144","YK-11","Myostatin SARM","wachstum","WACHSTUM","high",["DHT Derivat","Myostatin Hemmer"],["Leber","Gelenke"],{starter:"5mg",normal:"10mg",max:"15mg",freq:"1x/Tag",form:"Oral",timing:"Essen",cycle:"6 Wo",halflife:"8h"},"invitro","Zellstudien.",[{shop:"RCpeptides",price:"85.00",origin:"US"}]],
+            ["enclomiphene","063/144","Enclomiphene","SERM PCT","libido","LIBIDO","med",["PCT Goldstandard","LH Puls"],["Sehschärfe (selten)"],{starter:"6.25mg",normal:"12.5mg",max:"25mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"10h"},"human","Klinisch.",[{shop:"RCpeptides",price:"75.00",origin:"US"}]],
+            ["bacwater","064/144","BAC-Wasser","Bakteriostatisch","heilung","ZUBEHÖR","low",["Rekonstitution","Keimfrei"],["Nicht pur spritzen"],{starter:"1ml",normal:"2ml",max:"3ml",freq:"Bedarf",form:"Subkutan",timing:"Mischen",cycle:"Dauerhaft",halflife:"-"},"human","Standard.",[{shop:"Peptid24",price:"5.49",origin:"DE"},{shop:"Verra",price:"5.90",origin:"EU"},{shop:"Drakon Peptides",price:"19.99",origin:"EU"},{shop:"Premium Research Peptides",price:"8.49",origin:"EU"},{shop:"Rebirth Labs",price:"19.99",origin:"US"},{shop:"Austrian Peptides",price:"10.00",origin:"EU"},{shop:"r-phase",price:"3.90",origin:"EU"},{shop:"Kronen Peptide",price:"4.90",origin:"DE"},{shop:"nova-biolabs",price:"19.99",origin:"EU"},{shop:"odipept",price:"9.95",origin:"DE"}]],
+            ["ru58841","065/144","RU58841","Anti-Androgen","kosmetik","KOSMETIK","low",["Stoppt Haarausfall lokal"],["Kopfschmerz bei Systemik"],{starter:"20mg",normal:"50mg",max:"100mg",freq:"1x/Tag",form:"Topisch",timing:"Abends",cycle:"Dauerhaft",halflife:"1h"},"human","Klinisch.",[{shop:"RCpeptides",price:"45.00",origin:"US"},{shop:"Austrian Peptides",price:"40.00",origin:"EU"}]],
+            ["noopept","066/144","Noopept","Kognition","neuro","NEURO","low",["BDNF","Gedächtnis"],["Brain-Fog"],{starter:"10mg",normal:"20mg",max:"40mg",freq:"2x/Tag",form:"Oral/Nasal",timing:"Tag",cycle:"4 Wo",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"30.00",origin:"US"},{shop:"Austrian Peptides",price:"30.00",origin:"EU"}]],
+            ["tudca","067/144","TUDCA","Leberschutz","heilung","REGENERATION","low",["Stärkster Leberschutz"],["Magen"],{starter:"250mg",normal:"500mg",max:"1500mg",freq:"1x/Tag",form:"Oral",timing:"Essen",cycle:"Kur",halflife:"Mittel"},"human","Standard.",[{shop:"RCpeptides",price:"60.00",origin:"US"}]],
+            ["methyleneblue","068/144","Methylene Blue","Energie","neuro","NEURO","med",["ATP Produktion"],["Blauer Urin","SSRI Gefahr"],{starter:"0.5mg/kg",normal:"1mg/kg",max:"4mg/kg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"Kur",halflife:"5h"},"human","Standard.",[{shop:"RCpeptides",price:"60.00",origin:"US"},{shop:"Premium Research Peptides",price:"54.57",origin:"EU"},{shop:"Austrian Peptides",price:"20.00",origin:"EU"}]],
+            ["rad150","069/144","RAD-150","TLB-150","wachstum","WACHSTUM","high",["Lange HWZ","Muskeln"],["Shutdown"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"48h"},"animal","Präklinisch.",[{shop:"RCpeptides",price:"77.50",origin:"US"}]],
+            ["pinealon","070/144","Pinealon","Gehirn","neuro","NEURO","low",["Zirkadianer Rhythmus"],["-"],{starter:"10mg",normal:"20mg",max:"40mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"10 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"55.00",origin:"US"},{shop:"Rebirth Labs",price:"54.99",origin:"US"}]],
+            ["bromantane","071/144","Bromantane","Ladasten","neuro","NEURO","low",["Stimulans ohne Crash"],["Schlaf"],{starter:"25mg",normal:"50mg",max:"150mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"11h"},"human","Russland.",[{shop:"RCpeptides",price:"60.00",origin:"US"},{shop:"Premium Research Peptides",price:"36.38",origin:"EU"},{shop:"Austrian Peptides",price:"45.00",origin:"EU"}]],
+            ["phenibut","072/144","Phenibut","Angstlöser","neuro","NEURO","high",["Tiefschlaf","Sozial"],["Extreme Suchtgefahr"],{starter:"250mg",normal:"500mg",max:"1500mg",freq:"1x/Wo",form:"Oral",timing:"Bedarf",cycle:"Bedarf",halflife:"5h"},"human","Russland.",[{shop:"RCpeptides",price:"45.00",origin:"US"},{shop:"Austrian Peptides",price:"20.00",origin:"EU"}]],
+            ["nsi189","073/144","NSI-189","Hippocampus","neuro","NEURO","med",["Neurogenese","Depression"],["Parästhesien"],{starter:"20mg",normal:"40mg",max:"80mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"15h"},"human","Phase II.",[{shop:"RCpeptides",price:"90.00",origin:"US"}]],
+            ["9mbc","074/144","9-MBC","Dopamin","neuro","NEURO","high",["Regeneriert Dopamin"],["Photosensibilität (Sonne!)"],{starter:"10mg",normal:"15mg",max:"30mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"Lang"},"invitro","Zellen.",[{shop:"RCpeptides",price:"80.00",origin:"US"},{shop:"Austrian Peptides",price:"50.00",origin:"EU"}]],
+            ["vilon","075/144","Vilon","Thymus","aging","ANTI-AGING","low",["T-Zellen Produktion"],["Autoimmun"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"10 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"50.00",origin:"US"}]],
+            ["survodutide","076/144","Survodutide","Dual Agonist","gewicht","GEWICHT","high",["Glucagon + GLP1"],["Herzrasen"],{starter:"0.6mg",normal:"2.4mg",max:"4.8mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"Langzeit",halflife:"5 Tage"},"human","19% Abnahme.",[{shop:"RCpeptides",price:"90.00",origin:"US"}]],
+            ["ac262","077/144","AC-262","Milder SARM","wachstum","WACHSTUM","low",["Muskeln ohne Prostata"],["Schwach"],{starter:"10mg",normal:"20mg",max:"30mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"12h"},"animal","Tierstudien.",[{shop:"RCpeptides",price:"55.00",origin:"US"}]],
+            ["s4","078/144","S4 Andarine","Härte SARM","wachstum","WACHSTUM","med",["Muskelhärte","Fettabbau"],["Sehverschlechterung (Gelbstich)"],{starter:"25mg",normal:"50mg",max:"75mg",freq:"2x/Tag",form:"Oral",timing:"Verteilt",cycle:"8 Wo",halflife:"4h"},"human","Klinisch.",[{shop:"RCpeptides",price:"80.00",origin:"US"}]],
+            ["gw0742","079/144","GW0742","Super Cardarine","gewicht","GEWICHT","high",["Extreme Ausdauer"],["Herz (Tier)"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Training",cycle:"8 Wo",halflife:"24h"},"animal","Tiere.",[{shop:"RCpeptides",price:"75.00",origin:"US"}]],
+            ["acp105","080/144","ACP-105","SARM","wachstum","WACHSTUM","med",["Sicherer SARM"],["Suppression"],{starter:"10mg",normal:"15mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"5h"},"invitro","Zellen.",[{shop:"RCpeptides",price:"75.00",origin:"US"}]],
+            ["s23","081/144","S23","Stärkster SARM","wachstum","WACHSTUM","high",["Wettkampf-Härte"],["Verhütungsmittel (Männer)"],{starter:"10mg",normal:"20mg",max:"30mg",freq:"2x/Tag",form:"Oral",timing:"Verteilt",cycle:"8 Wo",halflife:"12h"},"animal","Tiere.",[{shop:"RCpeptides",price:"60.00",origin:"US"}]],
+            ["orexina","082/144","Orexin A","Fokus","neuro","NEURO","med",["Hellwach","Motivation"],["Schlafprobleme"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"Bedarf",form:"Nasal",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"120.00",origin:"US"}]],
+            ["larazotide","083/144","Larazotide","Leaky Gut","heilung","REGENERATION","low",["Schließt Darm (Tight Junctions)"],["Keine"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"3x/Tag",form:"Oral",timing:"Vor Essen",cycle:"4 Wo",halflife:"Lokal"},"human","Phase III.",[{shop:"RCpeptides",price:"95.00",origin:"US"}]],
+            ["colivelin","084/144","Colivelin","Neuroprotektiv","neuro","NEURO","med",["Schutz vor Alzheimer"],["Teuer"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"200.00",origin:"US"}]],
+            ["synake","085/144","Syn-Ake","Schlangengift","kosmetik","KOSMETIK","low",["Botox-Ersatz"],["Nur Topisch!"],{starter:"1%",normal:"4%",max:"5%",freq:"2x/Tag",form:"Topisch",timing:"Täglich",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik.",[{shop:"RCpeptides",price:"175.00",origin:"US"}]],
+            ["foxo4","086/144","FOXO4-DRI","Senolytikum","aging","ANTI-AGING","med",["Zerstört Zombie-Zellen"],["Niere"],{starter:"1mg",normal:"3mg",max:"5mg",freq:"3x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"Europa-Peptide",price:"189.90",origin:"EU"},{shop:"RCpeptides",price:"50.00",origin:"US"},{shop:"Rebirth Labs",price:"179.99",origin:"US"},{shop:"Austrian Peptides",price:"100.00",origin:"EU"}]],
+            ["mazdutide","087/144","Mazdutide","GLP/Glucagon","gewicht","GEWICHT","high",["Leberfett","Abnehmen"],["Herzrasen"],{starter:"1.5mg",normal:"3mg",max:"9mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"Lang",halflife:"7 Tage"},"human","Phase II.",[{shop:"RCpeptides",price:"80.00",origin:"US"}]],
+            ["thymalin","088/144","Thymalin","Thymus","aging","ANTI-AGING","low",["Immunsystem"],["Keine"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"Europa-Peptide",price:"24.90",origin:"EU"},{shop:"RCpeptides",price:"40.00",origin:"US"},{shop:"Austrian Peptides",price:"20.00",origin:"EU"}]],
+            ["bam15","089/144","BAM15","Entkoppler","gewicht","GEWICHT","high",["Verbrennt Kalorien als Hitze"],["Überhitzung"],{starter:"15mg",normal:"30mg",max:"50mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"125.00",origin:"US"}]],
+            ["p21","090/144","P21","BDNF Booster","neuro","NEURO","low",["Lernen","Neurogenese"],["Müdigkeit"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Stunden"},"animal","Mäuse.",[{shop:"RCpeptides",price:"70.00",origin:"US"}]],
+            ["adamax","091/144","Adamax","Super Semax","neuro","NEURO","low",["Extremer Fokus"],["Schlaf"],{starter:"100mcg",normal:"200mcg",max:"1000mcg",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"Kur",halflife:"Stunden"},"invitro","Zellen.",[{shop:"RCpeptides",price:"55.00",origin:"US"},{shop:"Rebirth Labs",price:"65.99",origin:"US"},{shop:"Austrian Peptides",price:"40.00",origin:"EU"}]],
+            ["ace031","092/144","ACE-031","Myostatin","wachstum","WACHSTUM","high",["Extremer Muskelaufbau"],["Nasenbluten"],{starter:"1mg",normal:"3mg",max:"5mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"15 Tage"},"human","Phase II.",[{shop:"RCpeptides",price:"180.00",origin:"US"}]],
+            ["dermorphin","093/144","Dermorphin","Frosch-Opioid","neuro","NEURO","high",["30x Morphium"],["Sucht","Atemdepression"],{starter:"Klinisch",normal:"Klinisch",max:"Klinisch",freq:"Akut",form:"Subkutan",timing:"Akut",cycle:"Kurz",halflife:"Kurz"},"animal","Pferde.",[{shop:"RCpeptides",price:"140.00",origin:"US"}]],
+            ["astressinb","094/144","Astressin-B","Stress-Blocker","kosmetik","KOSMETIK","low",["Haarwuchs","Stress"],["-"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"150.00",origin:"US"}]],
+            ["lgd3033","095/144","LGD-3033","Dry SARM","wachstum","WACHSTUM","high",["Trockene Muskeln"],["Suppression"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"2x/Tag",form:"Oral",timing:"Tag",cycle:"8 Wo",halflife:"6h"},"invitro","Zellen.",[{shop:"RCpeptides",price:"80.00",origin:"US"}]],
+            ["hng","096/144","HNG","Humanin Analogon","aging","ANTI-AGING","med",["Schutz vor Alzheimer"],["Tumor (Kontraindikation)"],{starter:"1mg",normal:"5mg",max:"10mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"invitro","Zellen.",[{shop:"RCpeptides",price:"100.00",origin:"US"}]],
+            ["dnsp11","097/144","DNSP-11","Dopamin Neuronen","neuro","NEURO","med",["Parkinson Schutz"],["Teuer"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"125.00",origin:"US"}]],
+            ["pnc27","098/144","PNC-27","Anti-Cancer","heilung","REGENERATION","high",["Zerstört Krebszellen"],["Experimentell"],{starter:"1mg",normal:"3mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Kur",halflife:"Kurz"},"invitro","Zellen.",[{shop:"RCpeptides",price:"100.00",origin:"US"}]],
+            ["palghk","099/144","PAL-GHK","Palmitoyl","kosmetik","KOSMETIK","low",["Kollagen (Haut)"],["Topisch"],{starter:"1%",normal:"2%",max:"5%",freq:"2x/Tag",form:"Topisch",timing:"Tag",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik.",[{shop:"RCpeptides",price:"50.00",origin:"US"}]],
+            ["hep1","100/144","HEP-1","Verbrennungen","heilung","REGENERATION","med",["Wundheilung"],["Wenig Daten"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"140.00",origin:"US"}]],
+            ["fgl","101/144","FGL","NCAM Mimetic","neuro","NEURO","med",["Synapsenbildung"],["Teuer"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"200.00",origin:"US"}]],
+            ["orexinb","102/144","Orexin B","Wachheit","neuro","NEURO","med",["Fokus"],["Blutdruck"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"Bedarf",form:"Nasal",timing:"Morgens",cycle:"Kur",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"120.00",origin:"US"}]],
+            ["chrysalin","103/144","Chrysalin","TP508","heilung","REGENERATION","low",["Knochenbruch Heilung"],["Lokal spritzen"],{starter:"1mg",normal:"2mg",max:"10mg",freq:"2x/Wo",form:"Lokal",timing:"Post-Trauma",cycle:"Bedarf",halflife:"Kurz"},"human","Phase II.",[{shop:"RCpeptides",price:"200.00",origin:"US"}]],
+            ["tb4frag","104/144","Thymosin B4 Frag","Ac-LKKTETQ","heilung","REGENERATION","low",["Anti-Fibrose (Narbe)"],["Kurze HWZ"],{starter:"1mg",normal:"2mg",max:"4mg",freq:"Alle 2 Tage",form:"Subkutan",timing:"Abends",cycle:"4 Wo",halflife:"Kurz"},"invitro","Zellen.",[{shop:"RCpeptides",price:"90.00",origin:"US"}]],
+            ["vesilute","105/144","Vesilute","Prostata","aging","ANTI-AGING","low",["Blase & Prostata"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"60.00",origin:"US"}]],
+            ["ace083","106/144","ACE-083","Lokales Myostatin","wachstum","WACHSTUM","high",["Muskel wächst nur lokal"],["Verhärtung"],{starter:"1mg",normal:"2mg",max:"3mg",freq:"2x/Wo",form:"IM",timing:"Training",cycle:"4 Wo",halflife:"Mittel"},"human","Klinisch.",[{shop:"RCpeptides",price:"180.00",origin:"US"}]],
+            ["sobetirome","107/144","Sobetirome","GC-1","gewicht","GEWICHT","med",["T3 ohne Herzbelastung"],["Schwitzen"],{starter:"10mcg",normal:"20mcg",max:"100mcg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"8 Wo",halflife:"Tage"},"animal","Tiere.",[{shop:"RCpeptides",price:"120.00",origin:"US"}]],
+            ["livagen","108/144","Livagen","DNA Entfaltung","aging","ANTI-AGING","low",["Verjüngt Leber/Immun"],["-"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"60.00",origin:"US"}]],
+            ["prostamax","109/144","Prostamax","Prostata-Bio","aging","ANTI-AGING","low",["Verjüngt Prostata"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"50.00",origin:"US"}]],
+            ["gonadorelin","110/144","Gonadorelin","GnRH-Analogon","libido","LIBIDO","med",["Testosteron Produktion"],["Kastration bei Dauerinfusion"],{starter:"100mcg",normal:"100mcg",max:"300mcg",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"PCT",halflife:"Minuten"},"human","Klinisch.",[{shop:"RCpeptides",price:"50.00",origin:"US"}]],
+            ["hmg","111/144","HMG","LH & FSH","libido","LIBIDO","med",["Hoden (Besser als HCG)"],["Teuer"],{starter:"37.5 IU",normal:"75 IU",max:"150 IU",freq:"3x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Tage"},"human","Klinisch.",[{shop:"RCpeptides",price:"32.50",origin:"US"}]],
+            ["cartalax","112/144","Cartalax","Knorpel","heilung","REGENERATION","low",["Gelenk-Knorpel"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"40.00",origin:"US"},{shop:"Premium Research Peptides",price:"58.85",origin:"EU"}]],
+            ["testagen","113/144","Testagen","Hoden-Bio","libido","LIBIDO","low",["Spermienqualität"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"52.50",origin:"US"}]],
+            ["vip","114/144","VIP","CIRS/Schimmel","neuro","NEURO","med",["Heilt Biotoxin-Krankheit"],["Blutdruck"],{starter:"50mcg",normal:"50mcg",max:"100mcg",freq:"4x/Tag",form:"Nasal",timing:"Tag",cycle:"Dauerhaft",halflife:"Minuten"},"human","Klinisch.",[{shop:"RCpeptides",price:"57.50",origin:"US"},{shop:"nova-biolabs",price:"79.99",origin:"EU"}]],
+            ["b733","115/144","B7-33","Anti-Fibrose","heilung","REGENERATION","low",["Baut Narbengewebe (Herz) ab"],["Experimentell"],{starter:"500mcg",normal:"1mg",max:"2mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"6 Wo",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"50.00",origin:"US"}]],
+            ["vesugen","116/144","Vesugen","Blutgefäße","aging","ANTI-AGING","low",["Elastizität Gefäße"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"50.00",origin:"US"}]],
+            ["ovagen","117/144","Ovagen","Leber-Bio","aging","ANTI-AGING","low",["Leber Regeneration"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"55.00",origin:"US"}]],
+            ["crystagen","118/144","Crystagen","Immun-Bio","aging","ANTI-AGING","low",["T-Zellen nach Infekt"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Russland.",[{shop:"RCpeptides",price:"55.00",origin:"US"}]],
+            ["cortagen","119/144","Cortagen","ZNS-Bio","neuro","NEURO","low",["Gehirn Stress"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"animal","Tiere.",[{shop:"RCpeptides",price:"50.00",origin:"US"}]],
+            ["pancragen","120/144","Pancragen","Pankreas","aging","ANTI-AGING","low",["Insulinresistenz"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"40.00",origin:"US"}]],
+            ["cardiogen","121/144","Cardiogen","Herz-Bio","aging","ANTI-AGING","low",["Herzmuskelzellen"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"47.50",origin:"US"}]],
+            ["teriparatide","122/144","Teriparatid","Forteo","heilung","REGENERATION","med",["Knochenaufbau massiv"],["Hyperkalzämie"],{starter:"20mcg",normal:"20mcg",max:"40mcg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"24 Mo",halflife:"1h"},"human","FDA.",[{shop:"RCpeptides",price:"80.00",origin:"US"}]],
+            ["ahkcu","123/144","AHK-Cu","Haar-Kupfer","kosmetik","KOSMETIK","low",["Besser als GHK für Haare"],["Topisch"],{starter:"1%",normal:"2%",max:"5%",freq:"1x/Tag",form:"Topisch",timing:"Tag",cycle:"Dauerhaft",halflife:"Lokal"},"invitro","Zellen.",[{shop:"Europa-Peptide",price:"47.90",origin:"EU"},{shop:"RCpeptides",price:"52.50",origin:"US"},{shop:"Rebirth Labs",price:"89.99",origin:"US"},{shop:"Austrian Peptides",price:"35.00",origin:"EU"}]],
+            ["tesofensine","124/144","Tesofensine","SNDRI","gewicht","GEWICHT","high",["Brutaler Appetitzügler"],["Puls/Blutdruck"],{starter:"250mcg",normal:"500mcg",max:"1000mcg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"12 Wo",halflife:"9 Tage"},"human","Phase II.",[{shop:"RCpeptides",price:"275.00",origin:"US"}]],
+            ["humanin","125/144","Humanin","Mito-Peptid","aging","ANTI-AGING","med",["Schützt vor Alzheimer"],["Tumor (Kontraindikation)"],{starter:"1mg",normal:"5mg",max:"10mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"125.00",origin:"US"}]],
+            ["retinalamin","126/144","Retinalamin","Augen-Bio","heilung","REGENERATION","low",["Netzhaut Heilung"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"10 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"125.00",origin:"US"}]],
+            ["bronchogen","127/144","Bronchogen","Lungen-Bio","heilung","REGENERATION","low",["Bronchitis/Raucher"],["-"],{starter:"5mg",normal:"10mg",max:"20mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"20 Tage",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"50.00",origin:"US"}]],
+            ["matrixyl","128/144","Matrixyl","Anti-Falten","kosmetik","KOSMETIK","low",["Kollagen-1"],["Topisch"],{starter:"2%",normal:"5%",max:"10%",freq:"2x/Tag",form:"Topisch",timing:"Tag",cycle:"Dauerhaft",halflife:"Lokal"},"human","Kosmetik.",[{shop:"RCpeptides",price:"30.00",origin:"US"}]],
+            ["bioglutide","129/144","Bioglutide","Oral GLP-1","gewicht","GEWICHT","med",["Semaglutid als Pille"],["Magen"],{starter:"100mg",normal:"100mg",max:"200mg",freq:"1x/Tag",form:"Oral",timing:"Morgens",cycle:"Langzeit",halflife:"24h"},"human","Klinisch.",[{shop:"RCpeptides",price:"200.00",origin:"US"}]],
+            ["lipoc","130/144","Lipo-C","Lipotropic","gewicht","GEWICHT","low",["Fettverbrennung (Leber)"],["Rötung"],{starter:"1ml",normal:"2ml",max:"3ml",freq:"2x/Wo",form:"IM",timing:"Morgens",cycle:"Dauerhaft",halflife:"Stunden"},"human","Kliniken.",[{shop:"RCpeptides",price:"75.00",origin:"US"}]],
+            ["ptd1","131/144","PTD-DBM","Kopfhaut-Peptid","kosmetik","KOSMETIK","med",["Haarwachstum"],["Teuer"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Topisch",timing:"Abends",cycle:"Kurweise",halflife:"Kurz"},"animal","Mäuse.",[{shop:"RCpeptides",price:"80.00",origin:"US"}]],
+            ["gdf8","132/144","GDF-8","Myostatin-Pro","wachstum","WACHSTUM","high",["Autoimmun Wachstum"],["Sehnenrisse"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Wo",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Lang"},"animal","Tiere.",[{shop:"RCpeptides",price:"100.00",origin:"US"}]],
+            ["thymalfasin","133/144","Thymalfasin","Hochdosis T-Alpha","aging","ANTI-AGING","low",["Maximales Immunsystem"],["Autoimmun"],{starter:"2mg",normal:"5mg",max:"10mg",freq:"2x/Wo",form:"Subkutan",timing:"Morgens",cycle:"Kur",halflife:"2h"},"human","Klinisch.",[{shop:"RCpeptides",price:"200.00",origin:"US"}]],
+            ["bpcpellets","134/144","BPC-157 Pellets","Oral BPC","heilung","REGENERATION","low",["Heilt Magen-Darm"],["-"],{starter:"500mcg",normal:"1000mcg",max:"2000mcg",freq:"2x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"4h"},"human","Klinisch.",[{shop:"RCpeptides",price:"125.00",origin:"US"},{shop:"Premium Research Peptides",price:"64.20",origin:"EU"}]],
+            ["kpvpellets","135/144","KPV Pellets","Oral KPV","heilung","REGENERATION","low",["Anti-Candida Darm"],["-"],{starter:"500mcg",normal:"1000mcg",max:"2000mcg",freq:"2x/Tag",form:"Oral",timing:"Essen",cycle:"4 Wo",halflife:"Kurz"},"animal","Darm.",[{shop:"RCpeptides",price:"125.00",origin:"US"}]],
+            ["tb500pellets","136/144","TB-500 Pellets","Oral TB500","heilung","REGENERATION","low",["Systemische Heilung"],["-"],{starter:"500mcg",normal:"1000mcg",max:"2000mcg",freq:"2x/Tag",form:"Oral",timing:"Morgens",cycle:"4 Wo",halflife:"Mittel"},"pilot","Pilot.",[{shop:"RCpeptides",price:"100.00",origin:"US"}]],
+            ["aminonasal","137/144","5-Amino Nasal","Nasal 1MQ","gewicht","GEWICHT","med",["Stoffwechsel Boost"],["Nasenreizung"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"Mittel"},"animal","Tiere.",[{shop:"RCpeptides",price:"100.00",origin:"US"}]],
+            ["ll37nasal","138/144","LL-37 Nasal","Spray LL37","heilung","REGENERATION","med",["Gegen Sinusitis Keime"],["Brennen"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"Kurz",halflife:"Kurz"},"human","Beobachtung.",[{shop:"RCpeptides",price:"40.00",origin:"US"}]],
+            ["semaxnasal","139/144","Semax Nasal","RC Spray","neuro","NEURO","low",["Fokus/Kognition"],["-"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"30.00",origin:"US"}]],
+            ["selanknasal","140/144","Selank Nasal","RC Angstlöser","neuro","NEURO","low",["Angstlöser"],["-"],{starter:"1 Hub",normal:"2 Hub",max:"4 Hub",freq:"1x/Tag",form:"Nasal",timing:"Bedarf",cycle:"4 Wo",halflife:"Kurz"},"human","Klinisch.",[{shop:"RCpeptides",price:"30.00",origin:"US"}]],
+            ["oxytocinacetate","141/144","Oxytocin Acetat","Soziales Peptid","neuro","NEURO","low",["Soziale Phobien"],["Empfindlichkeit"],{starter:"10 IU",normal:"20 IU",max:"40 IU",freq:"Bedarf",form:"Subkutan",timing:"Bedarf",cycle:"Bedarf",halflife:"Kurz"},"human","Psychologie.",[{shop:"RCpeptides",price:"70.00",origin:"US"}]],
+            ["cjcipa","142/144","CJC-1295 / Ipamorelin Blend","Synergy Stack","wachstum","WACHSTUM","low",["Synergistische HGH-Ausschüttung durch Überlagerung","Verbesserte Tiefschlafphasen","Starker Anti-Aging Effekt"],["Wassereinlagerungen"],{starter:"100mcg",normal:"250mcg",max:"500mcg",freq:"1-2x/Tag",form:"Subkutan",timing:"Vor Schlaf",cycle:"8-12 Wo",halflife:"2h"},"human","Standard-Protokoll in Anti-Aging Kliniken.",[{shop:"Premium Research Peptides",price:"49.99",origin:"EU"},{shop:"Rebirth Labs",price:"74.99",origin:"US"},{shop:"r-phase",price:"33.90",origin:"EU"},{shop:"Kronen Peptide",price:"39.90",origin:"DE"},{shop:"nova-biolabs",price:"69.99",origin:"EU"}]],
+            ["bpctb","143/144","BPC-157 / TB-500 Blend","Wolverine Stack","heilung","REGENERATION","low",["Extreme Synergie für Sehnen, Bänder & Muskelrisse","Beschleunigte Angiogenese & Zellmigration"],["Leichtes Hitzegefühl an Einstichstelle"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"4-8 Wo",halflife:"Misch"},"pilot","Goldstandard in der Sport-Reha.",[{shop:"Premium Research Peptides",price:"64.99",origin:"EU"},{shop:"Rebirth Labs",price:"89.99",origin:"US"},{shop:"nova-biolabs",price:"69.99",origin:"EU"},{shop:"odipept",price:"59.00",origin:"DE"}]],
+            ["glp2","144/144","GLP-2","Teduglutid","heilung","REGENERATION","med",["Darmzotten-Wachstum","Heilung Leaky Gut"],["Magenbeschwerden"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Morgens",cycle:"4 Wo",halflife:"Kurz"},"human","Zugelassen für Kurzdarmsyndrom.",[{shop:"Rebirth Labs",price:"49.99",origin:"US"},{shop:"nova-biolabs",price:"79.99",origin:"EU"}]]
         ];
 
         let loadedCount = RAW_DATA.length;
@@ -967,6 +1081,18 @@
             "Premium Research Peptides": "https://www.peptiderevolution.eu/"
         };
 
+        // Hilfsfunktion zum sicheren Parsen von Shop-Preisen (z.B. "Ab 44,00 €" -> 44.00)
+        function parsePrice(str) {
+            let s = str.toString().toLowerCase();
+            s = s.replace(/ab\s/g, ''); 
+            s = s.split('–')[0]; 
+            s = s.split('-')[0]; 
+            s = s.replace('€', '').replace('$', '').trim();
+            s = s.replace(',', '.'); 
+            let num = parseFloat(s);
+            return isNaN(num) ? 0 : num;
+        }
+
         function renderDatabase() {
             const grid = document.getElementById('db-grid');
             grid.innerHTML = '';
@@ -999,7 +1125,25 @@
                             
                         const displayPrice = pr.price.toString().includes('€') || pr.price.toString().includes('$') ? pr.price : pr.price + ' €';
                         
-                        priceHtml += `<div class="flex justify-between items-center text-xs py-1.5 border-b border-white/5 last:border-0"><span class="text-slate-400 font-bold">${shopLabel}</span><span class="font-bold text-white bg-slate-800/50 px-2 py-0.5 rounded">${displayPrice}</span></div>`;
+                        let originBadge = "";
+                        if (pr.origin) {
+                            if (pr.origin === 'DE' || pr.origin === 'EU') {
+                                originBadge = `<div class="flex items-center gap-1.5 text-[9.5px] font-medium text-emerald-400/90 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse-slow"></span> EU-Zentrallager (Kein Zollrisiko, 3-5 Tage)</div>`;
+                            } else if (pr.origin === 'UK') {
+                                originBadge = `<div class="flex items-center gap-1.5 text-[9.5px] font-medium text-amber-400/90 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span> Drittland (Stichproben-Risiko, 5-10 Tage)</div>`;
+                            } else if (pr.origin === 'US' || pr.origin === 'CN') {
+                                originBadge = `<div class="flex items-center gap-1.5 text-[9.5px] font-medium text-rose-400/90 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></span> Übersee (Erhöhtes Zollrisiko, 14-30 Tage)</div>`;
+                            }
+                        }
+                        
+                        priceHtml += `
+                            <div class="py-2.5 border-b border-white/5 last:border-0 flex flex-col justify-center">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-slate-300 font-bold">${shopLabel}</span>
+                                    <span class="font-bold text-white bg-slate-800/80 border border-white/5 px-2 py-1 rounded shadow-inner">${displayPrice}</span>
+                                </div>
+                                ${originBadge}
+                            </div>`;
                     });
                 }
 
@@ -1180,7 +1324,6 @@
             document.getElementById('db-count').innerText = displayed;
         }
 
-        // --- CALCULATOR LOGIC ---
         function calculateSyringe() {
             const mg = parseFloat(document.getElementById('calc-mg').value) || 0;
             const ml = parseFloat(document.getElementById('calc-ml').value) || 0;
@@ -1207,10 +1350,13 @@
             resConc.innerText = (mg / ml).toFixed(2) + " mg/ml";
             resDoses.innerText = Math.floor(totalMcg / mcg) + " Dosen";
             fluid.style.width = Math.min(100, Math.max(0, units)) + "%";
+            
+            if (typeof calculateCycleBudget === "function") calculateCycleBudget();
         }
 
         function initCalcPresets() {
             const s = document.getElementById('calcPreset');
+            if(!s) return;
             s.innerHTML = '<option value="">-- Manuelle Eingabe --</option>';
             RAW_DATA.forEach(item => {
                 const name = item[2];
@@ -1233,11 +1379,103 @@
             document.getElementById('calcPreset').value = id;
             document.getElementById('calc-mg').value = 5;
             document.getElementById('calc-ml').value = 2;
-            document.getElementById('calc-mcg').value = parseInt(pep[9].normal) || 250;
+            
+            const dose = parseInt(pep[9].normal) || 250;
+            document.getElementById('calc-mcg').value = dose;
+
+            let freqStr = pep[9].freq.toLowerCase();
+            let multi = 1;
+            if (freqStr.includes("2x")) multi = 2;
+            else if (freqStr.includes("3x")) multi = 3;
+            else if (freqStr.includes("4x")) multi = 4;
+            
+            const cycleMcgInput = document.getElementById('cycle-mcg');
+            if (cycleMcgInput) cycleMcgInput.value = dose * multi;
+
             calculateSyringe();
         }
 
-        // --- MAP LOGIC ---
+        function calculateCycleBudget() {
+            const weeks = parseFloat(document.getElementById('cycle-weeks').value) || 0;
+            const dailyMcg = parseFloat(document.getElementById('cycle-mcg').value) || 0;
+            const vialMg = parseFloat(document.getElementById('calc-mg').value) || 0;
+            const presetId = document.getElementById('calcPreset').value;
+
+            const resMg = document.getElementById('cycle-res-mg');
+            const resVials = document.getElementById('cycle-res-vials');
+            const shopList = document.getElementById('cycle-shop-list');
+
+            if (!presetId) {
+                if (shopList) shopList.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">Bitte wähle oben im Rechner ein Peptid aus (Preset), um Preise zu vergleichen.</p>';
+                if (resMg) resMg.innerText = "0 mg";
+                if (resVials) resVials.innerText = "0 Stück";
+                return;
+            }
+
+            if (weeks <= 0 || dailyMcg <= 0 || vialMg <= 0) {
+                if (shopList) shopList.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">Bitte gib gültige Werte für Dauer und Dosis ein.</p>';
+                if (resMg) resMg.innerText = "0 mg";
+                if (resVials) resVials.innerText = "0 Stück";
+                return;
+            }
+
+            const totalMcg = weeks * 7 * dailyMcg;
+            const totalMg = totalMcg / 1000;
+            const vialsNeeded = Math.ceil(totalMg / vialMg);
+
+            if (resMg) resMg.innerText = totalMg.toFixed(1) + " mg";
+            if (resVials) resVials.innerText = vialsNeeded + " Stück";
+
+            const pep = RAW_DATA.find(i => i[0] === presetId);
+            if (!pep || !pep[12] || pep[12].length === 0) {
+                if (shopList) shopList.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">Für dieses Peptid sind keine Preise hinterlegt.</p>';
+                return;
+            }
+
+            let shopCosts = pep[12].map(shopObj => {
+                let priceNum = parsePrice(shopObj.price);
+                let totalCost = priceNum * vialsNeeded;
+                return {
+                    shop: shopObj.shop,
+                    pricePerVial: priceNum,
+                    totalCost: totalCost,
+                    link: SHOP_LINKS[shopObj.shop] || null
+                };
+            }).filter(s => s.totalCost > 0);
+
+            shopCosts.sort((a, b) => a.totalCost - b.totalCost);
+
+            let html = '';
+            shopCosts.forEach((s, index) => {
+                let medal = '';
+                if (index === 0) medal = '🥇';
+                else if (index === 1) medal = '🥈';
+                else if (index === 2) medal = '🥉';
+                else medal = '<span class="text-slate-600 text-xs">●</span>';
+
+                let bgClass = index === 0 ? 'bg-amber-500/10 border-amber-500/30' : 'bg-slate-800/50 border-transparent';
+                let textClass = index === 0 ? 'text-amber-400' : 'text-slate-300';
+
+                html += `
+                    <div class="flex items-center justify-between p-3 rounded-xl border ${bgClass} transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span class="text-lg w-6 text-center flex-shrink-0">${medal}</span>
+                            <div>
+                                <span class="font-bold ${textClass} block text-sm">${s.shop}</span>
+                                <span class="text-[10px] text-slate-500">${s.pricePerVial.toFixed(2)} € pro Vial</span>
+                            </div>
+                        </div>
+                        <div class="text-right flex flex-col justify-center">
+                            <span class="font-mono font-bold text-white block">${s.totalCost.toFixed(2)} €</span>
+                            ${s.link ? `<a href="${s.link}" target="_blank" class="text-[9px] text-brand-400 hover:text-brand-300 transition-colors mt-0.5">Zum Shop →</a>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (shopList) shopList.innerHTML = html;
+        }
+
         function showMapInfo(zoneId) {
             document.getElementById('map-info-default').classList.add('hidden');
             document.getElementById('map-info-content').classList.remove('hidden');
@@ -1248,6 +1486,12 @@
             const angle = document.getElementById('map-info-angle');
             const badge = document.getElementById('map-info-badge');
             const rot = document.getElementById('map-info-rotation');
+
+            const clockContainer = document.getElementById('map-clock-container');
+            if(clockContainer) {
+                clockContainer.classList.add('hidden');
+                clockContainer.classList.remove('flex');
+            }
 
             let rotationText = `
                 <li><strong>Uhren-Methode:</strong> Nimm den Bauchnabel als Mitte und rotiere jeden Tag um 2-3 cm weiter (wie bei einem Ziffernblatt).</li>
@@ -1263,6 +1507,12 @@
                 angle.className = "font-bold text-emerald-400 text-lg";
                 desc.innerText = "Der Goldstandard für Peptid-Injektionen. Das subkutane Fettgewebe am Bauch (mindestens 5cm Abstand zum Bauchnabel halten!) hat wenig Schmerzrezeptoren und eine langsame, gleichmäßige Resorptionsrate. Bilde mit zwei Fingern eine Hautfalte (Pinch) und injiziere im 45° Winkel.";
                 rot.innerHTML = rotationText;
+                
+                if(clockContainer) {
+                    clockContainer.classList.remove('hidden');
+                    clockContainer.classList.add('flex');
+                    renderClock();
+                }
             } 
             else if(zoneId === 'subq-love') {
                 title.innerText = "Hüfte (Love Handles)";
@@ -1301,44 +1551,108 @@
             }
         }
 
-        // --- BLOODWORK LOGIC ---
+        const CLOCK_LOCK_HOURS = 72;
+
+        function renderClock() {
+            const clockUI = document.getElementById('clock-ui');
+            if (!clockUI) return;
+            
+            clockUI.innerHTML = '<div class="w-3 h-3 bg-slate-700 rounded-full z-10 shadow-inner absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>';
+            
+            let spotsStr = localStorage.getItem('peptide_clock_spots');
+            let spots = spotsStr ? JSON.parse(spotsStr) : {};
+            
+            const radius = 75; 
+            const now = Date.now();
+            
+            for (let i = 1; i <= 12; i++) {
+                let angleDeg = (i - 3) * 30;
+                let angleRad = angleDeg * (Math.PI / 180);
+                
+                let x = Math.cos(angleRad) * radius;
+                let y = Math.sin(angleRad) * radius;
+                
+                let locked = false;
+                let timeDiffMs = 0;
+                
+                if (spots[i]) {
+                    timeDiffMs = now - spots[i];
+                    if (timeDiffMs < CLOCK_LOCK_HOURS * 3600 * 1000) {
+                        locked = true;
+                    }
+                }
+                
+                let btn = document.createElement('button');
+                btn.innerText = i;
+                btn.style.left = `calc(50% + ${x}px)`;
+                btn.style.top = `calc(50% + ${y}px)`;
+                
+                if (locked) {
+                    let remainingHours = Math.ceil((CLOCK_LOCK_HOURS * 3600 * 1000 - timeDiffMs) / (3600 * 1000));
+                    btn.className = "absolute w-7 h-7 -ml-3.5 -mt-3.5 rounded-full bg-rose-500/20 border border-rose-500/50 text-[10px] font-bold text-rose-400 flex items-center justify-center cursor-not-allowed transition-all z-20";
+                    btn.title = `Gesperrt für weitere ${remainingHours}h`;
+                } else {
+                    btn.className = "absolute w-7 h-7 -ml-3.5 -mt-3.5 rounded-full bg-emerald-500/20 border border-emerald-500/50 text-[10px] font-bold text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center cursor-pointer transition-all shadow-[0_0_10px_rgba(16,185,129,0.2)] hover:shadow-[0_0_15px_rgba(16,185,129,0.5)] z-20";
+                    btn.title = "Stelle frei. Klicke zur Injektion.";
+                    btn.onclick = () => clickClockSpot(i);
+                }
+                
+                clockUI.appendChild(btn);
+            }
+        }
+
+        function clickClockSpot(hour) {
+            let spotsStr = localStorage.getItem('peptide_clock_spots');
+            let spots = spotsStr ? JSON.parse(spotsStr) : {};
+            
+            spots[hour] = Date.now();
+            localStorage.setItem('peptide_clock_spots', JSON.stringify(spots));
+            
+            renderClock();
+        }
+
+        // --- HINZUGEFÜGTE FUNKTIONEN (FEHLTEN VORHER) ---
+
         function initBloodPresets() {
-            const s = document.getElementById('blood-select');
-            s.innerHTML = '<option value="">-- Bitte wählen --</option>';
-            RAW_DATA.forEach(item => {
-                s.innerHTML += `<option value="${item[0]}">${item[2]} (${item[3]})</option>`;
+            const select = document.getElementById('blood-select');
+            if(!select) return;
+            select.innerHTML = '<option value="">-- Bitte wählen --</option>';
+            RAW_DATA.forEach(p => {
+                select.innerHTML += `<option value="${p[0]}">${p[2]}</option>`;
             });
         }
 
         function renderBloodPanel() {
-            const id = document.getElementById('blood-select').value;
+            const val = document.getElementById('blood-select').value;
             const res = document.getElementById('blood-results');
-            const baseL = document.getElementById('blood-base-list');
-            const specL = document.getElementById('blood-specific-list');
-            const ph = document.getElementById('blood-placeholder');
-
-            if(!id) {
-                res.classList.add('hidden');
-                ph.classList.remove('hidden');
+            const place = document.getElementById('blood-placeholder');
+            
+            if(!val) {
+                if(res) res.classList.add('hidden');
+                if(place) place.classList.remove('hidden');
                 return;
             }
-
-            const pep = RAW_DATA.find(i => i[0] === id);
+            
+            const pep = RAW_DATA.find(i => i[0] === val);
+            if(!pep) return;
+            
             const bio = getBiomarkers(pep[2], pep[4]);
-
-            baseL.innerHTML = bio.base.map(item => `<li class="flex items-start gap-2"><span class="text-slate-500 mt-0.5">▪</span> ${item}</li>`).join('');
-            specL.innerHTML = bio.spec.map(item => `<li class="flex items-start gap-2"><span class="text-brand-400 mt-0.5">●</span> <span class="font-bold">${item}</span></li>`).join('');
-
-            ph.classList.add('hidden');
-            res.classList.remove('hidden');
+            
+            const baseList = document.getElementById('blood-base-list');
+            const specList = document.getElementById('blood-specific-list');
+            
+            if(baseList) baseList.innerHTML = bio.base.map(b => `<li class="flex items-start gap-2"><span class="text-slate-500 mt-0.5">●</span>${b}</li>`).join('');
+            if(specList) specList.innerHTML = bio.spec.map(s => `<li class="flex items-start gap-2"><span class="text-brand-400 mt-0.5">●</span>${s}</li>`).join('');
+            
+            if(res) res.classList.remove('hidden');
+            if(place) place.classList.add('hidden');
         }
 
-        // --- STORAGE LOGIC ---
-        let sState = 'dry';
-        let sTemp = 'fridge';
+        let currentStorageState = 'dry';
+        let currentStorageTemp = 'fridge';
 
         function setStorageState(state, btn) {
-            sState = state;
+            currentStorageState = state;
             document.querySelectorAll('.storage-state-btn').forEach(b => {
                 b.className = "storage-state-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all";
             });
@@ -1347,7 +1661,7 @@
         }
 
         function setStorageTemp(temp, btn) {
-            sTemp = temp;
+            currentStorageTemp = temp;
             document.querySelectorAll('.storage-temp-btn').forEach(b => {
                 b.className = "storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all";
             });
@@ -1356,161 +1670,186 @@
         }
 
         function updateStorageSimulation() {
-            const light = document.getElementById('storage-light').checked;
-            const vPowder = document.getElementById('vial-powder');
-            const vLiquid = document.getElementById('vial-liquid');
-            const vBroken = document.getElementById('vial-broken');
-            const cap = document.getElementById('vial-cap');
-            
-            const life = document.getElementById('sim-result-life');
+            const light = document.getElementById('storage-light')?.checked || false;
+            const lifeEl = document.getElementById('sim-result-life');
+            const descEl = document.getElementById('sim-result-desc');
             const bar = document.getElementById('sim-result-bar');
-            const desc = document.getElementById('sim-result-desc');
+            const powder = document.getElementById('vial-powder');
+            const liquid = document.getElementById('vial-liquid');
+            const broken = document.getElementById('vial-broken');
 
-            vBroken.classList.add('hidden');
-            cap.className = "absolute -top-4 w-20 h-6 bg-emerald-500 rounded-md shadow-[0_0_20px_rgba(16,185,129,0.4)]";
-
-            let txt = "", d = "", perc = 100, color = "bg-emerald-500";
-
-            if(sState === 'dry') {
-                vPowder.style.display = 'block'; vLiquid.style.display = 'none';
-                if(sTemp === 'freezer') { txt = "Bis zu 24 Monate"; d = "Maximaler Schutz der lyophilisierten Proteinketten."; perc = 95; }
-                else if(sTemp === 'fridge') { txt = "12 - 18 Monate"; d = "Gekühltes Pulver bleibt exzellent erhalten."; perc = 80; }
-                else { txt = "ca. 4 Wochen"; d = "Raumtemperatur toleriert das Pulver kurzfristig."; perc = 40; color = "bg-amber-500"; }
-            } else {
-                vPowder.style.display = 'none'; vLiquid.style.display = 'block';
-                if(sTemp === 'freezer') { 
-                    txt = "ZERSTÖRT"; d = "Kristalle zerreißen die Ketten."; 
-                    perc = 0; color = "bg-rose-500"; vBroken.classList.remove('hidden');
-                    cap.className = "absolute -top-4 w-20 h-6 bg-rose-500 rounded-md shadow-[0_0_20px_rgba(244,63,94,0.4)]";
+            if(broken) broken.classList.add('hidden');
+            if(powder && liquid) {
+                if(currentStorageState === 'dry') {
+                    powder.style.display = 'block';
+                    liquid.style.display = 'none';
+                } else {
+                    powder.style.display = 'none';
+                    liquid.style.display = 'block';
                 }
-                else if(sTemp === 'fridge') { txt = "3 - 4 Wochen"; d = "In BAC-Wasser gelöst im Kühlschrank ideal haltbar."; perc = 65; color = "bg-accent"; }
-                else { txt = "Max. 48 Stunden"; d = "Ungekühlt zerfallen gelöste Aminosäuren rasant."; perc = 10; color = "bg-rose-500"; }
             }
 
-            if(light && perc > 0) {
-                perc = Math.max(5, perc - 20);
-                txt += " (UV Warnung)";
-                d += " UV-Licht bricht die Bindungen auf.";
-                if(color === 'bg-emerald-500') color = 'bg-amber-500';
+            let life = "";
+            let desc = "";
+            let percent = 100;
+
+            if(currentStorageState === 'dry') {
+                if(currentStorageTemp === 'freezer') { life = "3 - 5 Jahre"; desc = "Optimal eingefroren. Nahezu kein chemischer Zerfall."; percent = 100; }
+                if(currentStorageTemp === 'fridge') { life = "12 - 24 Monate"; desc = "Kühl und trocken. Sehr stabil."; percent = 80; }
+                if(currentStorageTemp === 'room') { life = "3 - 6 Monate"; desc = "Zimmertemperatur. Langsamer Abbau beginnt."; percent = 50; }
+            } else { 
+                if(currentStorageTemp === 'freezer') {
+                    life = "ZERSTÖRT"; desc = "Frost zerstört die Peptidbindungen im flüssigen Zustand irreparabel."; percent = 0;
+                    if(broken) broken.classList.remove('hidden');
+                    if(powder) powder.style.display = 'none';
+                    if(liquid) liquid.style.display = 'none';
+                }
+                if(currentStorageTemp === 'fridge') { life = "2 - 4 Wochen"; desc = "Kühl gelagert. Standard für angemischte Vials."; percent = 30; }
+                if(currentStorageTemp === 'room') { life = "24 - 48 Stunden"; desc = "Gefahr! Peptid zerfällt rasant."; percent = 5; }
             }
 
-            life.innerText = txt;
-            desc.innerText = d;
-            bar.className = `h-full transition-all duration-700 ease-out ${color}`;
-            bar.style.width = perc + '%';
-            
-            if(color === 'bg-emerald-500') life.className = "text-4xl font-extrabold text-emerald-400 tracking-tight";
-            else if(color === 'bg-accent') life.className = "text-4xl font-extrabold text-accent tracking-tight";
-            else if(color === 'bg-amber-500') life.className = "text-4xl font-extrabold text-amber-400 tracking-tight";
-            else life.className = "text-4xl font-extrabold text-rose-400 tracking-tight";
+            if(light && percent > 0) {
+                percent = Math.max(0, percent - 20);
+                desc += " UV-Licht beschleunigt den Zerfall zusätzlich massiv.";
+                if(life !== "ZERSTÖRT") life = "Stark Reduziert";
+            }
+
+            if(lifeEl) lifeEl.innerText = life;
+            if(descEl) descEl.innerText = desc;
+            if(bar) {
+                bar.style.width = percent + "%";
+                if(percent < 20) bar.className = "h-full transition-all duration-700 ease-out bg-rose-500";
+                else if(percent < 60) bar.className = "h-full transition-all duration-700 ease-out bg-amber-500";
+                else bar.className = "h-full transition-all duration-700 ease-out bg-emerald-500";
+            }
         }
 
-        // --- SPORT PROTOCOLS LOGIC ---
-        function setSportChannel(id, btn) {
+        function setSportChannel(channel, btn) {
             document.querySelectorAll('.sport-ch-btn').forEach(b => {
                 b.className = "sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-slate-500 text-left transition-all";
             });
-            document.querySelectorAll('.sport-content').forEach(c => c.classList.add('hidden'));
             
-            let color = "emerald-500";
-            if(id === 'muscle') color = "brand-500";
-            if(id === 'fat') color = "amber-500";
-            if(id === 'cell') color = "purple-500";
+            let activeClass = "border-slate-700";
+            if(channel === 'heal') activeClass = "border-emerald-500/50 bg-emerald-500/10";
+            if(channel === 'muscle') activeClass = "border-brand-500/50 bg-brand-500/10";
+            if(channel === 'fat') activeClass = "border-amber-500/50 bg-amber-500/10";
+            if(channel === 'cell') activeClass = "border-purple-500/50 bg-purple-500/10";
+            
+            btn.className = `sport-ch-btn p-4 rounded-xl text-left transition-all border ${activeClass}`;
 
-            btn.className = `sport-ch-btn p-4 rounded-xl border border-${color}/50 bg-${color}/10 text-left transition-all`;
-            document.getElementById('sport-ch-' + id).classList.remove('hidden');
+            document.querySelectorAll('.sport-content').forEach(c => {
+                c.classList.add('hidden'); c.classList.remove('block');
+            });
+            const t = document.getElementById('sport-ch-' + channel);
+            if(t) { t.classList.remove('hidden'); t.classList.add('block'); }
         }
 
-        // --- STACKER LOGIC ---
         function renderStackerList() {
             const list = document.getElementById('stack-list');
+            if(!list) return;
             list.innerHTML = '';
-            RAW_DATA.forEach(item => {
-                const name = item[2];
-                const cat = item[5];
-                const risk = item[6] === 'low' ? 1 : item[6] === 'med' ? 2 : 3;
+            RAW_DATA.forEach(p => {
                 list.innerHTML += `
-                    <label class="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl border border-white/5 cursor-pointer hover:border-brand-500/30 transition-all stack-item" data-name="${name.toLowerCase()}">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" value="${name}" data-risk="${risk}" onchange="generateStackReport()" class="stack-checkbox w-4 h-4 text-brand-500 rounded bg-slate-900 border-white/10 focus:ring-brand-500">
-                            <div><span class="text-xs font-bold text-white block">${name}</span><span class="text-[9px] text-slate-500">${cat}</span></div>
-                        </div>
-                    </label>`;
+                    <label class="flex items-center gap-3 p-2 hover:bg-slate-800/50 rounded-lg cursor-pointer transition-colors stack-item" data-name="${p[2].toLowerCase()}">
+                        <input type="checkbox" value="${p[2]}" class="stack-checkbox w-4 h-4 rounded border-slate-600 text-brand-500 focus:ring-brand-500 bg-slate-900" onchange="generateStackReport()">
+                        <span class="text-sm text-slate-300 font-medium">${p[2]}</span>
+                    </label>
+                `;
             });
         }
 
         function filterStack() {
             const q = document.getElementById('stack-search').value.toLowerCase();
-            document.querySelectorAll('.stack-item').forEach(item => {
-                if(item.dataset.name.includes(q)) item.classList.remove('hidden');
-                else item.classList.add('hidden');
+            document.querySelectorAll('.stack-item').forEach(el => {
+                if(el.dataset.name.includes(q)) el.style.display = 'flex';
+                else el.style.display = 'none';
             });
         }
 
         function generateStackReport() {
-            const boxes = document.querySelectorAll('.stack-checkbox:checked');
-            const count = document.getElementById('stack-count-display');
-            const riskD = document.getElementById('stack-risk-display');
-            const synD = document.getElementById('stack-syn-display');
-            const textD = document.getElementById('stack-analysis-text');
+            const selected = Array.from(document.querySelectorAll('.stack-checkbox:checked')).map(cb => cb.value);
+            const countDisplay = document.getElementById('stack-count-display');
+            const riskDisplay = document.getElementById('stack-risk-display');
+            const synDisplay = document.getElementById('stack-syn-display');
+            const analysisText = document.getElementById('stack-analysis-text');
 
-            count.innerText = boxes.length + " Moleküle";
+            if(!countDisplay) return;
 
-            if(boxes.length === 0) {
-                riskD.innerText = "-"; riskD.className = "font-bold text-slate-400";
-                synD.innerText = "-"; textD.innerText = "Bitte wähle Wirkstoffe aus der Liste, um die Analyse zu starten.";
+            countDisplay.innerText = selected.length + " Moleküle";
+
+            if(selected.length === 0) {
+                riskDisplay.innerText = "-";
+                riskDisplay.className = "font-bold";
+                synDisplay.innerText = "-";
+                analysisText.innerText = "Bitte wähle Wirkstoffe aus der Liste, um die Analyse zu starten.";
+                analysisText.parentElement.className = "p-4 bg-slate-800/50 rounded-xl mt-4 border border-transparent transition-all";
                 return;
             }
 
-            let maxR = 1; let names = [];
-            boxes.forEach(b => {
-                const r = parseInt(b.dataset.risk);
-                if(r > maxR) maxR = r;
-                names.push(b.value);
-            });
-
-            if(maxR === 1) { riskD.innerText = "Niedrig"; riskD.className = "font-bold text-emerald-400"; }
-            else if(maxR === 2) { riskD.innerText = "Mittel"; riskD.className = "font-bold text-amber-400"; }
-            else { riskD.innerText = "Hoch"; riskD.className = "font-bold text-rose-400"; }
-
-            let syn = "Individuell"; let txt = "Mehrere Wirkstoffe aktiv. Achte auf zeitliche Abstände.";
-            const ns = names.join(" ");
-
-            if(ns.includes("BPC-157") && ns.includes("TB-500")) {
-                syn = "High Synergy"; txt = "Herausragende Gewebe- und Sehnenregeneration. Die Kombination aus Angiogenese (BPC) und Zellwanderung (TB) beschleunigt Heilung optimal.";
-            } else if(ns.includes("Ipamorelin") && ns.includes("CJC-1295")) {
-                syn = "Max Synergy"; txt = "Wachstumshormon-Verstärkerschleife. CJC erhöht Amplitude, Ipamorelin den Puls. Maximale Proteinsynthese.";
-            } else if(boxes.length === 1) {
-                syn = "Single Mode"; txt = `Isolierte Betrachtung von ${names[0]}. Perfekt zur Bestimmung der individuellen Verträglichkeit.`;
+            if(selected.length === 1) {
+                riskDisplay.innerText = "N/A";
+                riskDisplay.className = "font-bold text-slate-400";
+                synDisplay.innerText = "N/A";
+                analysisText.innerText = "Für eine Synergie-Analyse werden mindestens zwei Wirkstoffe benötigt.";
+                analysisText.parentElement.className = "p-4 bg-slate-800/50 rounded-xl mt-4 border border-transparent transition-all";
+                return;
             }
 
-            synD.innerText = syn; textD.innerText = txt;
+            let matchedRule = null;
+            for(let rule of STACK_RULES) {
+                const isMatch = rule.peptides.every(p => selected.includes(p)) && selected.every(s => rule.peptides.includes(s));
+                if(isMatch) {
+                    matchedRule = rule;
+                    break;
+                }
+            }
+
+            if(matchedRule) {
+                synDisplay.innerText = matchedRule.title;
+                analysisText.innerText = matchedRule.description;
+                if(matchedRule.type === 'success') {
+                    riskDisplay.innerText = "Synergistisch";
+                    riskDisplay.className = "font-bold text-emerald-400";
+                    analysisText.parentElement.className = "p-4 rounded-xl mt-4 border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300";
+                } else if(matchedRule.type === 'warning') {
+                    riskDisplay.innerText = "Kontraproduktiv";
+                    riskDisplay.className = "font-bold text-amber-400";
+                    analysisText.parentElement.className = "p-4 rounded-xl mt-4 border transition-all bg-amber-500/10 border-amber-500/30 text-amber-300";
+                } else {
+                    riskDisplay.innerText = "Gefährlich";
+                    riskDisplay.className = "font-bold text-rose-400";
+                    analysisText.parentElement.className = "p-4 rounded-xl mt-4 border transition-all bg-rose-500/10 border-rose-500/30 text-rose-300";
+                }
+            } else {
+                riskDisplay.innerText = "Unbekannt";
+                riskDisplay.className = "font-bold text-slate-400";
+                synDisplay.innerText = "Keine Daten";
+                analysisText.innerText = "Für diese spezifische Kombination liegen keine Synergie- oder Warnhinweise in der Datenbank vor. Bitte manuell auf Halbwertzeiten und Rezeptor-Überlagerung prüfen.";
+                analysisText.parentElement.className = "p-4 bg-slate-800/50 rounded-xl mt-4 border border-white/5 transition-all";
+            }
         }
 
-        // --- UTILS ---
-        function copyCoupon(text, btn, colorClass = 'brand') {
-            const tmp = document.createElement("textarea");
-            tmp.value = text;
-            document.body.appendChild(tmp);
-            tmp.select();
+        function copyCoupon(code, btn, colorName) {
+            const tempInput = document.createElement("input");
+            tempInput.value = code;
+            document.body.appendChild(tempInput);
+            tempInput.select();
             document.execCommand("copy");
-            document.body.removeChild(tmp);
+            document.body.removeChild(tempInput);
 
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = `<span class="text-white">KOPIERT ✔</span>`;
-            btn.className = `w-full flex justify-center items-center bg-${colorClass}-500 border border-${colorClass}-500 text-white py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all shadow-glow-brand`;
-
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = `<span>Code kopiert!</span> <span class="bg-emerald-500 text-white px-2 py-0.5 rounded text-[10px]">✓</span>`;
             setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.className = `w-full flex justify-between items-center bg-${colorClass}-500/10 border border-${colorClass}-500/30 text-${colorClass}-400 hover:bg-${colorClass}-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all`;
+                btn.innerHTML = originalHtml;
             }, 2000);
         }
 
+        // --- Initialisierung beim Laden der Seite ---
         window.onload = function() {
             renderDatabase();
             calculateSyringe();
             updateStorageSimulation();
-        }
+        };
     </script>
 </body>
 </html>
