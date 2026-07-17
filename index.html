@@ -130,6 +130,11 @@
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
                     Partner
                 </button>
+                <div class="w-px h-4 bg-white/10 mx-1"></div>
+                <a href="https://janoshik.com/verification/" target="_blank" class="whitespace-nowrap px-3 py-2 rounded-full text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all duration-300 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Janoshik HPLC
+                </a>
             </nav>
         </div>
     </header>
@@ -647,20 +652,22 @@
                     <h2 class="text-3xl font-bold text-white">Verifizierte Labor-Partner</h2>
                     <p class="text-slate-400 text-sm">Nutze die exklusiven Rabattcodes bei unseren Partner-Laboren. Ein Klick kopiert den Code direkt in deine Zwischenablage.</p>
                 </div>
+
+                <div class="max-w-3xl mx-auto mb-10 bg-slate-900/80 border border-emerald-500/30 p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_0_20px_rgba(16,185,129,0.05)]">
+                    <div class="flex items-start gap-4">
+                        <div class="text-3xl mt-1">🔬</div>
+                        <div>
+                            <h4 class="font-bold text-emerald-400 text-sm mb-1">Unabhängige Laboranalysen (HPLC)</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">Wir empfehlen ausschließlich Shops, die aktuelle Reinheitszertifikate vorweisen können. Vertraue nicht blind – überprüfe die Batch-Nummern der gelieferten Vials immer selbst in der Datenbank des unabhängigen Prüflabors.</p>
+                        </div>
+                    </div>
+                    <a href="https://janoshik.com/verification/" target="_blank" class="shrink-0 whitespace-nowrap bg-emerald-500 text-white hover:bg-emerald-400 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-glow-success flex items-center gap-2">
+                        Zu Janoshik.com
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </a>
+                </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    
-                    <!-- Bioboostx -->
-                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-sky-500/50 transition-colors group">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-xl shadow-lg">🚀</div>
-                            <h3 class="text-lg font-bold text-white">Bioboostx</h3>
-                        </div>
-                        <a href="https://bioboostx.com/" target="_blank" class="w-full flex justify-center items-center bg-sky-500/10 border border-sky-500/30 text-sky-400 hover:bg-sky-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            Zum Shop (EU Verifiziert)
-                        </a>
-                    </div>
-
                     <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-amber-500/50 transition-colors group">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-xl shadow-lg">🇪🇺</div>
@@ -1312,7 +1319,12 @@
                         <!-- Tab Content: Preise -->
                         <div id="${p.id}-price" class="card-tab-content hidden space-y-3 min-h-[120px]">
                             <div class="bg-slate-900/50 rounded-xl p-4 border border-white/5">
-                                <span class="block text-[9px] text-slate-500 uppercase mb-2">Verifizierte Shops</span>
+                                <div class="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
+                                    <span class="block text-[9px] text-slate-500 uppercase font-bold">Verifizierte Shops</span>
+                                    <a href="https://janoshik.com/verification/" target="_blank" class="text-[9px] text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 font-bold">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Batch prüfen
+                                    </a>
+                                </div>
                                 <div class="space-y-1">
                                     ${priceHtml || '<span class="text-xs text-slate-500">Keine Preise hinterlegt.</span>'}
                                 </div>
