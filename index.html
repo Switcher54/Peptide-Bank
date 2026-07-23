@@ -996,6 +996,18 @@
             "hgh": 22.90
         };
 
+        const adriaSciencePrices = {
+            "amino1mq": 41.90, "ahkcu": 58.90, "aod9604": 57.50, "bacwater": 5.50,
+            "bpc157": 48.90, "bpctb": 132.90, "cagrilintide": 97.90, "cjc1295": 52.90,
+            "cjcipa": 81.90, "cjc1295dac": 84.90, "dsip": 52.90, "epitalon": 36.50,
+            "ghkcu": 36.50, "glow": 74.90, "glutathione": 54.90, "hghfrag": 47.61,
+            "igf1lr3": 132.90, "ipamorelin": 42.50, "klow": 132.90, "kpv": 36.70,
+            "mt1": 37.90, "mt2": 37.30, "motsc": 47.50, "nadplus": 39.50,
+            "pt141": 36.90, "retatrutide": 73.90, "selank": 20.90, "semaglutide": 73.90,
+            "semax": 42.30, "sermorelin": 79.90, "ss31": 57.90, "tb500": 47.50,
+            "tesamorelin": 88.90, "ta1": 58.50, "tirzepatide": 37.90
+        };
+
         // Fallback-Check: Nur ausführen, wenn RAW_DATA vom User wiederhergestellt wurde
         if (typeof RAW_DATA !== 'undefined') {
             RAW_DATA.forEach(item => {
@@ -1003,6 +1015,7 @@
                 if (research369Prices[item[0]]) item[12].push({ shop: "369Research", price: research369Prices[item[0]].toFixed(2), origin: "DE" });
                 if (coreSarmsPrices[item[0]]) item[12].push({ shop: "Core SARMs", price: coreSarmsPrices[item[0]].toFixed(2), origin: "DE" });
                 if (biosyncPrices[item[0]]) item[12].push({ shop: "BioSync Labs", price: biosyncPrices[item[0]].toFixed(2), origin: "DE" });
+                if (adriaSciencePrices[item[0]]) item[12].push({ shop: "AdriaScience", price: adriaSciencePrices[item[0]].toFixed(2), origin: "EU" });
             });
 
             // Völlig neue Peptide & Bundles am Ende anfügen
@@ -1013,7 +1026,8 @@
                 ["core_bulk", "B01/150", "Bulking-Paket", "Ultimativer Stack", "wachstum", "WACHSTUM", "high", ["Kombinierte Muskelmasse", "Kraftsteigerung"], ["Suppression", "Leberbelastung"], {starter:"1 Stack", normal:"1 Stack", max:"1 Stack", freq:"Täglich", form:"Oral", timing:"Verteilt", cycle:"8 Wo", halflife:"Misch"}, "human", "Stack-Protokoll.", [{shop:"Core SARMs", price:"200.00", origin:"DE"}]],
                 ["core_cut", "B02/150", "Cutting Bundle", "Shred Stack", "gewicht", "GEWICHT", "high", ["Maximaler Fettabbau", "Muskelschutz"], ["Suppression"], {starter:"1 Stack", normal:"1 Stack", max:"1 Stack", freq:"Täglich", form:"Oral", timing:"Verteilt", cycle:"8 Wo", halflife:"Misch"}, "human", "Stack-Protokoll.", [{shop:"Core SARMs", price:"150.00", origin:"DE"}]],
                 ["core_mass", "B03/150", "Mass Stack", "Mass Stack", "wachstum", "WACHSTUM", "high", ["Extreme Hypertrophie", "Gewichtszunahme"], ["Suppression", "Wassereinlagerungen"], {starter:"1 Stack", normal:"1 Stack", max:"1 Stack", freq:"Täglich", form:"Oral", timing:"Verteilt", cycle:"8 Wo", halflife:"Misch"}, "human", "Stack-Protokoll.", [{shop:"Core SARMs", price:"195.00", origin:"DE"}]],
-                ["core_pct", "B04/150", "PCT Bundle", "Post-Cycle-Therapie", "libido", "LIBIDO", "med", ["Testosteron-Wiederherstellung", "Östrogen-Kontrolle"], ["Stimmungsschwankungen"], {starter:"1 Stack", normal:"1 Stack", max:"1 Stack", freq:"Täglich", form:"Oral", timing:"Morgens", cycle:"4 Wo", halflife:"Misch"}, "human", "PCT-Protokoll.", [{shop:"Core SARMs", price:"55.00", origin:"DE"}]]
+                ["core_pct", "B04/150", "PCT Bundle", "Post-Cycle-Therapie", "libido", "LIBIDO", "med", ["Testosteron-Wiederherstellung", "Östrogen-Kontrolle"], ["Stimmungsschwankungen"], {starter:"1 Stack", normal:"1 Stack", max:"1 Stack", freq:"Täglich", form:"Oral", timing:"Morgens", cycle:"4 Wo", halflife:"Misch"}, "human", "PCT-Protokoll.", [{shop:"Core SARMs", price:"55.00", origin:"DE"}]],
+                ["tesaipa", "151/150", "Tesamorelin + Ipamorelin", "Fat-Loss Synergie", "wachstum", "WACHSTUM", "med", ["Maximale Lipolyse bei gleichzeitigem GH-Puls", "Gezielter Abbau von viszeralem Bauchfett"], ["Leichte Wassereinlagerungen", "Gelenkschmerz möglich"], {starter:"1mg", normal:"2mg", max:"3mg", freq:"1x/Tag", form:"Subkutan", timing:"Abends", cycle:"8-12 Wo", halflife:"Misch"}, "pilot", "Synergetischer Ansatz.", [{shop:"AdriaScience", price:"94.90", origin:"EU"}]]
             );
         }
 
@@ -1198,6 +1212,7 @@
                         else if(pr.shop === "Bioboostx") link = "https://bioboostx.com/";
                         else if(pr.shop === "Core SARMs") link = "https://coresarms.de/";
                         else if(pr.shop === "BioSync Labs") link = "https://biosynclabs.de/shop";
+                        else if(pr.shop === "AdriaScience") link = "https://adriascience.com/shop/";
 
                         const shopLabel = link 
                             ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
@@ -1588,6 +1603,7 @@
                 else if(shopObj.shop === "Bioboostx") link = "https://bioboostx.com/";
                 else if(shopObj.shop === "Core SARMs") link = "https://coresarms.de/";
                 else if(shopObj.shop === "BioSync Labs") link = "https://biosynclabs.de/shop";
+                else if(shopObj.shop === "AdriaScience") link = "https://adriascience.com/shop/";
 
                 return {
                     shop: shopObj.shop,
