@@ -1008,6 +1008,16 @@
             "tesamorelin": 88.90, "ta1": 58.50, "tirzepatide": 37.90
         };
 
+        const beyondPeptidesPrices = {
+            "bpc157": 66.46, "bpctb": 76.69, "aod9604": 51.12, "amino1mq": 206.23,
+            "ghkcu": 68.70, "ahkcu": 60.14, "dsip": 43.96, "epitalon": 46.01, 
+            "glow": 120.30, "hcg": 51.12, "hghfrag": 46.01, "igf1lr3": 112.48, 
+            "kisspeptin": 49.98, "klow": 128.04, "kpv": 51.55, "methyleneblue": 30.67, 
+            "mt2": 40.90, "nadplus": 85.07, "oxytocin": 46.01, "pegmgf": 54.19, 
+            "pt141": 46.01, "ss31": 66.46, "tb500": 76.69, "tesamorelin": 51.55, 
+            "ta1": 38.66, "vip": 73.03
+        };
+
         // Fallback-Check: Nur ausführen, wenn RAW_DATA vom User wiederhergestellt wurde
         if (typeof RAW_DATA !== 'undefined') {
             RAW_DATA.forEach(item => {
@@ -1016,6 +1026,7 @@
                 if (coreSarmsPrices[item[0]]) item[12].push({ shop: "Core SARMs", price: coreSarmsPrices[item[0]].toFixed(2), origin: "DE" });
                 if (biosyncPrices[item[0]]) item[12].push({ shop: "BioSync Labs", price: biosyncPrices[item[0]].toFixed(2), origin: "DE" });
                 if (adriaSciencePrices[item[0]]) item[12].push({ shop: "AdriaScience", price: adriaSciencePrices[item[0]].toFixed(2), origin: "EU" });
+                if (beyondPeptidesPrices[item[0]]) item[12].push({ shop: "Beyond Peptides", price: beyondPeptidesPrices[item[0]].toFixed(2), origin: "EU" });
             });
 
             // Völlig neue Peptide & Bundles am Ende anfügen
@@ -1027,7 +1038,10 @@
                 ["core_cut", "B02/150", "Cutting Bundle", "Shred Stack", "gewicht", "GEWICHT", "high", ["Maximaler Fettabbau", "Muskelschutz"], ["Suppression"], {starter:"1 Stack", normal:"1 Stack", max:"1 Stack", freq:"Täglich", form:"Oral", timing:"Verteilt", cycle:"8 Wo", halflife:"Misch"}, "human", "Stack-Protokoll.", [{shop:"Core SARMs", price:"150.00", origin:"DE"}]],
                 ["core_mass", "B03/150", "Mass Stack", "Mass Stack", "wachstum", "WACHSTUM", "high", ["Extreme Hypertrophie", "Gewichtszunahme"], ["Suppression", "Wassereinlagerungen"], {starter:"1 Stack", normal:"1 Stack", max:"1 Stack", freq:"Täglich", form:"Oral", timing:"Verteilt", cycle:"8 Wo", halflife:"Misch"}, "human", "Stack-Protokoll.", [{shop:"Core SARMs", price:"195.00", origin:"DE"}]],
                 ["core_pct", "B04/150", "PCT Bundle", "Post-Cycle-Therapie", "libido", "LIBIDO", "med", ["Testosteron-Wiederherstellung", "Östrogen-Kontrolle"], ["Stimmungsschwankungen"], {starter:"1 Stack", normal:"1 Stack", max:"1 Stack", freq:"Täglich", form:"Oral", timing:"Morgens", cycle:"4 Wo", halflife:"Misch"}, "human", "PCT-Protokoll.", [{shop:"Core SARMs", price:"55.00", origin:"DE"}]],
-                ["tesaipa", "151/150", "Tesamorelin + Ipamorelin", "Fat-Loss Synergie", "wachstum", "WACHSTUM", "med", ["Maximale Lipolyse bei gleichzeitigem GH-Puls", "Gezielter Abbau von viszeralem Bauchfett"], ["Leichte Wassereinlagerungen", "Gelenkschmerz möglich"], {starter:"1mg", normal:"2mg", max:"3mg", freq:"1x/Tag", form:"Subkutan", timing:"Abends", cycle:"8-12 Wo", halflife:"Misch"}, "pilot", "Synergetischer Ansatz.", [{shop:"AdriaScience", price:"94.90", origin:"EU"}]]
+                ["tesaipa", "151/150", "Tesamorelin + Ipamorelin", "Fat-Loss Synergie", "wachstum", "WACHSTUM", "med", ["Maximale Lipolyse bei gleichzeitigem GH-Puls", "Gezielter Abbau von viszeralem Bauchfett"], ["Leichte Wassereinlagerungen", "Gelenkschmerz möglich"], {starter:"1mg", normal:"2mg", max:"3mg", freq:"1x/Tag", form:"Subkutan", timing:"Abends", cycle:"8-12 Wo", halflife:"Misch"}, "pilot", "Synergetischer Ansatz.", [{shop:"AdriaScience", price:"94.90", origin:"EU"}]],
+                ["beyondgutpro", "152/150", "Beyond Gut Pro", "Darm-Synergie", "heilung", "REGENERATION", "low", ["Mikrobiom & Darmheilung"], ["Keine bekannt"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Täglich", form:"Oral/Subkutan", timing:"Morgens", cycle:"4 Wo", halflife:"Kurz"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"173.83", origin:"EU"}]],
+                ["beyondskin", "153/150", "Beyond Skin", "Haut-Synergie", "kosmetik", "KOSMETIK", "low", ["Kollagen & Hautbild"], ["Keine bekannt"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Täglich", form:"Subkutan/Topisch", timing:"Abends", cycle:"Dauerhaft", halflife:"Lokal"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"94.52", origin:"EU"}]],
+                ["beyondsleep", "154/150", "Beyond Sleep", "Schlaf-Synergie", "neuro", "NEURO", "low", ["Tiefschlaf & REM"], ["Morgenmüdigkeit"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Vor Schlaf", form:"Subkutan/Nasal", timing:"Abends", cycle:"Bedarf", halflife:"Kurz"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"43.96", origin:"EU"}]]
             );
         }
 
@@ -1213,6 +1227,7 @@
                         else if(pr.shop === "Core SARMs") link = "https://coresarms.de/";
                         else if(pr.shop === "BioSync Labs") link = "https://biosynclabs.de/shop";
                         else if(pr.shop === "AdriaScience") link = "https://adriascience.com/shop/";
+                        else if(pr.shop === "Beyond Peptides") link = "https://beyond-peptides.com/shop/?e-filter-1de3cab-product_cat=all-peptides";
 
                         const shopLabel = link 
                             ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
@@ -1604,6 +1619,7 @@
                 else if(shopObj.shop === "Core SARMs") link = "https://coresarms.de/";
                 else if(shopObj.shop === "BioSync Labs") link = "https://biosynclabs.de/shop";
                 else if(shopObj.shop === "AdriaScience") link = "https://adriascience.com/shop/";
+                else if(shopObj.shop === "Beyond Peptides") link = "https://beyond-peptides.com/shop/?e-filter-1de3cab-product_cat=all-peptides";
 
                 return {
                     shop: shopObj.shop,
