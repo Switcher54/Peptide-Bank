@@ -986,12 +986,23 @@
             "rad150": 60.00, "s23": 45.00, "sr9009": 55.00, "yk11": 65.00
         };
 
+        const biosyncPrices = {
+            "bpctb": 189.90, "bacwater": 5.90, "bpc157": 54.99, "bpcpellets": 69.99,
+            "cjc1295": 39.90, "dsip": 39.90, "epitalon": 49.90, "ghkcu": 25.99,
+            "ghkcu100": 139.90, "ghrp2": 48.90, "ipamorelin": 57.90, "kpv": 39.90,
+            "mt1": 39.90, "mt2": 39.90, "mk677": 69.99, "nadplus": 104.90,
+            "pt141": 42.90, "selank": 57.90, "semax": 39.99, "ss31": 49.90,
+            "tb500": 44.90, "tesamorelin": 69.90, "ta1": 59.90, "retatrutide": 44.90,
+            "hgh": 22.90
+        };
+
         // Fallback-Check: Nur ausführen, wenn RAW_DATA vom User wiederhergestellt wurde
         if (typeof RAW_DATA !== 'undefined') {
             RAW_DATA.forEach(item => {
                 if (bioboostxPrices[item[0]]) item[12].push({ shop: "Bioboostx", price: bioboostxPrices[item[0]].toFixed(2), origin: "EU" });
                 if (research369Prices[item[0]]) item[12].push({ shop: "369Research", price: research369Prices[item[0]].toFixed(2), origin: "DE" });
                 if (coreSarmsPrices[item[0]]) item[12].push({ shop: "Core SARMs", price: coreSarmsPrices[item[0]].toFixed(2), origin: "DE" });
+                if (biosyncPrices[item[0]]) item[12].push({ shop: "BioSync Labs", price: biosyncPrices[item[0]].toFixed(2), origin: "DE" });
             });
 
             // Völlig neue Peptide & Bundles am Ende anfügen
@@ -1186,6 +1197,7 @@
                         else if(pr.shop === "Glowing Peptides") link = "https://glowingpeptides.com/";
                         else if(pr.shop === "Bioboostx") link = "https://bioboostx.com/";
                         else if(pr.shop === "Core SARMs") link = "https://coresarms.de/";
+                        else if(pr.shop === "BioSync Labs") link = "https://biosynclabs.de/shop";
 
                         const shopLabel = link 
                             ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
@@ -1575,6 +1587,7 @@
                 else if(shopObj.shop === "Glowing Peptides") link = "https://glowingpeptides.com/";
                 else if(shopObj.shop === "Bioboostx") link = "https://bioboostx.com/";
                 else if(shopObj.shop === "Core SARMs") link = "https://coresarms.de/";
+                else if(shopObj.shop === "BioSync Labs") link = "https://biosynclabs.de/shop";
 
                 return {
                     shop: shopObj.shop,
