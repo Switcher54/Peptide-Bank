@@ -59,7 +59,7 @@
     
     <style>
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #334155; }
         
@@ -105,7 +105,7 @@
     <div class="fixed bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
 
     <header class="sticky top-0 z-50 glass-panel border-b border-white/5 py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col xl:flex-row items-center justify-between gap-4">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-8 flex flex-col xl:flex-row items-center justify-between gap-4">
             
             <div class="flex items-center gap-3 cursor-pointer group" onclick="goHome()">
                 <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white shadow-glow-brand group-hover:rotate-12 transition-transform duration-500">
@@ -117,21 +117,21 @@
                 </div>
             </div>
 
-            <nav class="flex flex-wrap items-center justify-center gap-1.5 bg-slate-900/50 p-1.5 rounded-full border border-white/5 shadow-inner max-w-full overflow-x-auto scrollbar-hide">
-                <button onclick="router('db')" id="nav-db" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md">Datenbank</button>
-                <button onclick="router('calc')" id="nav-calc" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Rechner</button>
-                <button onclick="router('map')" id="nav-map" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Injektion</button>
-                <button onclick="router('blood')" id="nav-blood" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Blutbild</button>
-                <button onclick="router('storage')" id="nav-storage" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Stabilität</button>
-                <button onclick="router('sport')" id="nav-sport" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Protokolle</button>
-                <button onclick="router('stack')" id="nav-stack" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300 flex items-center gap-1">Stacker <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span></button>
-                <button onclick="router('tutorial')" id="nav-tutorial" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Misch-Guide</button>
-                <button onclick="router('coupons')" id="nav-coupons" class="nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-amber-400 hover:text-amber-300 transition-all duration-300 flex items-center gap-1.5">
+            <nav class="flex items-center gap-1.5 bg-slate-900/50 p-1.5 rounded-full border border-white/5 shadow-inner max-w-full overflow-x-auto scrollbar-hide w-full xl:w-auto scroll-smooth">
+                <button onclick="router('db')" id="nav-db" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md">Datenbank</button>
+                <button onclick="router('calc')" id="nav-calc" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Rechner</button>
+                <button onclick="router('map')" id="nav-map" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Injektion</button>
+                <button onclick="router('blood')" id="nav-blood" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Blutbild</button>
+                <button onclick="router('storage')" id="nav-storage" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Stabilität</button>
+                <button onclick="router('sport')" id="nav-sport" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Protokolle</button>
+                <button onclick="router('stack')" id="nav-stack" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300 flex items-center gap-1">Stacker <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span></button>
+                <button onclick="router('tutorial')" id="nav-tutorial" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Misch-Guide</button>
+                <button onclick="router('coupons')" id="nav-coupons" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-amber-400 hover:text-amber-300 transition-all duration-300 flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
                     Partner
                 </button>
-                <div class="w-px h-4 bg-white/10 mx-1"></div>
-                <a href="https://janoshik.com/verification/" target="_blank" class="whitespace-nowrap px-3 py-2 rounded-full text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all duration-300 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                <div class="w-px h-4 bg-white/10 mx-1 shrink-0"></div>
+                <a href="https://janoshik.com/verification/" target="_blank" class="whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all duration-300 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     Janoshik HPLC
                 </a>
@@ -139,7 +139,7 @@
         </div>
     </header>
 
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-8 py-10 relative z-10">
+    <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-8 py-10 relative z-10">
 
         <div id="view-db" class="view-panel block animate-fade-in-up space-y-8">
             <div class="text-center space-y-4 mb-10">
@@ -179,7 +179,7 @@
                 <div>Zertifizierte Daten 2026</div>
             </div>
 
-            <div id="db-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+            <div id="db-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
         </div>
 
         <div id="view-calc" class="view-panel hidden space-y-8">
@@ -283,10 +283,16 @@
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-semibold text-slate-300">Gesamte Tagesdosis (mcg)</label>
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-semibold text-slate-300">Dosis pro Intervall (mcg)</label>
+                                <select id="cycle-freq" onchange="calculateCycleBudget(); updateCycleLabel();" class="bg-slate-800 border border-slate-600 rounded px-2 py-0.5 text-[10px] text-white outline-none cursor-pointer">
+                                    <option value="daily">Täglich</option>
+                                    <option value="weekly">Wöchentlich</option>
+                                </select>
+                            </div>
                             <div class="relative">
                                 <input type="number" id="cycle-mcg" value="500" step="50" min="10" oninput="calculateCycleBudget()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-4 text-sm text-white focus:border-amber-500 outline-none font-mono">
-                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mcg/Tag</span>
+                                <span id="cycle-mcg-label" class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mcg/Tag</span>
                             </div>
                         </div>
                         <p class="text-[10px] text-slate-500 mt-2">Hinweis: Die Fläschchen-Größe (Vial mg) wird automatisch aus dem oberen Rechner übernommen.</p>
@@ -1241,7 +1247,7 @@
                         </div>
 
                         <!-- Tabs Header -->
-                        <div class="flex border-b border-white/10 mb-4 overflow-x-auto scrollbar-hide">
+                        <div class="flex border-b border-white/10 mb-4 overflow-x-auto pb-2 max-w-full scroll-smooth">
                             <button onclick="toggleCardTab(this, '${p.id}-eff')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-brand-400 border-b-2 border-brand-500 transition-colors whitespace-nowrap shrink-0">Wirkung</button>
                             <button onclick="toggleCardTab(this, '${p.id}-side')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Risiken</button>
                             <button onclick="toggleCardTab(this, '${p.id}-dose')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Dosierung</button>
@@ -1471,14 +1477,35 @@
 
             let freqStr = pep[9].freq.toLowerCase();
             let multi = 1;
-            if (freqStr.includes("2x")) multi = 2;
-            else if (freqStr.includes("3x")) multi = 3;
-            else if (freqStr.includes("4x")) multi = 4;
+            let isWeekly = false;
+
+            if (freqStr.includes("wo") || freqStr.includes("woche") || freqStr.includes("wöchentlich")) {
+                isWeekly = true;
+                if (freqStr.includes("2x")) multi = 2;
+                else if (freqStr.includes("3x")) multi = 3;
+                else if (freqStr.includes("4x")) multi = 4;
+            } else {
+                if (freqStr.includes("2x")) multi = 2;
+                else if (freqStr.includes("3x")) multi = 3;
+                else if (freqStr.includes("4x")) multi = 4;
+            }
+            
+            const cycleFreqSelect = document.getElementById('cycle-freq');
+            if (cycleFreqSelect) {
+                cycleFreqSelect.value = isWeekly ? 'weekly' : 'daily';
+                if (typeof updateCycleLabel === 'function') updateCycleLabel();
+            }
             
             const cycleMcgInput = document.getElementById('cycle-mcg');
             if (cycleMcgInput) cycleMcgInput.value = dose * multi;
 
             calculateSyringe();
+        }
+
+        function updateCycleLabel() {
+            const freq = document.getElementById('cycle-freq').value;
+            const label = document.getElementById('cycle-mcg-label');
+            if(label) label.innerText = freq === 'weekly' ? 'mcg/Wo' : 'mcg/Tag';
         }
 
         function calculateCycleBudget() {
@@ -1490,9 +1517,11 @@
             if(!wEl || !mcEl || !mgEl || !preEl) return;
 
             const weeks = parseFloat(wEl.value) || 0;
-            const dailyMcg = parseFloat(mcEl.value) || 0;
+            const cycleDoseMcg = parseFloat(mcEl.value) || 0;
             const vialMg = parseFloat(mgEl.value) || 0;
             const presetId = preEl.value;
+            const freqSelect = document.getElementById('cycle-freq');
+            const freq = freqSelect ? freqSelect.value : 'daily';
 
             const resMg = document.getElementById('cycle-res-mg');
             const resVials = document.getElementById('cycle-res-vials');
@@ -1505,14 +1534,14 @@
                 return;
             }
 
-            if (weeks <= 0 || dailyMcg <= 0 || vialMg <= 0) {
+            if (weeks <= 0 || cycleDoseMcg <= 0 || vialMg <= 0) {
                 if (shopList) shopList.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">Bitte gib gültige Werte für Dauer und Dosis ein.</p>';
                 if (resMg) resMg.innerText = "0 mg";
                 if (resVials) resVials.innerText = "0 Stück";
                 return;
             }
 
-            const totalMcg = weeks * 7 * dailyMcg;
+            const totalMcg = freq === 'weekly' ? (weeks * cycleDoseMcg) : (weeks * 7 * cycleDoseMcg);
             const totalMg = totalMcg / 1000;
             const vialsNeeded = Math.ceil(totalMg / vialMg);
 
