@@ -1018,6 +1018,17 @@
             "ta1": 38.66, "vip": 73.03
         };
 
+        const smartPeptidesPrices = {
+            "amino1mq": 24.90, "ace031": 159.90, "ahkcu": 39.90, "aod9604": 64.90,
+            "bacwater": 6.90, "bpc157": 39.90, "bpctb": 84.90, "bpcpellets": 59.90,
+            "dsip": 29.90, "ghkcu": 49.90, "glow": 139.90, "ipamorelin": 44.90,
+            "klow": 149.90, "kpv": 34.90, "kpvpellets": 59.90, "methyleneblue": 34.90,
+            "motsc": 34.90, "mt1": 44.90, "mt2": 29.90, "nadplus": 69.90,
+            "retatrutide": 79.90, "selank": 34.90, "semaglutide": 49.90, "semax": 34.90,
+            "slupp332": 51.90, "ss31": 39.90, "tb500": 49.90, "tb500pellets": 74.90,
+            "tesamorelin": 69.90, "ta1": 69.90, "tirzepatide": 59.90, "vip": 49.90
+        };
+
         // Fallback-Check: Nur ausführen, wenn RAW_DATA vom User wiederhergestellt wurde
         if (typeof RAW_DATA !== 'undefined') {
             RAW_DATA.forEach(item => {
@@ -1027,6 +1038,7 @@
                 if (biosyncPrices[item[0]]) item[12].push({ shop: "BioSync Labs", price: biosyncPrices[item[0]].toFixed(2), origin: "DE" });
                 if (adriaSciencePrices[item[0]]) item[12].push({ shop: "AdriaScience", price: adriaSciencePrices[item[0]].toFixed(2), origin: "EU" });
                 if (beyondPeptidesPrices[item[0]]) item[12].push({ shop: "Beyond Peptides", price: beyondPeptidesPrices[item[0]].toFixed(2), origin: "EU" });
+                if (smartPeptidesPrices[item[0]]) item[12].push({ shop: "SmartPeptides", price: smartPeptidesPrices[item[0]].toFixed(2), origin: "DE" });
             });
 
             // Völlig neue Peptide & Bundles am Ende anfügen
@@ -1228,6 +1240,7 @@
                         else if(pr.shop === "BioSync Labs") link = "https://biosynclabs.de/shop";
                         else if(pr.shop === "AdriaScience") link = "https://adriascience.com/shop/";
                         else if(pr.shop === "Beyond Peptides") link = "https://beyond-peptides.com/shop/?e-filter-1de3cab-product_cat=all-peptides";
+                        else if(pr.shop === "SmartPeptides") link = "https://smartpeptides.de/shop/";
 
                         const shopLabel = link 
                             ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
@@ -1620,6 +1633,7 @@
                 else if(shopObj.shop === "BioSync Labs") link = "https://biosynclabs.de/shop";
                 else if(shopObj.shop === "AdriaScience") link = "https://adriascience.com/shop/";
                 else if(shopObj.shop === "Beyond Peptides") link = "https://beyond-peptides.com/shop/?e-filter-1de3cab-product_cat=all-peptides";
+                else if(shopObj.shop === "SmartPeptides") link = "https://smartpeptides.de/shop/";
 
                 return {
                     shop: shopObj.shop,
