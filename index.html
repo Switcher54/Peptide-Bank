@@ -117,7 +117,8 @@
                 </div>
             </div>
 
-            <nav class="flex items-center gap-1.5 bg-slate-900/50 p-1.5 rounded-full border border-white/5 shadow-inner max-w-full overflow-x-auto scrollbar-hide w-full xl:w-auto scroll-smooth">
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center gap-1.5 bg-slate-900/50 p-1.5 rounded-full border border-white/5 shadow-inner max-w-full overflow-x-auto scrollbar-hide w-full xl:w-auto scroll-smooth">
                 <button onclick="router('db')" id="nav-db" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md">Datenbank</button>
                 <button onclick="router('calc')" id="nav-calc" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Rechner</button>
                 <button onclick="router('map')" id="nav-map" class="nav-btn whitespace-nowrap shrink-0 px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300">Injektion</button>
@@ -139,7 +140,7 @@
         </div>
     </header>
 
-    <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-8 py-10 relative z-10">
+    <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-8 py-10 lg:pb-10 pb-28 relative z-10">
 
         <div id="view-db" class="view-panel block animate-fade-in-up space-y-8">
             <div class="text-center space-y-4 mb-10">
@@ -171,6 +172,11 @@
                     <button onclick="setRiskFilter('low', this)" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all">Gering</button>
                     <button onclick="setRiskFilter('med', this)" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all">Moderat</button>
                     <button onclick="setRiskFilter('high', this)" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all">Hoch</button>
+                    <div class="w-px h-4 bg-white/10 mx-2"></div>
+                    <button onclick="toggleFavFilter(this)" id="favFilterBtn" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/50 transition-all flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 fill-none fav-filter-icon" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        Favoriten
+                    </button>
                 </div>
             </div>
 
@@ -319,460 +325,84 @@
             </div>
         </div>
 
-        <div id="view-map" class="view-panel hidden space-y-8">
-            <div class="text-center space-y-4 mb-6">
-                <h2 class="text-4xl font-extrabold text-white tracking-tight">Injektions-<span class="text-gradient">Zonen & Map</span></h2>
-                <p class="text-slate-400 text-sm max-w-2xl mx-auto">Vermeide Lipohypertrophie (Gewebeverhärtungen). Rotiere stets die Einstichstellen. Klicke auf die Zonen für Details.</p>
-            </div>
-            
-            <div class="glass-card rounded-3xl p-6 lg:p-10">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                    
-                    <div class="flex justify-center items-center relative bg-slate-900/50 rounded-2xl border border-slate-800 p-4">
-                        <svg viewBox="0 0 200 400" class="w-full max-w-[300px] drop-shadow-2xl">
-                            <!-- Silhouette Base -->
-                            <path d="M70,40 Q100,10 130,40 L140,80 Q160,90 170,120 L160,220 L135,220 L130,180 L130,350 Q100,380 95,350 L95,230 L90,230 L90,350 Q60,380 55,350 L55,180 L50,220 L25,220 L15,120 Q25,90 45,80 Z" fill="#1e293b" stroke="#334155" stroke-width="2" />
-                            
-                            <!-- Subkutan (Bauch/Hüfte) - Green -->
-                            <circle cx="100" cy="180" r="22" class="map-zone map-subq" onclick="showMapInfo('subq-bauch')" />
-                            <circle cx="100" cy="180" r="4" fill="#10b981" class="animate-ping-slow pointer-events-none" />
-                            <circle cx="100" cy="180" r="2" fill="#fff" class="pointer-events-none" />
-                            
-                            <ellipse cx="65" cy="185" rx="12" ry="18" class="map-zone map-subq" onclick="showMapInfo('subq-love')" />
-                            <ellipse cx="130" cy="185" rx="12" ry="18" class="map-zone map-subq" onclick="showMapInfo('subq-love')" />
-                            
-                            <!-- Intramuskulär (Schulter) - Blue -->
-                            <circle cx="35" cy="115" r="14" class="map-zone map-im" onclick="showMapInfo('im-schulter')" />
-                            <circle cx="35" cy="115" r="3" fill="#38bdf8" class="animate-ping-slow pointer-events-none" />
-                            <circle cx="160" cy="115" r="14" class="map-zone map-im" onclick="showMapInfo('im-schulter')" />
-                            <circle cx="160" cy="115" r="3" fill="#38bdf8" class="animate-ping-slow pointer-events-none" />
-                            
-                            <!-- Intramuskulär (Oberschenkel) - Blue -->
-                            <ellipse cx="70" cy="280" rx="12" ry="30" class="map-zone map-im" onclick="showMapInfo('im-bein')" />
-                            <ellipse cx="125" cy="280" rx="12" ry="30" class="map-zone map-im" onclick="showMapInfo('im-bein')" />
-                        </svg>
-
-                        <div class="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700 p-3 rounded-xl backdrop-blur-md text-xs space-y-2">
-                            <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 rounded-full bg-emerald-500/50 border border-emerald-500 shadow-glow-success"></div>
-                                <span class="text-slate-300 font-bold">Subkutan (SC)</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 rounded-full bg-accent/50 border border-accent shadow-glow-accent"></div>
-                                <span class="text-slate-300 font-bold">Intramuskulär (IM)</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-col space-y-6">
-                        <div class="bg-slate-900/50 p-6 rounded-2xl border border-white/5 shadow-inner flex-grow h-full">
-                            <div id="map-info-default" class="block h-full flex flex-col justify-center items-center text-center space-y-3">
-                                <span class="text-4xl">👆</span>
-                                <h3 class="text-lg font-bold text-slate-300">Wähle eine Zone</h3>
-                                <p class="text-sm text-slate-500">Klicke auf die markierten Bereiche der Body Map, um spezifische Injektions- und Rotationstechniken zu sehen.</p>
-                            </div>
-                            
-                            <div id="map-info-content" class="hidden h-full flex-col">
-                                <div class="flex justify-between items-start mb-4 border-b border-white/10 pb-4">
-                                    <div>
-                                        <span id="map-info-badge" class="px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider mb-2 inline-block">Applikation</span>
-                                        <h3 id="map-info-title" class="text-xl font-bold text-white">Zonen Name</h3>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="block text-[10px] text-slate-500 uppercase">Winkel</span>
-                                        <span id="map-info-angle" class="font-bold text-white text-lg">45°</span>
-                                    </div>
-                                </div>
-                                <div class="space-y-4 text-sm text-slate-300 overflow-y-auto pr-2 flex-grow">
-                                    <p id="map-info-desc" class="leading-relaxed">Beschreibung hier...</p>
-                                    
-                                    <div id="map-clock-container" class="hidden flex-col items-center justify-center bg-slate-800/50 p-6 rounded-xl border border-white/5 mt-4 shadow-inner relative">
-                                        <h4 class="font-bold text-brand-400 mb-6 flex items-center gap-2"><span class="text-lg">🕒</span> Interaktive Uhren-Methode</h4>
-                                        <div id="clock-ui" class="relative w-48 h-48 rounded-full border-2 border-dashed border-slate-600/50 flex items-center justify-center">
-                                            <!-- Spots werden via JS eingefügt -->
-                                        </div>
-                                        <p class="text-[10px] text-slate-500 mt-6 text-center leading-relaxed">Klicke nach der Injektion auf eine Zahl. Sie wird für 72 Stunden gesperrt (Rot), um Gewebeverhärtungen zu vermeiden.</p>
-                                    </div>
-                                    
-                                    <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5 mt-4">
-                                        <h4 class="font-bold text-brand-400 mb-2 flex items-center gap-2"><span class="text-lg">🔄</span> Rotations-Guide</h4>
-                                        <ul id="map-info-rotation" class="space-y-2 text-xs text-slate-400 list-disc list-inside">
-                                            <li>Tipp 1</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl text-xs text-amber-200/80 leading-relaxed">
-                            <strong class="text-amber-400 block mb-1">Achtung: Lipohypertrophie</strong>
-                            Ständige Injektionen an exakt der selben Stelle führen zu Knötchenbildung unter der Haut. Diese Gewebeveränderungen stören die Peptid-Aufnahme massiv und sehen unschön aus. Verschiebe den Einstichpunkt bei jeder Injektion um <strong>mindestens 2-3 cm</strong> ("Uhren-Methode").
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-blood" class="view-panel hidden space-y-8">
-            <div class="text-center space-y-4 mb-6">
-                <h2 class="text-4xl font-extrabold text-white tracking-tight">Klinisches <span class="text-gradient">Blutbild</span></h2>
-                <p class="text-slate-400 text-sm max-w-2xl mx-auto">Sicherheit geht vor. Generiere präzise Labor-Checklisten (vor und nach dem Zyklus) basierend auf der gewählten Substanz.</p>
-            </div>
-            
-            <div class="glass-card rounded-3xl p-6 sm:p-10 max-w-4xl mx-auto">
-                <div class="space-y-6">
-                    <div class="bg-slate-900/50 p-4 rounded-2xl border border-brand-500/30">
-                        <label class="text-xs font-semibold text-brand-400 uppercase tracking-wider block mb-2">Substanz auswählen</label>
-                        <select id="blood-select" onchange="renderBloodPanel()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-3 px-4 text-sm text-white focus:border-brand-500 outline-none cursor-pointer">
-                            <option value="">-- Bitte wählen --</option>
-                        </select>
-                    </div>
-
-                    <div id="blood-results" class="hidden space-y-6 mt-8 animate-fade-in">
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <div class="flex-1 bg-slate-900/80 rounded-2xl border border-white/10 overflow-hidden">
-                                <div class="bg-slate-800/80 px-4 py-3 border-b border-white/5">
-                                    <h3 class="font-bold text-white flex items-center gap-2"><span class="text-slate-400">🩸</span> Großes Blutbild & Basis</h3>
-                                </div>
-                                <ul class="p-4 space-y-3 text-sm text-slate-300" id="blood-base-list">
-                                </ul>
-                            </div>
-                            <div class="flex-1 bg-brand-900/20 rounded-2xl border border-brand-500/30 overflow-hidden shadow-glow-brand">
-                                <div class="bg-brand-900/40 px-4 py-3 border-b border-brand-500/20">
-                                    <h3 class="font-bold text-brand-400 flex items-center gap-2"><span class="text-brand-400">🔬</span> Spezifische Biomarker</h3>
-                                </div>
-                                <ul class="p-4 space-y-3 text-sm text-white" id="blood-specific-list">
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="bg-rose-500/10 border border-rose-500/20 p-4 rounded-xl flex items-start gap-4">
-                            <div class="text-2xl">⚠️</div>
-                            <div>
-                                <h4 class="font-bold text-rose-400 text-sm mb-1">Medizinischer Disclaimer</h4>
-                                <p class="text-xs text-rose-200/70 leading-relaxed">Diese Liste dient ausschließlich Informationszwecken für klinische Forschung und ersetzt keinen ärztlichen Rat. Ein Ausgangsblutbild (Baseline) vor Beginn der Exposition ist zwingend erforderlich, um Veränderungen referenzieren zu können.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="blood-placeholder" class="py-12 text-center text-slate-500 text-sm">
-                        Bitte wähle oben ein Peptid oder SARM aus, um das benötigte Blutbild zu sehen.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-storage" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                    <div class="lg:col-span-5 space-y-8">
-                        <div>
-                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                                Thermal Analysis
-                            </div>
-                            <h2 class="text-3xl font-bold text-white mb-2">Stabilitäts-Simulator</h2>
-                            <p class="text-slate-400 text-sm">Berechne den temperaturbedingten Molekularzerfall.</p>
-                        </div>
-                        <div class="space-y-6">
-                            <div class="space-y-3">
-                                <label class="text-xs font-semibold text-slate-300">Aggregatzustand</label>
-                                <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
-                                    <button onclick="setStorageState('dry', this)" class="storage-state-btn flex-1 py-2.5 rounded-lg text-sm font-semibold bg-slate-700 text-white shadow-sm transition-all">Pulver (Lyo)</button>
-                                    <button onclick="setStorageState('liquid', this)" class="storage-state-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all">Flüssig</button>
-                                </div>
-                            </div>
-                            <div class="space-y-3">
-                                <label class="text-xs font-semibold text-slate-300">Lagertemperatur</label>
-                                <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
-                                    <button onclick="setStorageTemp('room', this)" class="storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all">Raum</button>
-                                    <button onclick="setStorageTemp('fridge', this)" class="storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold bg-slate-700 text-white shadow-sm transition-all">Kühler</button>
-                                    <button onclick="setStorageTemp('freezer', this)" class="storage-temp-btn flex-1 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all">Frost</button>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between p-4 bg-slate-900/50 rounded-xl border border-slate-800">
-                                <div>
-                                    <span class="text-sm font-semibold text-white block">UV-Exposition</span>
-                                    <span class="text-xs text-slate-500">Beschleunigt den photochemischen Zerfall</span>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="storage-light" onchange="updateStorageSimulation()" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-emerald-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-7 flex flex-col items-center justify-center space-y-8 bg-slate-900/30 p-8 rounded-3xl border border-slate-800/50">
-                        <div class="relative w-32 h-56 border-[3px] border-slate-600/50 rounded-3xl flex flex-col justify-between items-center py-2 px-1.5 bg-gradient-to-b from-white/5 to-white/0 shadow-2xl backdrop-blur-sm">
-                            <div class="absolute -top-4 w-20 h-6 bg-emerald-500 rounded-md shadow-[0_0_20px_rgba(16,185,129,0.4)]" id="vial-cap"></div>
-                            <div class="w-full h-full flex items-end justify-center relative overflow-hidden rounded-[18px]">
-                                <div id="vial-liquid" class="w-full h-[45%] bg-gradient-to-t from-emerald-500/40 to-emerald-400/20 border-t-2 border-emerald-400/50 transition-all duration-700" style="display: none;"></div>
-                                <div id="vial-powder" class="w-full h-[25%] bg-gradient-to-t from-white/80 to-white/40 border-t border-white/60 transition-all duration-700 rounded-b-[16px]"></div>
-                                <div id="vial-broken" class="absolute inset-0 flex items-center justify-center bg-rose-500/20 backdrop-blur-sm hidden transition-all duration-300"><span class="text-4xl">❄️💥</span></div>
-                            </div>
-                        </div>
-                        <div class="w-full max-w-sm text-center space-y-4">
-                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Erwartete Lebensdauer</span>
-                            <div class="text-4xl font-extrabold text-emerald-400 tracking-tight" id="sim-result-life">12 - 18 Monate</div>
-                            <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                                <div id="sim-result-bar" class="h-full bg-emerald-500 transition-all duration-700 ease-out" style="width: 80%;"></div>
-                            </div>
-                            <p class="text-sm text-slate-400 leading-relaxed" id="sim-result-desc">Lyophilisiert im Kühlschrank optimal geschützt.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-sport" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
-                <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-white mb-2">Sportmedizin & Protokolle</h2>
-                    <p class="text-slate-400 text-sm">Wähle ein Ziel, um die physiologischen Mechanismen zu verstehen.</p>
-                </div>
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <button onclick="setSportChannel('heal', this)" class="sport-ch-btn p-4 rounded-xl border border-emerald-500/50 bg-emerald-500/10 text-left transition-all">
-                        <span class="text-2xl block mb-2">🩹</span>
-                        <h4 class="font-bold text-sm text-white">Regeneration</h4>
-                        <p class="text-[10px] text-slate-400 uppercase mt-1">Sehnen & Gelenke</p>
-                    </button>
-                    <button onclick="setSportChannel('muscle', this)" class="sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-brand-500/50 text-left transition-all">
-                        <span class="text-2xl block mb-2">💪</span>
-                        <h4 class="font-bold text-sm text-white">Hypertrophie</h4>
-                        <p class="text-[10px] text-slate-400 uppercase mt-1">Muskelaufbau</p>
-                    </button>
-                    <button onclick="setSportChannel('fat', this)" class="sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-amber-500/50 text-left transition-all">
-                        <span class="text-2xl block mb-2">🔥</span>
-                        <h4 class="font-bold text-sm text-white">Lipolyse</h4>
-                        <p class="text-[10px] text-slate-400 uppercase mt-1">Fettabbau</p>
-                    </button>
-                    <button onclick="setSportChannel('cell', this)" class="sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-purple-500/50 text-left transition-all">
-                        <span class="text-2xl block mb-2">🧬</span>
-                        <h4 class="font-bold text-sm text-white">Ausdauer</h4>
-                        <p class="text-[10px] text-slate-400 uppercase mt-1">Mitochondrien</p>
-                    </button>
-                </div>
+        <!-- Detail Modal Overlay -->
+        <div id="peptide-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
+            <div class="absolute inset-0 bg-base/80 backdrop-blur-md" onclick="closePeptideModal()"></div>
+            <div class="glass-card w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl relative z-10 flex flex-col scale-95 transition-transform duration-300 shadow-2xl border border-white/10">
                 
-                <div class="bg-slate-900/50 border border-white/5 rounded-2xl p-6">
-                    <div id="sport-ch-heal" class="sport-content block space-y-4">
-                        <h3 class="text-xl font-bold text-emerald-400">Gewebeheilung & Reparatur</h3>
-                        <p class="text-sm text-slate-300">Peptide wie BPC-157 (Angiogenese) und TB-500 (Zellmigration) sind der Goldstandard für die Heilung des passiven Bewegungsapparates.</p>
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between p-6 border-b border-white/10 bg-slate-900/50 shrink-0">
+                    <div id="modal-header-content">
+                        <!-- Populated by JS -->
                     </div>
-                    <div id="sport-ch-muscle" class="sport-content hidden space-y-4">
-                        <h3 class="text-xl font-bold text-brand-400">Anaboles Wachstum</h3>
-                        <p class="text-sm text-slate-300">GHRPs und GHRHs stimulieren natürliche Wachstumshormon-Pulse für Muskelaufbau, während Follistatin-344 die Myostatin-Bremse löst.</p>
-                    </div>
-                    <div id="sport-ch-fat" class="sport-content hidden space-y-4">
-                        <h3 class="text-xl font-bold text-amber-400">Metabolischer Fettabbau</h3>
-                        <p class="text-sm text-slate-300">GLP-1 Agonisten (Semaglutid) dämpfen den Appetit extrem, während HGH Frag 176-191 direkte Lipolyse in den Zellen anregt.</p>
-                    </div>
-                    <div id="sport-ch-cell" class="sport-content hidden space-y-4">
-                        <h3 class="text-xl font-bold text-purple-400">Zelluläre Ausdauer</h3>
-                        <p class="text-sm text-slate-300">Wirkstoffe wie SLU-PP-332, MOTS-c oder Cardarine optimieren die ATP-Gewinnung und erhöhen die VO2-Max drastisch.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-stack" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
-                <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-white mb-2">Synergie Stacker</h2>
-                    <p class="text-slate-400 text-sm">Wähle Moleküle aus, um ihre biochemische Überlagerung zu prüfen.</p>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div class="lg:col-span-5 space-y-4">
-                        <input type="text" id="stack-search" oninput="filterStack()" placeholder="Substanz suchen..." class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-2.5 px-4 text-sm text-white focus:border-brand-500 outline-none">
-                        <div class="h-[300px] overflow-y-auto space-y-2 pr-2 scrollbar-hide" id="stack-list">
-                            <!-- Populated via JS -->
-                        </div>
-                    </div>
-                    <div class="lg:col-span-7 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
-                        <h3 class="text-lg font-bold text-white mb-4 border-b border-white/5 pb-4">Stack Analyse Report</h3>
-                        <div class="space-y-4 flex-grow">
-                            <div class="flex justify-between border-b border-white/5 pb-2 text-sm">
-                                <span class="text-slate-400">Gewählt:</span>
-                                <span class="text-white font-bold" id="stack-count-display">0 Moleküle</span>
-                            </div>
-                            <div class="flex justify-between border-b border-white/5 pb-2 text-sm">
-                                <span class="text-slate-400">Risikoprofil:</span>
-                                <span class="font-bold" id="stack-risk-display">-</span>
-                            </div>
-                            <div class="flex justify-between border-b border-white/5 pb-2 text-sm">
-                                <span class="text-slate-400">Synergie:</span>
-                                <span class="text-white font-bold" id="stack-syn-display">-</span>
-                            </div>
-                            <div class="p-4 bg-slate-800/50 rounded-xl mt-4 border border-transparent transition-all">
-                                <p class="text-sm text-slate-300" id="stack-analysis-text">Bitte wähle Wirkstoffe aus der Liste, um die Analyse zu starten.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-tutorial" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
-                <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-white mb-2">Rekonstitutions-Guide</h2>
-                    <p class="text-slate-400 text-sm">Schritt-für-Schritt Anleitung zum sterilen Anmischen von Peptiden.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
-                            <h4 class="font-bold text-brand-400">1. Vorbereitung</h4>
-                            <p class="text-sm text-slate-300 mt-1">Gummiverschlüsse (Vial & BAC-Wasser) mit Alkohol-Pads desinfizieren.</p>
-                        </div>
-                        <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
-                            <h4 class="font-bold text-brand-400">2. Druckausgleich</h4>
-                            <p class="text-sm text-slate-300 mt-1">Gewünschte Menge an Luft in die BAC-Flasche spritzen, dann Wasser aufziehen.</p>
-                        </div>
-                        <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
-                            <h4 class="font-bold text-brand-400">3. Sehr langsames Mischen</h4>
-                            <p class="text-sm text-slate-300 mt-1">Wasser schräg an die innere Glaswand des Peptid-Vials laufen lassen. NIEMALS den Strahl direkt auf das Pulver richten!</p>
-                        </div>
-                        <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
-                            <h4 class="font-bold text-brand-400">4. Lösen & Lagern</h4>
-                            <p class="text-sm text-slate-300 mt-1">Vial sanft zwischen den Fingern rollen (NICHT schütteln). Anschließend sofort im Kühlschrank lagern.</p>
-                        </div>
-                    </div>
-                    <div class="bg-rose-500/10 border border-rose-500/20 p-6 rounded-xl flex flex-col justify-center">
-                        <h4 class="font-bold text-rose-400 text-xl mb-4">Gefahren & Fehler</h4>
-                        <ul class="space-y-3 text-sm text-rose-200">
-                            <li>⚠️ <strong>Schütteln:</strong> Zerstört die Molekularstruktur sofort.</li>
-                            <li>⚠️ <strong>Falsches Wasser:</strong> Normales steriles Wasser keimt nach wenigen Tagen aus. Nutze immer BAC-Wasser (Benzylalkohol).</li>
-                            <li>⚠️ <strong>Wärme:</strong> Einmal gelöst, zerfällt das Peptid bei Zimmertemperatur rasant.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-coupons" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
-                <div class="text-center max-w-2xl mx-auto mb-10 space-y-4">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Community Benefits
-                    </div>
-                    <h2 class="text-3xl font-bold text-white">Verifizierte Labor-Partner</h2>
-                    <p class="text-slate-400 text-sm">Nutze die exklusiven Rabattcodes bei unseren Partner-Laboren. Ein Klick kopiert den Code direkt in deine Zwischenablage.</p>
-                </div>
-
-                <div class="max-w-3xl mx-auto mb-10 bg-slate-900/80 border border-emerald-500/30 p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_0_20px_rgba(16,185,129,0.05)]">
-                    <div class="flex items-start gap-4">
-                        <div class="text-3xl mt-1">🔬</div>
-                        <div>
-                            <h4 class="font-bold text-emerald-400 text-sm mb-1">Unabhängige Laboranalysen (HPLC)</h4>
-                            <p class="text-xs text-slate-400 leading-relaxed">Wir empfehlen ausschließlich Shops, die aktuelle Reinheitszertifikate vorweisen können. Vertraue nicht blind – überprüfe die Batch-Nummern der gelieferten Vials immer selbst in der Datenbank des unabhängigen Prüflabors.</p>
-                        </div>
-                    </div>
-                    <a href="https://janoshik.com/verification/" target="_blank" class="shrink-0 whitespace-nowrap bg-emerald-500 text-white hover:bg-emerald-400 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-glow-success flex items-center gap-2">
-                        Zu Janoshik.com
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                    </a>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-amber-500/50 transition-colors group">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-xl shadow-lg">🇪🇺</div>
-                            <h3 class="text-lg font-bold text-white">Europa-Peptide</h3>
-                        </div>
-                        <div class="space-y-3">
-                            <button onclick="copyCoupon('OUTLAW15', this, 'amber')" class="w-full flex justify-between items-center bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                                <span>Code: OUTLAW15</span> <span class="bg-amber-500 text-white px-2 py-0.5 rounded text-[10px]">-15%</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-brand-500/50 transition-colors group">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-xl shadow-lg">🇩🇪</div>
-                            <h3 class="text-lg font-bold text-white">Peptid24</h3>
-                        </div>
-                        <div class="space-y-3">
-                            <button onclick="copyCoupon('OUTLAW15', this, 'brand')" class="w-full flex justify-between items-center bg-brand-500/10 border border-brand-500/30 text-brand-400 hover:bg-brand-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                                <span>Code: OUTLAW15</span> <span class="bg-brand-500 text-white px-2 py-0.5 rounded text-[10px]">-15%</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-rose-500/50 transition-colors group">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-xl shadow-lg">🐉</div>
-                            <h3 class="text-lg font-bold text-white">Drakon Peptides</h3>
-                        </div>
-                        <button onclick="copyCoupon('SIMONPROVES', this, 'rose')" class="w-full flex justify-between items-center bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: SIMONPROVES</span> <span class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px]">-10%</span>
+                    <div class="flex items-center gap-3">
+                        <button id="modal-fav-btn" onclick="" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
+                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        </button>
+                        <button onclick="closePeptideModal()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 flex items-center justify-center transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
+                </div>
 
-                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-emerald-500/50 transition-colors group">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-xl shadow-lg">🧬</div>
-                            <h3 class="text-lg font-bold text-white">Rebirth Labs</h3>
-                        </div>
-                        <button onclick="copyCoupon('SAM', this, 'emerald')" class="w-full flex justify-between items-center bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: SAM</span> <span class="bg-emerald-500 text-white px-2 py-0.5 rounded text-[10px]">-10%</span>
-                        </button>
-                    </div>
-
-                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-purple-500/50 transition-colors group">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-xl shadow-lg">✨</div>
-                            <h3 class="text-lg font-bold text-white">Verra Labs</h3>
-                        </div>
-                        <button onclick="copyCoupon('MORTY', this, 'purple')" class="w-full flex justify-between items-center bg-purple-500/10 border border-purple-500/30 text-purple-400 hover:bg-purple-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: MORTY</span> <span class="bg-purple-500 text-white px-2 py-0.5 rounded text-[10px]">-10%</span>
-                        </button>
-                    </div>
-
-                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-colors group">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center text-xl shadow-lg">🧪</div>
-                            <h3 class="text-lg font-bold text-white">RCpeptides</h3>
-                        </div>
-                        <button onclick="copyCoupon('FOLGT', this, 'cyan')" class="w-full flex justify-between items-center bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: FOLGT</span> <span class="bg-cyan-500 text-white px-2 py-0.5 rounded text-[10px]">Wartet</span>
-                        </button>
-                    </div>
-
-                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-indigo-500/50 transition-colors group">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-xl shadow-lg">🔬</div>
-                            <h3 class="text-lg font-bold text-white">Nova Labs</h3>
-                        </div>
-                        <button onclick="copyCoupon('Nova10', this, 'indigo')" class="w-full flex justify-between items-center bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: Nova10</span> <span class="bg-indigo-500 text-white px-2 py-0.5 rounded text-[10px]">-10%</span>
-                        </button>
-                    </div>
-
-                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-fuchsia-500/50 transition-colors group">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-fuchsia-400 to-fuchsia-600 flex items-center justify-center text-xl shadow-lg">📦</div>
-                            <h3 class="text-lg font-bold text-white">Premium Research</h3>
-                        </div>
-                        <button onclick="copyCoupon('Newsletter', this, 'fuchsia')" class="w-full flex justify-between items-center bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-400 hover:bg-fuchsia-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: Newsletter</span> <span class="bg-fuchsia-500 text-white px-2 py-0.5 rounded text-[10px]">-27%</span>
-                        </button>
-                        <p class="text-[10px] text-slate-500 text-center mt-3 uppercase tracking-wider">Rabatt bei Newsletter-Anmeldung</p>
-                    </div>
-
-                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-emerald-500/50 transition-colors group">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-xl shadow-lg">✨</div>
-                            <h3 class="text-lg font-bold text-white">Glowing Peptides</h3>
-                        </div>
-                        <a href="https://glowingpeptides.com/" target="_blank" class="w-full flex justify-center items-center bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            Zum Shop (Preise geprüft)
-                        </a>
-                    </div>
+                <!-- Modal Content -->
+                <div id="modal-body-content" class="p-6 overflow-y-auto flex-grow scrollbar-hide space-y-6">
+                    <!-- Populated by JS -->
                 </div>
             </div>
         </div>
 
     </main>
+
+    <!-- Mobile Navigation Bar -->
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-[60] glass-panel border-t border-white/10 px-4 py-3 flex justify-between items-center pb-safe">
+        <button onclick="router('db'); toggleMobileMenu(true)" id="mob-nav-db" class="mob-nav-btn flex flex-col items-center gap-1.5 w-16 text-brand-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+            <span class="text-[10px] font-semibold">DB</span>
+        </button>
+        <button onclick="router('calc'); toggleMobileMenu(true)" id="mob-nav-calc" class="mob-nav-btn flex flex-col items-center gap-1.5 w-16 text-slate-400 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <span class="text-[10px] font-semibold">Rechner</span>
+        </button>
+        <button onclick="router('map'); toggleMobileMenu(true)" id="mob-nav-map" class="mob-nav-btn flex flex-col items-center gap-1.5 w-16 text-slate-400 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+            <span class="text-[10px] font-semibold">Map</span>
+        </button>
+        <button onclick="toggleMobileMenu()" class="flex flex-col items-center gap-1.5 w-16 text-slate-400 hover:text-white transition-colors relative">
+            <div id="mob-menu-badge" class="absolute top-0 right-2 w-2 h-2 bg-brand-500 rounded-full hidden"></div>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <span class="text-[10px] font-semibold">Mehr</span>
+        </button>
+    </nav>
+
+    <!-- Mobile Slide-Up Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-[55] hidden flex-col justify-end lg:hidden">
+        <div class="absolute inset-0 bg-base/80 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
+        <div class="glass-card rounded-t-3xl p-6 relative z-10 flex flex-col gap-2 transform transition-transform translate-y-full duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border-t border-white/10" id="mobile-menu-content">
+            <div class="w-12 h-1.5 bg-slate-600 rounded-full mx-auto mb-4"></div>
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">Weitere Tools</h3>
+            <button onclick="router('blood'); toggleMobileMenu()" class="flex items-center gap-3 px-4 py-3.5 bg-slate-800/50 hover:bg-slate-800 rounded-xl text-sm font-semibold text-white transition-colors border border-white/5">
+                <span class="text-xl w-6 text-center">🩸</span> Blutbild
+            </button>
+            <button onclick="router('storage'); toggleMobileMenu()" class="flex items-center gap-3 px-4 py-3.5 bg-slate-800/50 hover:bg-slate-800 rounded-xl text-sm font-semibold text-white transition-colors border border-white/5">
+                <span class="text-xl w-6 text-center">❄️</span> Stabilität
+            </button>
+            <button onclick="router('sport'); toggleMobileMenu()" class="flex items-center gap-3 px-4 py-3.5 bg-slate-800/50 hover:bg-slate-800 rounded-xl text-sm font-semibold text-white transition-colors border border-white/5">
+                <span class="text-xl w-6 text-center">🏋️</span> Protokolle
+            </button>
+            <button onclick="router('stack'); toggleMobileMenu()" class="flex items-center gap-3 px-4 py-3.5 bg-slate-800/50 hover:bg-slate-800 rounded-xl text-sm font-semibold text-white transition-colors border border-white/5">
+                <span class="text-xl w-6 text-center">🧬</span> Stacker
+            </button>
+            <button onclick="router('tutorial'); toggleMobileMenu()" class="flex items-center gap-3 px-4 py-3.5 bg-slate-800/50 hover:bg-slate-800 rounded-xl text-sm font-semibold text-white transition-colors border border-white/5">
+                <span class="text-xl w-6 text-center">💡</span> Misch-Guide
+            </button>
+            <div class="h-px bg-white/5 my-1"></div>
+            <button onclick="router('coupons'); toggleMobileMenu()" class="flex items-center gap-3 px-4 py-3.5 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl text-sm font-semibold text-amber-400 transition-colors border border-amber-500/20">
+                <span class="text-xl w-6 text-center">💎</span> Verifizierte Partner
+            </button>
+            <div class="h-10"></div> <!-- Spacer for bottom nav -->
+        </div>
+    </div>
 
     <script>
         const STACK_RULES = [
@@ -952,7 +582,6 @@
             ["epithalon_ghk","147/147","Epithalon + GHK-Cu","Anti-Aging Mix","aging","ANTI-AGING","low",["Telomerase","Haut/Haare"],["Hautreizung"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"20 Tage",halflife:"Misch"},"pilot","Synergie.",[{shop:"Slavic Labs",price:"43.66",origin:"EU"}]]
         ];
 
-        // --- AUTOMATISCHER DATEN-MERGE FÜR ALLE SHOPS ---
         const bioboostxPrices = {
             "bpc157": 39.95, "tb500": 45.95, "ipamorelin": 45.95, "cjc1295": 49.95,
             "semax": 29.95, "selank": 29.95, "dsip": 59.95, "epitalon": 35.95,
@@ -1029,7 +658,6 @@
             "tesamorelin": 69.90, "ta1": 69.90, "tirzepatide": 59.90, "vip": 49.90
         };
 
-        // Fallback-Check: Nur ausführen, wenn RAW_DATA vom User wiederhergestellt wurde
         if (typeof RAW_DATA !== 'undefined') {
             RAW_DATA.forEach(item => {
                 if (bioboostxPrices[item[0]]) item[12].push({ shop: "Bioboostx", price: bioboostxPrices[item[0]].toFixed(2), origin: "EU" });
@@ -1041,7 +669,6 @@
                 if (smartPeptidesPrices[item[0]]) item[12].push({ shop: "SmartPeptides", price: smartPeptidesPrices[item[0]].toFixed(2), origin: "DE" });
             });
 
-            // Völlig neue Peptide & Bundles am Ende anfügen
             RAW_DATA.push(
                 ["lemonbottle", "148/150", "Lemon Bottle", "Fat Dissolver", "gewicht", "GEWICHT", "med", ["Lokaler Fettabbau"], ["Schwellung"], {starter:"10ml", normal:"20ml", max:"50ml", freq:"1x/Wo", form:"Lokal", timing:"Tag", cycle:"Kurz", halflife:"Kurz"}, "human", "Kosmetik.", [{shop:"Bioboostx", price:"25.95", origin:"EU"}]],
                 ["xmorelin", "149/150", "X-morelin", "GH Secretagogue", "wachstum", "WACHSTUM", "med", ["GH Puls"], ["Hunger"], {starter:"100mcg", normal:"250mcg", max:"500mcg", freq:"1x/Tag", form:"Subkutan", timing:"Abends", cycle:"8 Wo", halflife:"Kurz"}, "pilot", "Forschung.", [{shop:"Bioboostx", price:"59.95", origin:"EU"}]],
@@ -1059,6 +686,25 @@
 
         let loadedCount = typeof RAW_DATA !== 'undefined' ? RAW_DATA.length : 0;
 
+        let showFavoritesOnly = false;
+        let favorites = JSON.parse(localStorage.getItem('peptide_favorites') || '[]');
+
+        function toggleMobileMenu(forceClose = false) {
+            const menu = document.getElementById('mobile-menu');
+            const content = document.getElementById('mobile-menu-content');
+            const badge = document.getElementById('mob-menu-badge');
+            
+            if(forceClose || !menu.classList.contains('hidden')) {
+                content.classList.add('translate-y-full');
+                setTimeout(() => { menu.classList.add('hidden'); }, 300);
+            } else {
+                menu.classList.remove('hidden');
+                if(badge) badge.classList.add('hidden'); // hide notification dot when opened
+                void content.offsetWidth; // trigger reflow
+                content.classList.remove('translate-y-full');
+            }
+        }
+
         function router(viewId) {
             document.querySelectorAll('.view-panel').forEach(p => { 
                 p.classList.add('hidden'); 
@@ -1069,10 +715,11 @@
             if(target) { 
                 target.classList.remove('hidden'); 
                 target.classList.add('block'); 
-                void target.offsetWidth; // Reflow for animation restart
+                void target.offsetWidth; 
                 target.classList.add('animate-fade-in-up');
             }
 
+            // Update Desktop Nav
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 if(btn.id !== 'nav-coupons') {
                     btn.className = "nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition-all duration-300";
@@ -1082,6 +729,20 @@
             if(activeBtn && viewId !== 'coupons') {
                 activeBtn.className = "nav-btn whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md";
             }
+
+            // Update Mobile Nav
+            document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+                btn.className = "mob-nav-btn flex flex-col items-center gap-1.5 w-16 text-slate-400 hover:text-white transition-colors";
+            });
+            const activeMobBtn = document.getElementById('mob-nav-' + viewId);
+            if(activeMobBtn) {
+                activeMobBtn.className = "mob-nav-btn flex flex-col items-center gap-1.5 w-16 text-brand-400 transition-colors";
+            } else {
+                // If it's a view from the "More" menu, show a little badge on the menu button
+                const badge = document.getElementById('mob-menu-badge');
+                if(badge) badge.classList.remove('hidden');
+            }
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1110,6 +771,55 @@
             });
             btn.className = "risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-brand-500 bg-brand-500/10 text-brand-400 transition-all";
             applyFilters();
+        }
+
+        function toggleFavFilter(btn) {
+            showFavoritesOnly = !showFavoritesOnly;
+            const icon = btn.querySelector('.fav-filter-icon');
+            
+            if(showFavoritesOnly) {
+                btn.className = "px-4 py-1.5 rounded-full text-xs font-semibold border border-rose-500 bg-rose-500/10 text-rose-400 transition-all flex items-center gap-1.5 shadow-[0_0_10px_rgba(244,63,94,0.2)]";
+                if(icon) { icon.classList.remove('fill-none'); icon.classList.add('fill-rose-500'); }
+            } else {
+                btn.className = "px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/50 transition-all flex items-center gap-1.5";
+                if(icon) { icon.classList.add('fill-none'); icon.classList.remove('fill-rose-500'); }
+            }
+            applyFilters();
+        }
+
+        function toggleFavorite(id) {
+            if(favorites.includes(id)) {
+                favorites = favorites.filter(f => f !== id);
+            } else {
+                favorites.push(id);
+            }
+            localStorage.setItem('peptide_favorites', JSON.stringify(favorites));
+            
+            // Update icons on grid cards
+            document.querySelectorAll(`.fav-btn-${id} svg`).forEach(svg => {
+                if(favorites.includes(id)) {
+                    svg.classList.add('fill-rose-500', 'text-rose-500');
+                    svg.classList.remove('fill-none', 'text-slate-400');
+                } else {
+                    svg.classList.remove('fill-rose-500', 'text-rose-500');
+                    svg.classList.add('fill-none', 'text-slate-400');
+                }
+            });
+
+            // Update modal icon if open
+            const modalFavBtn = document.getElementById('modal-fav-btn');
+            if(modalFavBtn && modalFavBtn.getAttribute('onclick').includes(id)) {
+                const svg = modalFavBtn.querySelector('svg');
+                if(favorites.includes(id)) {
+                    svg.classList.add('fill-rose-500', 'text-rose-500');
+                    svg.classList.remove('fill-none', 'text-slate-400');
+                } else {
+                    svg.classList.remove('fill-rose-500', 'text-rose-500');
+                    svg.classList.add('fill-none', 'text-slate-400');
+                }
+            }
+            
+            if(showFavoritesOnly) applyFilters();
         }
 
         function getBiomarkers(name, cat) {
@@ -1194,6 +904,7 @@
             return isNaN(num) ? 0 : num;
         }
 
+        // NEW RENDER DATABASE (Compact Cards)
         function renderDatabase() {
             const grid = document.getElementById('db-grid');
             if(!grid) return;
@@ -1217,189 +928,33 @@
                 if(p.risk === 'med') { riskClass = "text-amber-400 border-amber-500/30 bg-amber-500/10"; riskText = "Mittel"; }
                 if(p.risk === 'high') { riskClass = "text-danger border-danger/30 bg-danger/10"; riskText = "Hoch"; }
 
-                let priceHtml = "";
-                if (p.prices) {
-                    p.prices.forEach(pr => {
-                        let link = "";
-                        if(pr.shop === "r-phase") link = "https://www.r-phase.com/";
-                        else if(pr.shop === "Nova Labs") link = "https://nova-labs.eu/products";
-                        else if(pr.shop === "Kronen Peptide") link = "https://kronen-peptide.com/shop/page/2/";
-                        else if(pr.shop === "Rebirth Labs") link = "https://rebirthlabs.org/product-category/all-peptides/";
-                        else if(pr.shop === "Austrian Peptides") link = "https://www.austrianspeptides.com/category/all-products?page=3";
-                        else if(pr.shop === "Europa-Peptide") link = "https://europa-peptide.de/";
-                        else if(pr.shop === "odipept") link = "https://odipept.de/#produkte";
-                        else if(pr.shop === "RCpeptides") link = "https://rcpeptides.to/";
-                        else if(pr.shop === "Peptid24") link = "https://peptid24.de/";
-                        else if(pr.shop === "Drakon Peptides") link = "https://drakonpeptides.com/shop-2/?s=BPC-157&post_type=product";
-                        else if(pr.shop === "Premium Research Peptides") link = "https://www.peptiderevolution.eu/";
-                        else if(pr.shop === "Slavic Labs") link = "https://slaviclabs.com/";
-                        else if(pr.shop === "Helus Lab") link = "https://heluslab.com/home/shop/";
-                        else if(pr.shop === "Glowing Peptides") link = "https://glowingpeptides.com/";
-                        else if(pr.shop === "Bioboostx") link = "https://bioboostx.com/";
-                        else if(pr.shop === "Core SARMs") link = "https://coresarms.de/";
-                        else if(pr.shop === "BioSync Labs") link = "https://biosynclabs.de/shop";
-                        else if(pr.shop === "AdriaScience") link = "https://adriascience.com/shop/";
-                        else if(pr.shop === "Beyond Peptides") link = "https://beyond-peptides.com/shop/?e-filter-1de3cab-product_cat=all-peptides";
-                        else if(pr.shop === "SmartPeptides") link = "https://smartpeptides.de/shop/";
-
-                        const shopLabel = link 
-                            ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
-                            : pr.shop;
-                            
-                        const displayPrice = pr.price.toString().includes('€') || pr.price.toString().includes('$') ? pr.price : pr.price + ' €';
-                        
-                        let originBadge = "";
-                        if (pr.origin) {
-                            if (pr.origin === 'DE' || pr.origin === 'EU') {
-                                originBadge = `<div class="flex items-center gap-1.5 text-[9.5px] font-medium text-emerald-400/90 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse-slow"></span> EU-Zentrallager (Kein Zollrisiko, 3-5 Tage)</div>`;
-                            } else if (pr.origin === 'UK') {
-                                originBadge = `<div class="flex items-center gap-1.5 text-[9.5px] font-medium text-amber-400/90 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span> Drittland (Stichproben-Risiko, 5-10 Tage)</div>`;
-                            } else if (pr.origin === 'US' || pr.origin === 'CN') {
-                                originBadge = `<div class="flex items-center gap-1.5 text-[9.5px] font-medium text-rose-400/90 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></span> Übersee (Erhöhtes Zollrisiko, 14-30 Tage)</div>`;
-                            }
-                        }
-                        
-                        priceHtml += `
-                            <div class="py-2.5 border-b border-white/5 last:border-0 flex flex-col justify-center">
-                                <div class="flex justify-between items-center text-xs">
-                                    <span class="text-slate-300 font-bold">${shopLabel}</span>
-                                    <span class="font-bold text-white bg-slate-800/80 border border-white/5 px-2 py-1 rounded shadow-inner">${displayPrice}</span>
-                                </div>
-                                ${originBadge}
-                            </div>`;
-                    });
-                }
-
-                const encName = encodeURIComponent(p.name.split(' ')[0]);
-                const pubMedLink = `https://pubmed.ncbi.nlm.nih.gov/?term=${encName}+peptide`;
-                const scholarLink = `https://scholar.google.de/scholar?hl=de&q=${encName}+Peptid+Studie`;
-                const ytLink = `https://www.youtube.com/results?search_query=${encName}+peptide+wirkung`;
-
-                let angle = "N/A";
-                let appType = p.dosage.form || "";
-                let angleColor = "text-slate-500";
-                
-                if(appType.toLowerCase().includes("subkutan")) { angle = "45° (Pinch-Technik)"; angleColor = "text-emerald-400"; }
-                if(appType.toLowerCase().includes("im") || appType.toLowerCase().includes("lokal")) { angle = "90° (Senkrecht)"; angleColor = "text-accent"; }
-                if(appType.toLowerCase().includes("nasal")) { angle = "Sprühstoß"; angleColor = "text-brand-400"; }
-                if(appType.toLowerCase().includes("oral") && !appType.toLowerCase().includes("subkutan")) { angle = "Schlucken"; angleColor = "text-amber-400"; }
-
-                const bio = getBiomarkers(p.name, p.cat);
+                const isFav = favorites.includes(p.id);
+                const favIconClass = isFav ? 'fill-rose-500 text-rose-500' : 'fill-none text-slate-400';
 
                 const cardHTML = `
-                    <div class="peptide-card glass-panel rounded-3xl p-6 hover:border-brand-500/50 transition-all duration-300 group" data-cat="${p.cat}" data-risk="${p.risk}" data-search="${p.name.toLowerCase()} ${p.aka.toLowerCase()}">
+                    <div class="peptide-card glass-panel rounded-3xl p-5 hover:border-brand-500/50 transition-all duration-300 group cursor-pointer relative flex flex-col h-full shadow-lg hover:shadow-glow-brand/20" data-id="${p.id}" data-cat="${p.cat}" data-risk="${p.risk}" data-search="${p.name.toLowerCase()} ${p.aka.toLowerCase()}" onclick="openPeptideModal('${p.id}')">
                         
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest block mb-1">REF // ${p.nr}</span>
-                                <h3 class="text-xl font-bold text-white">${p.name}</h3>
-                                <p class="text-xs text-slate-400">${p.aka}</p>
-                            </div>
-                            <div class="flex flex-col gap-1 items-end">
-                                <span class="px-2.5 py-1 rounded-full text-[9px] font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
-                                <span class="px-2 py-0.5 rounded text-[8px] font-bold border uppercase tracking-wider ${riskClass}">Risiko: ${riskText}</span>
-                            </div>
+                        <button onclick="event.stopPropagation(); toggleFavorite('${p.id}')" class="absolute top-5 right-5 hover:text-rose-400 transition-colors z-10 fav-btn-${p.id}">
+                            <svg class="w-6 h-6 ${favIconClass} transition-colors" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        </button>
+
+                        <div class="mb-3 pr-8">
+                            <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest block mb-1">REF // ${p.nr}</span>
+                            <h3 class="text-xl font-bold text-white group-hover:text-brand-400 transition-colors">${p.name}</h3>
+                            <p class="text-xs text-slate-400 line-clamp-1">${p.aka}</p>
                         </div>
-
-                        <!-- Tabs Header -->
-                        <div class="flex border-b border-white/10 mb-4 overflow-x-auto pb-2 max-w-full scroll-smooth">
-                            <button onclick="toggleCardTab(this, '${p.id}-eff')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-brand-400 border-b-2 border-brand-500 transition-colors whitespace-nowrap shrink-0">Wirkung</button>
-                            <button onclick="toggleCardTab(this, '${p.id}-side')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Risiken</button>
-                            <button onclick="toggleCardTab(this, '${p.id}-dose')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Dosierung</button>
-                            <button onclick="toggleCardTab(this, '${p.id}-praxis')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0 flex items-center gap-1"><span class="text-sm">💡</span> Praxis-Guide</button>
-                            <button onclick="toggleCardTab(this, '${p.id}-study')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Studien</button>
-                            <button onclick="toggleCardTab(this, '${p.id}-price')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Preise</button>
+                        
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider ${riskClass}">Risiko: ${riskText}</span>
                         </div>
-
-                        <!-- Tab Content: Wirkung -->
-                        <div id="${p.id}-eff" class="card-tab-content block space-y-3 min-h-[120px]">
-                            <ul class="space-y-2 text-sm text-slate-300">
-                                ${p.effects.map(e => `<li class="flex items-start gap-2"><span class="text-success mt-0.5">●</span>${e}</li>`).join('')}
-                            </ul>
-                        </div>
-
-                        <!-- Tab Content: Risiken -->
-                        <div id="${p.id}-side" class="card-tab-content hidden space-y-3 min-h-[120px]">
-                            <ul class="space-y-2 text-sm text-slate-300">
-                                ${p.risks.map(r => `<li class="flex items-start gap-2"><span class="text-danger mt-0.5">✖</span>${r}</li>`).join('')}
-                            </ul>
-                        </div>
-
-                        <!-- Tab Content: Dosierung -->
-                        <div id="${p.id}-dose" class="card-tab-content hidden space-y-3 min-h-[120px]">
-                            <div class="bg-slate-900/50 rounded-xl p-3 border border-white/5 grid grid-cols-2 gap-3 text-xs">
-                                <div><span class="block text-[9px] text-slate-500 uppercase">Standard-Dosis</span><span class="font-semibold text-brand-400">${p.dosage.normal}</span></div>
-                                <div><span class="block text-[9px] text-slate-500 uppercase">Max. Limit</span><span class="font-semibold text-danger">${p.dosage.max}</span></div>
-                                <div><span class="block text-[9px] text-slate-500 uppercase">Applikation</span><span class="font-semibold text-white">${p.dosage.form}</span></div>
-                                <div><span class="block text-[9px] text-slate-500 uppercase">Häufigkeit</span><span class="font-semibold text-white">${p.dosage.freq}</span></div>
-                                <div><span class="block text-[9px] text-slate-500 uppercase">Zeitpunkt</span><span class="font-semibold text-white">${p.dosage.timing}</span></div>
-                                <div><span class="block text-[9px] text-slate-500 uppercase">Halbwertszeit</span><span class="font-semibold text-white">${p.dosage.halflife}</span></div>
+                        
+                        <p class="text-xs text-slate-300 line-clamp-3 mb-4 flex-grow leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity">${p.effects[0]}</p>
+                        
+                        <div class="mt-auto pt-4 border-t border-white/5 flex gap-2">
+                            <div class="w-full py-2.5 rounded-xl text-xs font-bold bg-brand-500/10 group-hover:bg-brand-500 group-hover:text-white text-brand-400 border border-brand-500/20 transition-all flex items-center justify-center gap-1.5">
+                                Details & Datenblatt <span class="group-hover:translate-x-1 transition-transform">→</span>
                             </div>
-                        </div>
-
-                        <!-- Tab Content: Praxis & Lifestyle -->
-                        <div id="${p.id}-praxis" class="card-tab-content hidden space-y-3 min-h-[120px]">
-                            <!-- Applikation & Winkel -->
-                            <div class="bg-slate-900/80 rounded-xl p-4 border border-white/5 mb-3 flex flex-col md:flex-row justify-between md:items-center gap-4">
-                                <div>
-                                    <span class="block text-[9px] text-slate-500 uppercase tracking-widest mb-1">Applikation</span>
-                                    <span class="font-bold text-white">${appType}</span>
-                                </div>
-                                <div class="md:text-right">
-                                    <span class="block text-[9px] text-slate-500 uppercase tracking-widest mb-1">Winkel</span>
-                                    <span class="font-bold ${angleColor} text-sm flex items-center md:justify-end gap-1">📐 ${angle}</span>
-                                </div>
-                            </div>
-
-                            <!-- Biomarker Check -->
-                            <div class="bg-brand-500/10 rounded-xl p-3 border border-brand-500/20 mb-3 cursor-pointer hover:bg-brand-500/20 transition-all" onclick="router('blood'); document.getElementById('blood-select').value='${p.id}'; renderBloodPanel();">
-                                <span class="text-[10px] font-bold text-brand-400 uppercase tracking-wider block mb-1">🩸 Empfohlene Biomarker</span>
-                                <p class="text-xs text-slate-300 leading-relaxed mb-2">${bio.short}</p>
-                                <span class="text-[10px] text-brand-400 font-bold">Klicke für detaillierte Checkliste →</span>
-                            </div>
-
-                            <div class="bg-slate-900/50 rounded-xl p-3 border border-white/5">
-                                <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider block mb-2">Optimierung der Wirkung</span>
-                                ${getLifestyleTips(p.cat)}
-                            </div>
-                        </div>
-
-                        <!-- Tab Content: Studien & Quellen -->
-                        <div id="${p.id}-study" class="card-tab-content hidden space-y-3 min-h-[120px]">
-                            <div class="bg-brand-500/10 border-l-2 border-brand-500 p-3 rounded-r-xl">
-                                <span class="text-[10px] font-bold text-brand-400 uppercase tracking-wider block mb-1">Evidenz: ${p.study.level}</span>
-                                <p class="text-xs text-slate-300 leading-relaxed">${p.study.text}</p>
-                            </div>
-                            <div class="pt-2 flex flex-wrap gap-2">
-                                <a href="${pubMedLink}" target="_blank" class="px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[10px] text-slate-300 transition-colors">🇬🇧 PubMed (Int.)</a>
-                                <a href="${scholarLink}" target="_blank" class="px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[10px] text-slate-300 transition-colors">🇩🇪 Scholar (DE)</a>
-                                <a href="${ytLink}" target="_blank" class="px-2 py-1 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded text-[10px] text-red-400 transition-colors">▶ YouTube</a>
-                            </div>
-                        </div>
-
-                        <!-- Tab Content: Preise -->
-                        <div id="${p.id}-price" class="card-tab-content hidden space-y-3 min-h-[120px]">
-                            <div class="bg-slate-900/50 rounded-xl p-4 border border-white/5">
-                                <div class="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
-                                    <span class="block text-[9px] text-slate-500 uppercase font-bold">Verifizierte Shops</span>
-                                    <a href="https://janoshik.com/verification/" target="_blank" class="text-[9px] text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 font-bold">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Batch prüfen
-                                    </a>
-                                </div>
-                                <div class="space-y-1">
-                                    ${priceHtml || '<span class="text-xs text-slate-500">Keine Preise hinterlegt.</span>'}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div class="mt-4 pt-4 border-t border-white/5 flex gap-2">
-                            <button onclick="router('calc'); loadDirectToCalc('${p.id}')" class="flex-1 py-2 rounded-xl text-[10px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
-                                🧪 Rechner
-                            </button>
-                            <button onclick="router('stack'); setTimeout(() => { const cb = document.querySelector('.stack-checkbox[value=\\'${p.name}\\']'); if(cb){ cb.checked = true; generateStackReport(); } }, 100);" class="flex-1 py-2 rounded-xl text-[10px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
-                                🧬 Stacker
-                            </button>
                         </div>
                     </div>
                 `;
@@ -1412,22 +967,283 @@
             renderStackerList();
         }
 
-        function toggleCardTab(btn, targetId) {
-            const card = btn.closest('.peptide-card');
-            card.querySelectorAll('.card-tab-btn').forEach(tab => {
-                tab.className = "card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0";
+        // PEPTIDE MODAL LOGIC
+        function openPeptideModal(id) {
+            const pepRaw = RAW_DATA.find(i => i[0] === id);
+            if(!pepRaw) return;
+
+            const p = {
+                id: pepRaw[0], nr: pepRaw[1], name: pepRaw[2], aka: pepRaw[3], cat: pepRaw[4], catText: pepRaw[5], risk: pepRaw[6],
+                effects: pepRaw[7], risks: pepRaw[8], dosage: pepRaw[9], study: { level: pepRaw[10], text: pepRaw[11] }, prices: pepRaw[12]
+            };
+
+            let badgeColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+            if(p.cat === 'wachstum') badgeColor = "bg-accent/10 text-accent border-accent/20";
+            if(p.cat === 'gewicht') badgeColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+            if(p.cat === 'neuro' || p.cat === 'aging') badgeColor = "bg-brand-500/10 text-brand-400 border-brand-500/20";
+            if(p.cat === 'kosmetik') badgeColor = "bg-rose-500/10 text-rose-400 border-rose-500/20";
+            if(p.cat === 'libido') badgeColor = "bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20";
+
+            let riskClass = "text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
+            let riskText = "Niedrig";
+            if(p.risk === 'med') { riskClass = "text-amber-400 border-amber-500/30 bg-amber-500/10"; riskText = "Mittel"; }
+            if(p.risk === 'high') { riskClass = "text-danger border-danger/30 bg-danger/10"; riskText = "Hoch"; }
+
+            // Prices
+            let priceHtml = "";
+            if (p.prices) {
+                p.prices.forEach(pr => {
+                    let link = "";
+                    if(pr.shop === "r-phase") link = "https://www.r-phase.com/";
+                    else if(pr.shop === "Nova Labs") link = "https://nova-labs.eu/products";
+                    else if(pr.shop === "Kronen Peptide") link = "https://kronen-peptide.com/shop/page/2/";
+                    else if(pr.shop === "Rebirth Labs") link = "https://rebirthlabs.org/product-category/all-peptides/";
+                    else if(pr.shop === "Austrian Peptides") link = "https://www.austrianspeptides.com/category/all-products?page=3";
+                    else if(pr.shop === "Europa-Peptide") link = "https://europa-peptide.de/";
+                    else if(pr.shop === "odipept") link = "https://odipept.de/#produkte";
+                    else if(pr.shop === "RCpeptides") link = "https://rcpeptides.to/";
+                    else if(pr.shop === "Peptid24") link = "https://peptid24.de/";
+                    else if(pr.shop === "Drakon Peptides") link = "https://drakonpeptides.com/shop-2/?s=BPC-157&post_type=product";
+                    else if(pr.shop === "Premium Research Peptides") link = "https://www.peptiderevolution.eu/";
+                    else if(pr.shop === "Slavic Labs") link = "https://slaviclabs.com/";
+                    else if(pr.shop === "Helus Lab") link = "https://heluslab.com/home/shop/";
+                    else if(pr.shop === "Glowing Peptides") link = "https://glowingpeptides.com/";
+                    else if(pr.shop === "Bioboostx") link = "https://bioboostx.com/";
+                    else if(pr.shop === "Core SARMs") link = "https://coresarms.de/";
+                    else if(pr.shop === "BioSync Labs") link = "https://biosynclabs.de/shop";
+                    else if(pr.shop === "AdriaScience") link = "https://adriascience.com/shop/";
+                    else if(pr.shop === "Beyond Peptides") link = "https://beyond-peptides.com/shop/?e-filter-1de3cab-product_cat=all-peptides";
+                    else if(pr.shop === "SmartPeptides") link = "https://smartpeptides.de/shop/";
+
+                    const shopLabel = link 
+                        ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
+                        : pr.shop;
+                        
+                    const displayPrice = pr.price.toString().includes('€') || pr.price.toString().includes('$') ? pr.price : pr.price + ' €';
+                    
+                    let originBadge = "";
+                    if (pr.origin) {
+                        if (pr.origin === 'DE' || pr.origin === 'EU') {
+                            originBadge = `<div class="flex items-center gap-1.5 text-[9.5px] font-medium text-emerald-400/90 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse-slow"></span> EU-Zentrallager (Kein Zollrisiko, 3-5 Tage)</div>`;
+                        } else if (pr.origin === 'UK') {
+                            originBadge = `<div class="flex items-center gap-1.5 text-[9.5px] font-medium text-amber-400/90 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span> Drittland (Stichproben-Risiko, 5-10 Tage)</div>`;
+                        } else if (pr.origin === 'US' || pr.origin === 'CN') {
+                            originBadge = `<div class="flex items-center gap-1.5 text-[9.5px] font-medium text-rose-400/90 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></span> Übersee (Erhöhtes Zollrisiko, 14-30 Tage)</div>`;
+                        }
+                    }
+                    
+                    priceHtml += `
+                        <div class="py-2.5 border-b border-white/5 last:border-0 flex flex-col justify-center">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-300 font-bold">${shopLabel}</span>
+                                <span class="font-bold text-white bg-slate-800/80 border border-white/5 px-2 py-1 rounded shadow-inner">${displayPrice}</span>
+                            </div>
+                            ${originBadge}
+                        </div>`;
+                });
+            }
+
+            // Links & Angles
+            const encName = encodeURIComponent(p.name.split(' ')[0]);
+            const pubMedLink = `https://pubmed.ncbi.nlm.nih.gov/?term=${encName}+peptide`;
+            const scholarLink = `https://scholar.google.de/scholar?hl=de&q=${encName}+Peptid+Studie`;
+            const ytLink = `https://www.youtube.com/results?search_query=${encName}+peptide+wirkung`;
+
+            let angle = "N/A";
+            let appType = p.dosage.form || "";
+            let angleColor = "text-slate-500";
+            
+            if(appType.toLowerCase().includes("subkutan")) { angle = "45° (Pinch-Technik)"; angleColor = "text-emerald-400"; }
+            if(appType.toLowerCase().includes("im") || appType.toLowerCase().includes("lokal")) { angle = "90° (Senkrecht)"; angleColor = "text-accent"; }
+            if(appType.toLowerCase().includes("nasal")) { angle = "Sprühstoß"; angleColor = "text-brand-400"; }
+            if(appType.toLowerCase().includes("oral") && !appType.toLowerCase().includes("subkutan")) { angle = "Schlucken"; angleColor = "text-amber-400"; }
+
+            const bio = getBiomarkers(p.name, p.cat);
+            const isFav = favorites.includes(p.id);
+
+            // Populate Header
+            document.getElementById('modal-header-content').innerHTML = `
+                <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest block mb-1">REF // ${p.nr}</span>
+                <h3 class="text-2xl font-bold text-white leading-tight">${p.name}</h3>
+                <p class="text-xs text-slate-400">${p.aka}</p>
+                <div class="flex flex-wrap gap-1.5 mt-2">
+                    <span class="px-2.5 py-1 rounded text-[9px] font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
+                    <span class="px-2 py-1 rounded text-[9px] font-bold border uppercase tracking-wider ${riskClass}">Risiko: ${riskText}</span>
+                </div>
+            `;
+
+            // Update Favorite Button Logic
+            const favBtn = document.getElementById('modal-fav-btn');
+            favBtn.setAttribute('onclick', `toggleFavorite('${p.id}')`);
+            const favSvg = favBtn.querySelector('svg');
+            if(isFav) {
+                favSvg.classList.add('fill-rose-500', 'text-rose-500');
+                favSvg.classList.remove('fill-none', 'text-slate-400');
+            } else {
+                favSvg.classList.remove('fill-rose-500', 'text-rose-500');
+                favSvg.classList.add('fill-none', 'text-slate-400');
+            }
+
+            // Populate Content
+            const contentHtml = `
+                <!-- Tabs Header -->
+                <div class="flex border-b border-white/10 overflow-x-auto pb-2 max-w-full scroll-smooth">
+                    <button onclick="toggleModalTab(this, 'modal-${p.id}-eff')" class="modal-tab-btn px-4 py-2 text-sm font-semibold text-brand-400 border-b-2 border-brand-500 transition-colors whitespace-nowrap shrink-0">Wirkung</button>
+                    <button onclick="toggleModalTab(this, 'modal-${p.id}-side')" class="modal-tab-btn px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Risiken</button>
+                    <button onclick="toggleModalTab(this, 'modal-${p.id}-dose')" class="modal-tab-btn px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Dosierung</button>
+                    <button onclick="toggleModalTab(this, 'modal-${p.id}-praxis')" class="modal-tab-btn px-4 py-2 text-sm font-semibold text-amber-400 hover:text-amber-300 transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0 flex items-center gap-1">💡 Praxis-Guide</button>
+                    <button onclick="toggleModalTab(this, 'modal-${p.id}-study')" class="modal-tab-btn px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Studien</button>
+                    <button onclick="toggleModalTab(this, 'modal-${p.id}-price')" class="modal-tab-btn px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Preise</button>
+                </div>
+
+                <!-- Tab Content: Wirkung -->
+                <div id="modal-${p.id}-eff" class="modal-tab-content block space-y-4">
+                    <ul class="space-y-3 text-sm text-slate-300 bg-slate-900/50 p-5 rounded-2xl border border-white/5">
+                        ${p.effects.map(e => `<li class="flex items-start gap-3"><span class="text-success mt-0.5 text-lg">●</span> <span class="leading-relaxed">${e}</span></li>`).join('')}
+                    </ul>
+                </div>
+
+                <!-- Tab Content: Risiken -->
+                <div id="modal-${p.id}-side" class="modal-tab-content hidden space-y-4">
+                    <ul class="space-y-3 text-sm text-slate-300 bg-rose-500/5 p-5 rounded-2xl border border-rose-500/10">
+                        ${p.risks.map(r => `<li class="flex items-start gap-3"><span class="text-danger mt-0.5 text-lg">✖</span> <span class="leading-relaxed">${r}</span></li>`).join('')}
+                    </ul>
+                </div>
+
+                <!-- Tab Content: Dosierung -->
+                <div id="modal-${p.id}-dose" class="modal-tab-content hidden space-y-4">
+                    <div class="bg-slate-900/50 rounded-2xl p-5 border border-white/5 grid grid-cols-2 md:grid-cols-3 gap-6 text-sm">
+                        <div><span class="block text-[10px] text-slate-500 uppercase tracking-wider mb-1">Standard-Dosis</span><span class="font-semibold text-brand-400 text-lg">${p.dosage.normal}</span></div>
+                        <div><span class="block text-[10px] text-slate-500 uppercase tracking-wider mb-1">Max. Limit</span><span class="font-semibold text-danger text-lg">${p.dosage.max}</span></div>
+                        <div><span class="block text-[10px] text-slate-500 uppercase tracking-wider mb-1">Einstieg (Starter)</span><span class="font-semibold text-emerald-400 text-lg">${p.dosage.starter}</span></div>
+                        
+                        <div class="col-span-full h-px bg-white/5 my-2"></div>
+
+                        <div><span class="block text-[10px] text-slate-500 uppercase tracking-wider mb-1">Applikation</span><span class="font-semibold text-white">${p.dosage.form}</span></div>
+                        <div><span class="block text-[10px] text-slate-500 uppercase tracking-wider mb-1">Häufigkeit</span><span class="font-semibold text-white">${p.dosage.freq}</span></div>
+                        <div><span class="block text-[10px] text-slate-500 uppercase tracking-wider mb-1">Zeitpunkt</span><span class="font-semibold text-white">${p.dosage.timing}</span></div>
+                        
+                        <div class="col-span-full h-px bg-white/5 my-2"></div>
+
+                        <div><span class="block text-[10px] text-slate-500 uppercase tracking-wider mb-1">Zyklus-Dauer</span><span class="font-semibold text-white">${p.dosage.cycle}</span></div>
+                        <div class="col-span-2"><span class="block text-[10px] text-slate-500 uppercase tracking-wider mb-1">Biologische Halbwertszeit</span><span class="font-semibold text-white">${p.dosage.halflife}</span></div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Praxis & Lifestyle -->
+                <div id="modal-${p.id}-praxis" class="modal-tab-content hidden space-y-4">
+                    <div class="bg-slate-900/80 rounded-2xl p-5 border border-white/5 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                        <div>
+                            <span class="block text-[10px] text-slate-500 uppercase tracking-widest mb-1">Empfohlene Applikation</span>
+                            <span class="font-bold text-white text-lg">${appType}</span>
+                        </div>
+                        <div class="sm:text-right">
+                            <span class="block text-[10px] text-slate-500 uppercase tracking-widest mb-1">Injektions-Winkel</span>
+                            <span class="font-bold ${angleColor} text-xl flex items-center sm:justify-end gap-2">📐 ${angle}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-500/10 rounded-2xl p-5 border border-brand-500/20 cursor-pointer hover:bg-brand-500/20 transition-all group" onclick="closePeptideModal(); setTimeout(() => { router('blood'); document.getElementById('blood-select').value='${p.id}'; renderBloodPanel(); }, 300);">
+                        <span class="text-xs font-bold text-brand-400 uppercase tracking-wider block mb-2 flex items-center gap-2">🩸 Empfohlene Baseline Biomarker</span>
+                        <p class="text-sm text-slate-300 leading-relaxed mb-3">${bio.short}</p>
+                        <span class="text-xs text-brand-400 font-bold group-hover:underline">Zum Labor-Generator wechseln →</span>
+                    </div>
+
+                    <div class="bg-slate-900/50 rounded-2xl p-5 border border-white/5">
+                        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block mb-3">Maximierung der Bioverfügbarkeit</span>
+                        ${getLifestyleTips(p.cat)}
+                    </div>
+                </div>
+
+                <!-- Tab Content: Studien & Quellen -->
+                <div id="modal-${p.id}-study" class="modal-tab-content hidden space-y-4">
+                    <div class="bg-brand-500/10 border-l-4 border-brand-500 p-5 rounded-r-2xl">
+                        <span class="text-xs font-bold text-brand-400 uppercase tracking-wider block mb-2">Evidenz-Level: ${p.study.level}</span>
+                        <p class="text-sm text-slate-300 leading-relaxed">${p.study.text}</p>
+                    </div>
+                    <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                        <a href="${pubMedLink}" target="_blank" class="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 border border-white/10 rounded-xl text-xs font-semibold text-white text-center transition-colors shadow-sm">🇬🇧 PubMed Library</a>
+                        <a href="${scholarLink}" target="_blank" class="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 border border-white/10 rounded-xl text-xs font-semibold text-white text-center transition-colors shadow-sm">🇩🇪 Google Scholar</a>
+                        <a href="${ytLink}" target="_blank" class="flex-1 py-3 px-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-xs font-semibold text-red-400 text-center transition-colors shadow-sm">▶ Video Reports</a>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Preise -->
+                <div id="modal-${p.id}-price" class="modal-tab-content hidden space-y-4">
+                    <div class="bg-slate-900/50 rounded-2xl p-5 border border-white/5">
+                        <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-4">
+                            <span class="block text-xs text-slate-400 uppercase tracking-wider font-bold">Verifizierte Shop-Datenbank</span>
+                            <a href="https://janoshik.com/verification/" target="_blank" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors flex items-center gap-1.5 font-bold">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> HPLC Batch prüfen
+                            </a>
+                        </div>
+                        <div class="space-y-1">
+                            ${priceHtml || '<span class="text-sm text-slate-500">Für dieses Molekül sind noch keine Preise in der verifizierten Datenbank hinterlegt.</span>'}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Footer -->
+                <div class="pt-4 flex gap-3">
+                    <button onclick="closePeptideModal(); setTimeout(() => { router('calc'); loadDirectToCalc('${p.id}'); }, 300);" class="flex-1 py-3.5 rounded-xl text-sm font-bold bg-white/5 hover:bg-brand-500/20 text-white hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-2">
+                        🧪 In den Rechner laden
+                    </button>
+                    <button onclick="closePeptideModal(); setTimeout(() => { router('stack'); const cb = document.querySelector('.stack-checkbox[value=\\'${p.name}\\']'); if(cb){ cb.checked = true; generateStackReport(); } }, 300);" class="flex-1 py-3.5 rounded-xl text-sm font-bold bg-white/5 hover:bg-brand-500/20 text-white hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-2">
+                        🧬 Zum Stacker hinzufügen
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('modal-body-content').innerHTML = contentHtml;
+
+            // Show Modal
+            const modal = document.getElementById('peptide-modal');
+            const modalContent = document.querySelector('#peptide-modal .glass-card');
+            
+            modal.classList.remove('hidden');
+            // Trigger reflow
+            void modal.offsetWidth;
+            
+            modal.classList.remove('opacity-0');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+            document.body.style.overflow = 'hidden'; // prevent background scrolling
+        }
+
+        function closePeptideModal() {
+            const modal = document.getElementById('peptide-modal');
+            const modalContent = document.querySelector('#peptide-modal .glass-card');
+            
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        function toggleModalTab(btn, targetId) {
+            const container = btn.closest('#modal-body-content');
+            container.querySelectorAll('.modal-tab-btn').forEach(tab => {
+                tab.className = "modal-tab-btn px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0";
             });
-            card.querySelectorAll('.card-tab-content').forEach(content => {
+            container.querySelectorAll('.modal-tab-content').forEach(content => {
                 content.classList.add('hidden');
                 content.classList.remove('block');
             });
 
-            btn.className = "card-tab-btn px-3 py-1.5 text-xs font-semibold text-brand-400 border-b-2 border-brand-500 transition-colors whitespace-nowrap shrink-0";
-            const targetEl = card.querySelector('#' + targetId);
+            btn.className = "modal-tab-btn px-4 py-2 text-sm font-semibold text-brand-400 border-b-2 border-brand-500 transition-colors whitespace-nowrap shrink-0";
+            const targetEl = document.getElementById(targetId);
             if(targetEl) {
                 targetEl.classList.remove('hidden');
                 targetEl.classList.add('block');
             }
+        }
+
+        function toggleCardTab(btn, targetId) {
+            // Keep this empty/fallback just in case old calls exist
         }
 
         function applyFilters() {
@@ -1444,12 +1260,14 @@
                 const cCat = card.dataset.cat;
                 const cRisk = card.dataset.risk;
                 const search = card.dataset.search;
+                const pId = card.dataset.id;
 
                 const matchCat = (cat === 'all' || cCat === cat);
                 const matchRisk = (activeRiskFilter === 'all' || cRisk === activeRiskFilter);
                 const matchQuery = (!query || search.includes(query));
+                const matchFav = (!showFavoritesOnly || favorites.includes(pId));
 
-                if(matchCat && matchRisk && matchQuery) {
+                if(matchCat && matchRisk && matchQuery && matchFav) {
                     card.classList.remove('hidden');
                     displayed++;
                 } else {
