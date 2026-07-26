@@ -952,6 +952,7 @@
             ["epithalon_ghk","147/147","Epithalon + GHK-Cu","Anti-Aging Mix","aging","ANTI-AGING","low",["Telomerase","Haut/Haare"],["Hautreizung"],{starter:"1mg",normal:"2mg",max:"5mg",freq:"1x/Tag",form:"Subkutan",timing:"Abends",cycle:"20 Tage",halflife:"Misch"},"pilot","Synergie.",[{shop:"Slavic Labs",price:"43.66",origin:"EU"}]]
         ];
 
+        // --- AUTOMATISCHER DATEN-MERGE FÜR ALLE SHOPS ---
         const bioboostxPrices = {
             "bpc157": 39.95, "tb500": 45.95, "ipamorelin": 45.95, "cjc1295": 49.95,
             "semax": 29.95, "selank": 29.95, "dsip": 59.95, "epitalon": 35.95,
@@ -1028,6 +1029,13 @@
             "tesamorelin": 69.90, "ta1": 69.90, "tirzepatide": 59.90, "vip": 49.90
         };
 
+        const evoPeptidePrices = {
+            "bpc157": 54.99, "bpctb": 99.99, "ghkcu": 34.99, "glow": 99.99,
+            "hgh": 54.99, "mt2": 34.99, "motsc": 29.99, "retatrutide": 109.99,
+            "semaxselank": 74.99, "semaglutide": 54.99, "tb500": 84.99, "tirzepatide": 84.99
+        };
+
+        // Fallback-Check: Nur ausführen, wenn RAW_DATA vom User wiederhergestellt wurde
         if (typeof RAW_DATA !== 'undefined') {
             RAW_DATA.forEach(item => {
                 if (bioboostxPrices[item[0]]) item[12].push({ shop: "Bioboostx", price: bioboostxPrices[item[0]].toFixed(2), origin: "EU" });
@@ -1037,8 +1045,10 @@
                 if (adriaSciencePrices[item[0]]) item[12].push({ shop: "AdriaScience", price: adriaSciencePrices[item[0]].toFixed(2), origin: "EU" });
                 if (beyondPeptidesPrices[item[0]]) item[12].push({ shop: "Beyond Peptides", price: beyondPeptidesPrices[item[0]].toFixed(2), origin: "EU" });
                 if (smartPeptidesPrices[item[0]]) item[12].push({ shop: "SmartPeptides", price: smartPeptidesPrices[item[0]].toFixed(2), origin: "DE" });
+                if (evoPeptidePrices[item[0]]) item[12].push({ shop: "Evo Peptide", price: evoPeptidePrices[item[0]].toFixed(2), origin: "EU" });
             });
 
+            // Völlig neue Peptide & Bundles am Ende anfügen
             RAW_DATA.push(
                 ["lemonbottle", "148/150", "Lemon Bottle", "Fat Dissolver", "gewicht", "GEWICHT", "med", ["Lokaler Fettabbau"], ["Schwellung"], {starter:"10ml", normal:"20ml", max:"50ml", freq:"1x/Wo", form:"Lokal", timing:"Tag", cycle:"Kurz", halflife:"Kurz"}, "human", "Kosmetik.", [{shop:"Bioboostx", price:"25.95", origin:"EU"}]],
                 ["xmorelin", "149/150", "X-morelin", "GH Secretagogue", "wachstum", "WACHSTUM", "med", ["GH Puls"], ["Hunger"], {starter:"100mcg", normal:"250mcg", max:"500mcg", freq:"1x/Tag", form:"Subkutan", timing:"Abends", cycle:"8 Wo", halflife:"Kurz"}, "pilot", "Forschung.", [{shop:"Bioboostx", price:"59.95", origin:"EU"}]],
@@ -1066,7 +1076,7 @@
             if(target) { 
                 target.classList.remove('hidden'); 
                 target.classList.add('block'); 
-                void target.offsetWidth; 
+                void target.offsetWidth; // Reflow for animation restart
                 target.classList.add('animate-fade-in-up');
             }
 
@@ -1238,6 +1248,7 @@
                         else if(pr.shop === "AdriaScience") link = "https://adriascience.com/shop/";
                         else if(pr.shop === "Beyond Peptides") link = "https://beyond-peptides.com/shop/?e-filter-1de3cab-product_cat=all-peptides";
                         else if(pr.shop === "SmartPeptides") link = "https://smartpeptides.de/shop/";
+                        else if(pr.shop === "Evo Peptide") link = "https://evo-peptide.com/products";
 
                         const shopLabel = link 
                             ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
@@ -1631,6 +1642,7 @@
                 else if(shopObj.shop === "AdriaScience") link = "https://adriascience.com/shop/";
                 else if(shopObj.shop === "Beyond Peptides") link = "https://beyond-peptides.com/shop/?e-filter-1de3cab-product_cat=all-peptides";
                 else if(shopObj.shop === "SmartPeptides") link = "https://smartpeptides.de/shop/";
+                else if(shopObj.shop === "Evo Peptide") link = "https://evo-peptide.com/products";
 
                 return {
                     shop: shopObj.shop,
