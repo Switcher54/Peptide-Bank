@@ -1095,6 +1095,18 @@
             "ta1": 79.99, "vip": 59.99
         };
 
+        const novaBiolabsPrices = {
+            "amino1mq": 84.99, "bacwater": 19.99, "bpctb": 69.99, "bpc157": 44.99,
+            "bpcpellets": 219.99, "cagrilintide": 129.99, "cjcipa": 74.99, "cjc1295": 94.99,
+            "dsip": 54.99, "epitalon": 44.99, "ghkcu": 39.99, "glow": 134.99,
+            "glp2": 79.99, "ipamorelin": 59.99, "klow": 149.99, "kpv": 59.99,
+            "motsc": 49.99, "mt1": 44.99, "mt2": 39.99, "nadplus": 69.99,
+            "pt141": 54.99, "retatrutide": 94.99, "selank": 49.99, "selanknasal": 129.99,
+            "semax": 49.99, "semaxselank": 179.99, "semaxnasal": 129.99, "sermorelin": 99.99,
+            "slupp332pellets": 219.99, "ss31": 59.99, "tb500": 79.99, "tesamorelin": 99.99,
+            "ta1": 99.99, "vip": 89.99, "amino1mqpellets": 219.99
+        };
+
         // Fallback-Check: Nur ausführen, wenn RAW_DATA vom User wiederhergestellt wurde
         if (typeof RAW_DATA !== 'undefined') {
             RAW_DATA.forEach(item => {
@@ -1109,6 +1121,7 @@
                 if (crystalPeptidesPrices[item[0]]) item[12].push({ shop: "Crystal Peptides", price: crystalPeptidesPrices[item[0]].toFixed(2), origin: "DE" });
                 if (peptidedeskPrices[item[0]]) item[12].push({ shop: "Peptidedesk", price: peptidedeskPrices[item[0]].toFixed(2), origin: "EU" });
                 if (primalpeptidePrices[item[0]]) item[12].push({ shop: "Primalpeptide", price: primalpeptidePrices[item[0]].toFixed(2), origin: "EU" });
+                if (novaBiolabsPrices[item[0]]) item[12].push({ shop: "Nova Biolabs", price: novaBiolabsPrices[item[0]].toFixed(2), origin: "EU" });
             });
 
             // Völlig neue Peptide & Bundles am Ende anfügen
@@ -1124,7 +1137,9 @@
                 ["beyondgutpro", "152/150", "Beyond Gut Pro", "Darm-Synergie", "heilung", "REGENERATION", "low", ["Mikrobiom & Darmheilung"], ["Keine bekannt"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Täglich", form:"Oral/Subkutan", timing:"Morgens", cycle:"4 Wo", halflife:"Kurz"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"173.83", origin:"EU"}]],
                 ["beyondskin", "153/150", "Beyond Skin", "Haut-Synergie", "kosmetik", "KOSMETIK", "low", ["Kollagen & Hautbild"], ["Keine bekannt"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Täglich", form:"Subkutan/Topisch", timing:"Abends", cycle:"Dauerhaft", halflife:"Lokal"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"94.52", origin:"EU"}]],
                 ["beyondsleep", "154/150", "Beyond Sleep", "Schlaf-Synergie", "neuro", "NEURO", "low", ["Tiefschlaf & REM"], ["Morgenmüdigkeit"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Vor Schlaf", form:"Subkutan/Nasal", timing:"Abends", cycle:"Bedarf", halflife:"Kurz"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"43.96", origin:"EU"}]],
-                ["slupp332pellets", "155/150", "SLU-PP-332 Tabletten", "Oral Exercise Mimetic", "gewicht", "GEWICHT", "med", ["Mitochondriendichte", "Ausdauer (Oral)"], ["Magenbeschwerden"], {starter:"10mg", normal:"20mg", max:"30mg", freq:"1x/Tag", form:"Oral", timing:"Morgens", cycle:"4-8 Wo", halflife:"12h"}, "invitro", "Klinisch bewiesen.", [{shop:"Peptidedesk", price:"119.99", origin:"EU"}]]
+                ["slupp332pellets", "155/150", "SLU-PP-332 Tabletten", "Oral Exercise Mimetic", "gewicht", "GEWICHT", "med", ["Mitochondriendichte", "Ausdauer (Oral)"], ["Magenbeschwerden"], {starter:"10mg", normal:"20mg", max:"30mg", freq:"1x/Tag", form:"Oral", timing:"Morgens", cycle:"4-8 Wo", halflife:"12h"}, "invitro", "Klinisch bewiesen.", [{shop:"Peptidedesk", price:"119.99", origin:"EU"}, {shop:"Nova Biolabs", price:"219.99", origin:"EU"}]],
+                ["eloralintide", "156/150", "Eloralintide", "GLP-1 / GIP / Glucagon / Amylin", "gewicht", "GEWICHT", "high", ["Stärkster Fettabbau"], ["Herzrasen", "Übelkeit"], {starter:"1mg", normal:"2mg", max:"5mg", freq:"1x/Wo", form:"Subkutan", timing:"Morgens", cycle:"Langzeit", halflife:"120h"}, "human", "Forschung.", [{shop:"Nova Biolabs", price:"249.99", origin:"EU"}]],
+                ["amino1mqpellets", "157/150", "5-Amino-1MQ Kapseln", "Oral NNMT", "gewicht", "GEWICHT", "low", ["Blockiert Fettspeicherung"], ["Teuer"], {starter:"50mg", normal:"100mg", max:"150mg", freq:"1x/Tag", form:"Oral", timing:"Morgens", cycle:"3 Mo", halflife:"Stunden"}, "animal", "Mäuse.", [{shop:"Nova Biolabs", price:"219.99", origin:"EU"}]]
             );
         }
 
@@ -1316,6 +1331,7 @@
                         else if(pr.shop === "Crystal Peptides") link = "https://crystalpeptides.de/shop?category=vial";
                         else if(pr.shop === "Peptidedesk") link = "https://thepeptidedesk.org/de/compounds/";
                         else if(pr.shop === "Primalpeptide") link = "https://primalpeptides.nl/shop";
+                        else if(pr.shop === "Nova Biolabs") link = "https://www.nova-biolabs.eu/shop/";
 
                         const shopLabel = link 
                             ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
@@ -1713,6 +1729,7 @@
                 else if(shopObj.shop === "Crystal Peptides") link = "https://crystalpeptides.de/shop?category=vial";
                 else if(shopObj.shop === "Peptidedesk") link = "https://thepeptidedesk.org/de/compounds/";
                 else if(shopObj.shop === "Primalpeptide") link = "https://primalpeptides.nl/shop";
+                else if(shopObj.shop === "Nova Biolabs") link = "https://www.nova-biolabs.eu/shop/";
 
                 return {
                     shop: shopObj.shop,
