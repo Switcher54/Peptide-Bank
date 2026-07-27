@@ -1005,7 +1005,7 @@
             "mt1": 37.90, "mt2": 37.30, "motsc": 47.50, "nadplus": 39.50,
             "pt141": 36.90, "retatrutide": 73.90, "selank": 20.90, "semaglutide": 73.90,
             "semax": 42.30, "sermorelin": 79.90, "ss31": 57.90, "tb500": 47.50,
-            "tesamorelin": 88.90, "ta1": 58.50, "tirzepatide": 37.90
+            "tesamorelin": 88.90, "ta1": 58.50, "tirzepatide": 37.90, "slupp332": 57.90
         };
 
         const beyondPeptidesPrices = {
@@ -1035,6 +1035,66 @@
             "semaxselank": 74.99, "semaglutide": 54.99, "tb500": 84.99, "tirzepatide": 84.99
         };
 
+        const crystalPeptidesPrices = {
+            "amino1mq": 54.95, "aicar": 29.99, "aod9604": 49.95, "ara290": 43.99,
+            "bacwater": 8.99, "bpc157": 28.99, "bpctb": 64.98, "cagrilintide": 59.99,
+            "cartalax": 49.99, "cerebro": 49.99, "cjc1295": 39.97, "cjcipa": 64.99,
+            "cjc1295dac": 46.99, "dsip": 29.99, "epitalon": 29.99, "foxo4": 119.00,
+            "ghkcu": 29.99, "ghrp2": 24.96, "ghrp6": 29.99, "glow": 129.99,
+            "glp2": 99.00, "glutathione": 74.99, "gonadorelin": 39.00, "hcg": 43.99,
+            "hgh": 29.99, "hexarelin": 39.99, "igf1lr3": 99.00, "ipamorelin": 25.99,
+            "kisspeptin": 34.99, "klow": 144.99, "kpv": 44.98, "ll37": 44.99,
+            "mt1": 39.99, "mt2": 34.99, "nadplus": 94.49, "oxytocin": 27.99,
+            "pegmgf": 49.00, "pt141": 39.99, "retatrutide": 99.00, "selank": 24.99,
+            "semaglutide": 44.99, "semax": 24.99, "sermorelin": 59.99, "snap8": 22.99,
+            "ss31": 49.99, "tb500": 34.99, "tesamorelin": 44.99, "thymalin": 29.99,
+            "ta1": 43.99, "tirzepatide": 99.00, "vip": 41.99, "adamax": 59.99, 
+            "ahkcu": 34.99, "follistatin344": 119.99, "motsc": 44.99
+        };
+
+        const peptidedeskPrices = {
+            "amino1mq": 12.50, "ace031": 29.00, "adamax": 28.00, "adipotide": 23.50,
+            "ahkcu": 16.00, "aicar": 23.50, "aod9604": 16.50, "ara290": 20.00,
+            "b733": 54.50, "bam15": 200.00, "bpctb": 31.00, "bpc157": 12.50,
+            "bpcpellets": 105.00, "bronchogen": 40.00, "cagrilintide": 25.00,
+            "cardiogen": 40.00, "cartalax": 40.00, "cerebro": 18.50, "cjc1295dac": 25.00,
+            "cjc1295": 20.50, "cjcipa": 32.50, "cortagen": 40.00, "crystagen": 40.00,
+            "dermorphin": 20.00, "dihexa": 115.00, "dsip": 10.00, "enclomiphene": 175.00,
+            "epitalon": 14.50, "epo": 34.50, "foxo4": 32.00, "follistatin344": 66.50,
+            "gdf8": 65.00, "ghkcu": 11.00, "ghrp2": 11.00, "ghrp6": 11.00, "glow": 62.00,
+            "glutathione": 21.00, "gonadorelin": 12.50, "cardarine": 100.00, "hcg": 16.50,
+            "hexarelin": 12.50, "hgh": 15.00, "hghfrag": 13.00, "hmg": 21.50,
+            "humanin": 65.00, "igf1lr3": 14.50, "ipamorelin": 12.50, "kisspeptin": 16.50,
+            "klow": 69.00, "kpv": 14.50, "kpvpellets": 110.00, "lcarnitin": 14.50,
+            "lemonbottle": 16.00, "lgd4033": 105.00, "livagen": 40.00, "ll37": 32.50,
+            "mazdutide": 40.00, "mt1": 16.50, "mt2": 16.50, "methyleneblue": 85.00,
+            "mk677": 105.00, "motsc": 20.00, "nadplus": 12.50, "orexinb": 40.00,
+            "ostarine": 105.00, "ovagen": 40.00, "oxytocin": 12.50, "oxytocinacetate": 12.50,
+            "p21": 20.00, "pancragen": 40.00, "pe2228": 20.00, "pegmgf": 27.50,
+            "pinealon": 14.50, "pnc27": 31.00, "prostamax": 40.00, "pt141": 16.00,
+            "rad140": 125.00, "retatrutide": 20.00, "s4": 100.00, "selank": 12.50,
+            "semaxselank": 20.50, "semaglutide": 12.50, "semax": 12.50, "sermorelin": 13.50,
+            "slupp332pellets": 70.00, "snap8": 14.50, "sr9009": 125.00, "ss31": 29.00,
+            "survodutide": 76.00, "tb500": 23.50, "teriparatide": 65.00, "tesaipa": 60.00,
+            "tesamorelin": 18.50, "tesofensine": 100.00, "testagen": 40.00, "thymalin": 20.00,
+            "ta1": 27.50, "tirzepatide": 12.50, "triptorelin": 14.50, "vesugen": 40.00,
+            "vilon": 40.00, "vip": 29.00, "yk11": 175.00
+        };
+
+        const primalpeptidePrices = {
+            "amino1mq": 89.99, "ace031": 69.99, "adamax": 59.99, "ahkcu": 59.99,
+            "aod9604": 64.99, "ara290": 39.99, "bpc157": 39.99, "bpctb": 69.99,
+            "bpcpellets": 170.00, "cagrilintide": 79.99, "cjc1295": 49.99, "cjcipa": 69.99,
+            "dsip": 44.99, "epitalon": 34.99, "ghkcu": 39.99, "ghrp6": 39.99,
+            "glow": 159.99, "glutathione": 44.99, "igf1lr3": 89.99, "ipamorelin": 49.95,
+            "kisspeptin": 59.99, "klow": 199.99, "kpv": 59.99, "kpvpellets": 189.99,
+            "mt2": 39.99, "methyleneblue": 69.99, "motsc": 49.99, "nadplus": 69.99,
+            "oxytocin": 39.99, "pinealon": 49.99, "pt141": 39.99, "retatrutide": 124.99,
+            "selank": 29.99, "semax": 29.99, "semaxselank": 69.99, "slupp332": 69.99,
+            "slupp332pellets": 119.99, "snap8": 29.99, "ss31": 44.99, "tb500": 49.99,
+            "ta1": 79.99, "vip": 59.99
+        };
+
         // Fallback-Check: Nur ausführen, wenn RAW_DATA vom User wiederhergestellt wurde
         if (typeof RAW_DATA !== 'undefined') {
             RAW_DATA.forEach(item => {
@@ -1046,6 +1106,9 @@
                 if (beyondPeptidesPrices[item[0]]) item[12].push({ shop: "Beyond Peptides", price: beyondPeptidesPrices[item[0]].toFixed(2), origin: "EU" });
                 if (smartPeptidesPrices[item[0]]) item[12].push({ shop: "SmartPeptides", price: smartPeptidesPrices[item[0]].toFixed(2), origin: "DE" });
                 if (evoPeptidePrices[item[0]]) item[12].push({ shop: "Evo Peptide", price: evoPeptidePrices[item[0]].toFixed(2), origin: "EU" });
+                if (crystalPeptidesPrices[item[0]]) item[12].push({ shop: "Crystal Peptides", price: crystalPeptidesPrices[item[0]].toFixed(2), origin: "DE" });
+                if (peptidedeskPrices[item[0]]) item[12].push({ shop: "Peptidedesk", price: peptidedeskPrices[item[0]].toFixed(2), origin: "EU" });
+                if (primalpeptidePrices[item[0]]) item[12].push({ shop: "Primalpeptide", price: primalpeptidePrices[item[0]].toFixed(2), origin: "EU" });
             });
 
             // Völlig neue Peptide & Bundles am Ende anfügen
@@ -1060,7 +1123,8 @@
                 ["tesaipa", "151/150", "Tesamorelin + Ipamorelin", "Fat-Loss Synergie", "wachstum", "WACHSTUM", "med", ["Maximale Lipolyse bei gleichzeitigem GH-Puls", "Gezielter Abbau von viszeralem Bauchfett"], ["Leichte Wassereinlagerungen", "Gelenkschmerz möglich"], {starter:"1mg", normal:"2mg", max:"3mg", freq:"1x/Tag", form:"Subkutan", timing:"Abends", cycle:"8-12 Wo", halflife:"Misch"}, "pilot", "Synergetischer Ansatz.", [{shop:"AdriaScience", price:"94.90", origin:"EU"}]],
                 ["beyondgutpro", "152/150", "Beyond Gut Pro", "Darm-Synergie", "heilung", "REGENERATION", "low", ["Mikrobiom & Darmheilung"], ["Keine bekannt"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Täglich", form:"Oral/Subkutan", timing:"Morgens", cycle:"4 Wo", halflife:"Kurz"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"173.83", origin:"EU"}]],
                 ["beyondskin", "153/150", "Beyond Skin", "Haut-Synergie", "kosmetik", "KOSMETIK", "low", ["Kollagen & Hautbild"], ["Keine bekannt"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Täglich", form:"Subkutan/Topisch", timing:"Abends", cycle:"Dauerhaft", halflife:"Lokal"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"94.52", origin:"EU"}]],
-                ["beyondsleep", "154/150", "Beyond Sleep", "Schlaf-Synergie", "neuro", "NEURO", "low", ["Tiefschlaf & REM"], ["Morgenmüdigkeit"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Vor Schlaf", form:"Subkutan/Nasal", timing:"Abends", cycle:"Bedarf", halflife:"Kurz"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"43.96", origin:"EU"}]]
+                ["beyondsleep", "154/150", "Beyond Sleep", "Schlaf-Synergie", "neuro", "NEURO", "low", ["Tiefschlaf & REM"], ["Morgenmüdigkeit"], {starter:"1 Dosis", normal:"1 Dosis", max:"2 Dosen", freq:"Vor Schlaf", form:"Subkutan/Nasal", timing:"Abends", cycle:"Bedarf", halflife:"Kurz"}, "pilot", "Blend.", [{shop:"Beyond Peptides", price:"43.96", origin:"EU"}]],
+                ["slupp332pellets", "155/150", "SLU-PP-332 Tabletten", "Oral Exercise Mimetic", "gewicht", "GEWICHT", "med", ["Mitochondriendichte", "Ausdauer (Oral)"], ["Magenbeschwerden"], {starter:"10mg", normal:"20mg", max:"30mg", freq:"1x/Tag", form:"Oral", timing:"Morgens", cycle:"4-8 Wo", halflife:"12h"}, "invitro", "Klinisch bewiesen.", [{shop:"Peptidedesk", price:"119.99", origin:"EU"}]]
             );
         }
 
@@ -1249,6 +1313,9 @@
                         else if(pr.shop === "Beyond Peptides") link = "https://beyond-peptides.com/shop/?e-filter-1de3cab-product_cat=all-peptides";
                         else if(pr.shop === "SmartPeptides") link = "https://smartpeptides.de/shop/";
                         else if(pr.shop === "Evo Peptide") link = "https://evo-peptide.com/products";
+                        else if(pr.shop === "Crystal Peptides") link = "https://crystalpeptides.de/shop?category=vial";
+                        else if(pr.shop === "Peptidedesk") link = "https://thepeptidedesk.org/de/compounds/";
+                        else if(pr.shop === "Primalpeptide") link = "https://primalpeptides.nl/shop";
 
                         const shopLabel = link 
                             ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
@@ -1643,6 +1710,9 @@
                 else if(shopObj.shop === "Beyond Peptides") link = "https://beyond-peptides.com/shop/?e-filter-1de3cab-product_cat=all-peptides";
                 else if(shopObj.shop === "SmartPeptides") link = "https://smartpeptides.de/shop/";
                 else if(shopObj.shop === "Evo Peptide") link = "https://evo-peptide.com/products";
+                else if(shopObj.shop === "Crystal Peptides") link = "https://crystalpeptides.de/shop?category=vial";
+                else if(shopObj.shop === "Peptidedesk") link = "https://thepeptidedesk.org/de/compounds/";
+                else if(shopObj.shop === "Primalpeptide") link = "https://primalpeptides.nl/shop";
 
                 return {
                     shop: shopObj.shop,
