@@ -322,6 +322,22 @@
             .intro-status, .intro-balken { width: 200px; }
         }
 
+        /* Sparmodus fuer Handys und schwache Geraete.
+           Die Maske ueber dem gekippten Raster und der drop-shadow
+           kosten auf mobilen GPUs am meisten - beides faellt weg. */
+        #intro.sparsam .intro-raster {
+            animation: none;
+            opacity: 0.5;
+            -webkit-mask-image: none;
+            mask-image: none;
+            background-size: 60px 60px;
+            inset: 0;
+            transform: none;
+        }
+        #intro.sparsam .intro-kolben { filter: none; }
+        #intro.sparsam .intro-ring.aussen { animation-duration: 0.6s, 14s; }
+        #intro.sparsam::before { animation-duration: 1.8s; }
+
         @media (prefers-reduced-motion: reduce) { #intro { display: none; } }
 
         /* --- Aufgeklappte Auswahllisten ------------------------------
@@ -384,6 +400,21 @@
         
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
             .pb-safe { padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
+        }
+
+        /* Mit viewport-fit=cover reicht die Seite bis unter die
+           Statusleiste und die Kamera-Aussparung. Ohne diesen Abstand
+           schneidet das Gerät die Kopfzeile oben an. */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            header {
+                padding-top: calc(1rem + env(safe-area-inset-top));
+            }
+            /* Chatfenster und Bottom-Sheet halten sich seitlich frei,
+               etwa im Querformat mit Aussparung am Rand. */
+            #ai-chat-window {
+                margin-right: env(safe-area-inset-right);
+            }
+            .pt-safe { padding-top: env(safe-area-inset-top); }
         }
 
         /* Glasflaechen bekommen oben eine helle Kante und unten einen
@@ -459,6 +490,29 @@
 </head>
 <body class="bg-base text-slate-200 font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-brand-500/30 selection:text-brand-400">
 
+    <!-- ===================== TAGESBRIEFING ===================== -->
+    <div id="briefing" class="fixed inset-0 z-[95] hidden items-start sm:items-center justify-center bg-base/85 backdrop-blur-sm p-4 overflow-y-auto"
+         role="dialog" aria-modal="true" aria-labelledby="briefing-titel">
+        <div class="glass-card rounded-3xl max-w-lg w-full my-auto shadow-lift border border-white/10 overflow-hidden">
+
+            <div class="p-6 border-b border-white/10 flex items-start gap-4">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-xl shadow-glow-brand shrink-0" id="briefing-symbol">☀️</div>
+                <div class="min-w-0">
+                    <h2 class="text-xl font-bold text-white" id="briefing-titel">Guten Morgen</h2>
+                    <p class="text-[11px] text-slate-400" id="briefing-datum">Montag, 1. Januar</p>
+                </div>
+                <button onclick="closeBriefing()" aria-label="Briefing schließen" class="ml-auto text-slate-500 hover:text-white transition-colors shrink-0 text-lg leading-none">✖</button>
+            </div>
+
+            <div class="p-6 space-y-5 max-h-[65vh] overflow-y-auto scrollbar-hide" id="briefing-inhalt"></div>
+
+            <div class="p-5 border-t border-white/10 flex gap-2">
+                <button onclick="closeBriefing()" class="flex-1 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/5 transition-colors">Später</button>
+                <button onclick="closeBriefing(); router('dashboard');" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-brand-500 text-white hover:bg-brand-400 transition-colors shadow-glow-brand">Los geht's</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===================== INTRO ===================== -->
     <div id="intro" role="presentation" aria-hidden="true">
         <canvas id="intro-canvas"></canvas>
@@ -520,6 +574,15 @@
 
         document.documentElement.style.overflow = 'hidden';
 
+        /* Schwaches Geraet? Grobzeiger deutet auf Touch, wenige Kerne
+           auf einen langsamen Prozessor. Beides zusammen mit der
+           Fensterbreite trifft Handys zuverlaessig, ohne den
+           User-Agent auszuwerten. */
+        var sparsam = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+                      (navigator.hardwareConcurrency || 8) <= 4 ||
+                      window.innerWidth < 820;
+        if (sparsam) intro.classList.add('sparsam');
+
         var cv = document.getElementById('intro-canvas');
         var ctx = cv && cv.getContext ? cv.getContext('2d') : null;
         var teilchen = [], anim = null, start = Date.now();
@@ -555,10 +618,12 @@
             cv.height = window.innerHeight * dpr;
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-            // Anzahl an die Flaeche koppeln: auf dem Handy weniger,
-            // damit nichts ruckelt.
-            var n = Math.round(Math.min(150, Math.max(60,
-                    (window.innerWidth * window.innerHeight) / 12000)));
+            // Die Verbindungspruefung waechst quadratisch: 150 Partikel
+            // sind 11175 Abstandsrechnungen je Bild, 45 nur noch 990.
+            var n = sparsam
+                ? 45
+                : Math.round(Math.min(150, Math.max(60,
+                        (window.innerWidth * window.innerHeight) / 12000)));
             var ziele = zieleVomPfad(n);
 
             teilchen = [];
@@ -577,8 +642,17 @@
             }
         }
 
+        var frameZaehler = 0;
+
         function zeichnen() {
             if (!ctx || !intro) return;
+            anim = requestAnimationFrame(zeichnen);
+
+            // Im Sparmodus nur jedes zweite Bild zeichnen. Die Bewegung
+            // bleibt fluessig genug, der Aufwand halbiert sich.
+            frameZaehler++;
+            if (sparsam && (frameZaehler % 2)) return;
+
             var t = (Date.now() - start) / 1000;
             ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
@@ -605,7 +679,7 @@
                         var dx = teilchen[a].x - teilchen[b].x;
                         var dy = teilchen[a].y - teilchen[b].y;
                         var d2 = dx * dx + dy * dy;
-                        if (d2 > 2600) continue;
+                        if (d2 > (sparsam ? 1700 : 2600)) continue;
                         var o = (1 - Math.sqrt(d2) / 51) * 0.5 * deckung;
                         ctx.strokeStyle = 'rgba(130,148,245,' + o.toFixed(3) + ')';
                         ctx.lineWidth = 0.7;
@@ -626,13 +700,14 @@
                 ctx.arc(q.x, q.y, q.gr, 0, 6.2832);
                 ctx.fill();
             }
-
-            anim = requestAnimationFrame(zeichnen);
         }
 
         // Erst nach dem Layout abtasten, sonst steht die Bounding-Box
-        // des Pfads noch nicht fest.
-        requestAnimationFrame(function () { aufbauen(); zeichnen(); });
+        // des Pfads noch nicht fest. Zwei Frames Abstand, damit die
+        // Schriftarten geladen sind und das Layout nicht mehr springt.
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () { aufbauen(); zeichnen(); });
+        });
         window.addEventListener('resize', aufbauen);
 
         setTimeout(function () {
@@ -662,7 +737,7 @@
             }, sofort ? 0 : 170);
         }
 
-        var timer = setTimeout(function () { beenden(false); }, 2900);
+        var timer = setTimeout(function () { beenden(false); }, sparsam ? 2400 : 2900);
         function ueberspringen() { clearTimeout(timer); beenden(true); }
 
         intro.addEventListener('click', ueberspringen);
@@ -845,6 +920,9 @@
                         <div class="flex gap-2">
                              <button onclick="addCustomScheduleItem()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1">
                                 + Manuell
+                            </button>
+                            <button onclick="openBriefing()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1">
+                                ☀️ Tagesbriefing
                             </button>
                             <button onclick="generateDailySchedule()" class="px-3 py-1.5 bg-brand-500/20 hover:bg-brand-500 text-brand-400 hover:text-white border border-brand-500/50 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1">
                                 🔄 Plan generieren
@@ -1779,19 +1857,26 @@
                                 <option value="">-- Bitte wählen --</option>
                             </select>
                         </div>
+                        <div class="space-y-2 mt-2">
+                            <label class="text-xs font-semibold text-slate-300 block">Darreichung</label>
+                            <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700">
+                                <button onclick="setInvArt('vial', this)" class="inv-art-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-600 text-white shadow-sm transition-all flex items-center justify-center gap-1.5"><span>🧪</span> Vial</button>
+                                <button onclick="setInvArt('tablette', this)" class="inv-art-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span>💊</span> Tabletten</button>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                             <div class="space-y-2">
-                                <label class="text-xs font-semibold text-slate-300 block" title="Menge an Wirkstoff in einer Flasche (Vial)">Inhalt pro Vial (mg)</label>
-                                <input type="number" id="inv-mg-vial" aria-label="Inhalt pro Vial in Milligramm" value="10" min="0.1" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-blue-500 outline-none font-mono">
+                                <label class="text-xs font-semibold text-slate-300 block" id="inv-mg-label" for="inv-mg-vial">Inhalt pro Vial (mg)</label>
+                                <input type="number" id="inv-mg-vial" aria-label="Wirkstoffmenge" value="10" min="0.01" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-blue-500 outline-none font-mono">
                             </div>
-                            <!-- NEU: Anzahl Vials Feld -->
                             <div class="space-y-2">
-                                <label class="text-xs font-semibold text-slate-300 block" title="Anzahl der Flaschen, die du hinzufügen möchtest">Anzahl Vials (Stück)</label>
-                                <input type="number" id="inv-vial-count" aria-label="Anzahl der Vials" value="1" min="1" step="1" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-blue-500 outline-none font-mono">
+                                <label class="text-xs font-semibold text-slate-300 block" id="inv-anzahl-label" for="inv-vial-count">Anzahl Vials (Stück)</label>
+                                <input type="number" id="inv-vial-count" aria-label="Anzahl" value="1" min="1" step="1" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-blue-500 outline-none font-mono">
                             </div>
                         </div>
                         <button onclick="addInventoryItem()" class="w-full py-3 bg-blue-500/20 text-blue-400 border border-blue-500/50 hover:bg-blue-500 hover:text-white rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(59,130,246,0.2)] mt-2 flex items-center justify-center gap-2">
-                            <span class="text-lg">+</span> In den Kühlschrank stellen
+                            <span class="text-lg">+</span> <span id="inv-add-text">In den Kühlschrank stellen</span>
                         </button>
                     </div>
 
@@ -2427,8 +2512,10 @@
                 <li><span class="text-brand-400 font-bold">Nachschlagen</span> &mdash; &bdquo;was ist reta&ldquo;, &bdquo;erz&auml;hl mir &uuml;ber bpc&ldquo;</li>
                 <li><span class="text-brand-400 font-bold">Kombinationen</span> &mdash; &bdquo;kann ich bpc und tb500 zusammen&ldquo;</li>
                 <li><span class="text-brand-400 font-bold">Blutwerte</span> &mdash; &bdquo;welche blutwerte bei rad140&ldquo;</li>
-                <li><span class="text-brand-400 font-bold">Lagerung</span> &mdash; &bdquo;wie lagere ich semaglutid&ldquo;</li>
-                <li><span class="text-brand-400 font-bold">Deine Daten</span> &mdash; &bdquo;mein bestand&ldquo;, &bdquo;letzte injektion&ldquo;, &bdquo;mein schlaf&ldquo;</li>
+                <li><span class="text-brand-400 font-bold">Lagerung</span> &mdash; &bdquo;wie lagere ich semaglutid&ldquo;, &bdquo;wo lagere ich bac wasser&ldquo;</li>
+                <li><span class="text-brand-400 font-bold">Dein Tag</span> &mdash; &bdquo;was steht heute an&ldquo;, &bdquo;bpc erledigt&ldquo;, &bdquo;wo soll ich spritzen&ldquo;</li>
+                <li><span class="text-brand-400 font-bold">Deine Daten</span> &mdash; &bdquo;mein bestand&ldquo;, &bdquo;letzte injektion&ldquo;, &bdquo;reicht mein bpc noch&ldquo;</li>
+                <li><span class="text-brand-400 font-bold">Rechnen</span> &mdash; &bdquo;wie viele h&uuml;be f&uuml;r 300 mcg&ldquo;, &bdquo;wie viel mcg sind 0,25 mg&ldquo;</li>
                 <li><span class="text-brand-400 font-bold">Eintragen</span> &mdash; &bdquo;1mg reta bauch&ldquo;, &bdquo;gym r&uuml;cken 12 s&auml;tze rpe 8&ldquo;, &bdquo;schlaf 8 energie 7&ldquo;</li>
             </ul>
             <div class="mt-3 pt-3 border-t border-white/10 flex items-start gap-2">
@@ -2450,9 +2537,10 @@
 
         <!-- Input Area -->
         <div id="ai-chips" class="px-3 pt-2 bg-slate-800 border-t border-white/10 flex gap-1.5 overflow-x-auto scrollbar-hide">
-            <button onclick="askAI('Was ist BPC-157?')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Was ist BPC-157?</button>
-            <button onclick="askAI('Mein Bestand')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Mein Bestand</button>
-            <button onclick="askAI('Letzte Injektion')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Letzte Injektion</button>
+            <button onclick="askAI('Was steht heute an?')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Heute</button>
+            <button onclick="askAI('Wo soll ich heute spritzen?')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Wo spritzen?</button>
+            <button onclick="askAI('Was geht zur Neige?')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Zur Neige</button>
+            <button onclick="askAI('Mein Bestand')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Bestand</button>
             <button onclick="askAI('Hilfe')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Hilfe</button>
         </div>
         <div class="p-3 bg-slate-800 flex gap-2">
@@ -2974,7 +3062,8 @@
             daily_schedule: {},
             peptide_alarms: [],
             ai_chat_history: [],
-            nasal_log: []
+            nasal_log: [],
+            briefing_stand: {}
         };
 
         let storeWarnings = [];
@@ -3039,11 +3128,41 @@
             }
         }
 
+        // Maskiert Zeichen, die im HTML eine Bedeutung haben. Alles,
+        // was der Nutzer eintippt, geht hierdurch - sonst zerlegt ein
+        // Anfuehrungszeichen in einer Notiz das Layout.
+        function esc(s) {
+            return String(s === null || s === undefined ? '' : s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Text, der in einem onclick-Attribut landet, muss zweifach
+        // abgesichert werden: erst als JavaScript-String (Backslash und
+        // Anfuehrungszeichen), dann als HTML-Attribut. Nur eines von
+        // beidem reicht nicht - ein Anfuehrungszeichen im Namen bricht
+        // sonst aus dem Attribut aus.
+        function escAttr(s) {
+            return esc(String(s === null || s === undefined ? '' : s)
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'"));
+        }
+
         // Lokales Datum als YYYY-MM-DD.
         // toISOString() rechnet nach UTC um. Deutschland liegt davor, also
         // liefert es zwischen Mitternacht und 1 Uhr (Winter) bzw. 2 Uhr
         // (Sommer) noch den Vortag - Eintraege landen dann im Kalender
         // einen Tag zu frueh.
+        // Alle Substanzlisten der App gehen hierdurch, damit die
+        // Reihenfolge überall dieselbe ist. localeCompare sortiert
+        // Umlaute richtig ein, ein einfacher Vergleich nicht.
+        function nachNamen(liste) {
+            return [...liste].sort((a, b) => a[2].localeCompare(b[2], 'de'));
+        }
+
         function localDateISO(d) {
             const x = d instanceof Date ? d : new Date();
             return x.getFullYear() + '-' +
@@ -3939,10 +4058,8 @@
             const idx = calcVialCount;
             calcVialCount++;
             
-            let optionsHtml = '<option value="">-- Manuelle Eingabe --</option>';
-            RAW_DATA.forEach(item => {
-                optionsHtml += `<option value="${item[0]}">${item[2]}</option>`;
-            });
+            let optionsHtml = '<option value="">-- Manuelle Eingabe --</option>' +
+                nachNamen(RAW_DATA).map(item => `<option value="${item[0]}">${item[2]}</option>`).join('');
 
             const html = `
                 <div class="bg-slate-900/50 p-5 rounded-2xl border ${idx > 0 ? 'border-dashed border-slate-700' : 'border-slate-800'} relative calc-vial-block animate-fade-in-up" id="calc-vial-block-${idx}">
@@ -5413,7 +5530,7 @@
                 if (item.type === 'injection' || (item.type === undefined && item.peptide)) {
                     icon = '<span class="text-brand-400 text-lg">💉</span>';
                     let doseText = item.dose ? ` <span class="text-xs text-slate-400 ml-1">(${item.dose})</span>` : '';
-                    let subName = item.peptide ? item.peptide : 'Unbekannt';
+                    let subName = esc(item.peptide ? item.peptide : 'Unbekannt');
                     contentHtml = `<span class="text-sm font-bold text-white">${subName}</span>${doseText}`;
                 } 
                 else if (item.type === 'feedback' || (item.type === undefined && item.sleep)) {
@@ -5433,13 +5550,13 @@
                 }
                 else if (item.type === 'note' || (item.type === undefined && item.note)) {
                     icon = '<span class="text-amber-400 text-lg">📝</span>';
-                    contentHtml = `<p class="text-xs text-slate-300 italic">"${item.note}"</p>`;
+                    contentHtml = `<p class="text-xs text-slate-300 italic">"${esc(item.note)}"</p>`;
                 }
                 else if (item.type === 'workout' || (item.type === undefined && item.focus)) {
                     icon = '<span class="text-purple-400 text-lg">🏋️</span>';
                     contentHtml = `
                         <div class="flex flex-col gap-0.5">
-                            <span class="text-sm font-bold text-white">${item.focus || 'Training'}</span>
+                            <span class="text-sm font-bold text-white">${esc(item.focus || 'Training')}</span>
                             <div class="flex gap-3 text-[11px] font-mono text-purple-300">
                                 <span title="Arbeitssätze">VOL: ${item.sets || 0} Sätze</span>
                                 <span title="Intensität">RPE: ${item.rpe || '-'}</span>
@@ -5531,7 +5648,37 @@
             const select = document.getElementById('inv-select');
             if(!select) return;
             select.innerHTML = '<option value="">-- Bitte wählen --</option>' +
-                RAW_DATA.map(p => `<option value="${p[0]}">${p[2]}</option>`).join('');
+                nachNamen(RAW_DATA).map(p => `<option value="${p[0]}">${p[2]}</option>`).join('');
+        }
+
+        let invArt = 'vial';
+
+        function setInvArt(art, btn) {
+            invArt = art;
+            document.querySelectorAll('.inv-art-btn').forEach(b => {
+                b.classList.remove('bg-slate-600', 'text-white', 'shadow-sm');
+                b.classList.add('text-slate-400');
+            });
+            if (btn) {
+                btn.classList.add('bg-slate-600', 'text-white', 'shadow-sm');
+                btn.classList.remove('text-slate-400');
+            }
+            const mgL = document.getElementById('inv-mg-label');
+            const anzL = document.getElementById('inv-anzahl-label');
+            const add = document.getElementById('inv-add-text');
+            const mgF = document.getElementById('inv-mg-vial');
+
+            if (art === 'tablette') {
+                if (mgL) mgL.innerText = 'Wirkstoff je Tablette (mg)';
+                if (anzL) anzL.innerText = 'Anzahl Tabletten (Stück)';
+                if (add) add.innerText = 'Zum Bestand hinzufügen';
+                if (mgF) mgF.value = 10;
+            } else {
+                if (mgL) mgL.innerText = 'Inhalt pro Vial (mg)';
+                if (anzL) anzL.innerText = 'Anzahl Vials (Stück)';
+                if (add) add.innerText = 'In den Kühlschrank stellen';
+                if (mgF) mgF.value = 10;
+            }
         }
 
         function addInventoryItem() {
@@ -5595,13 +5742,28 @@
                 delete inv[id].mgPerVial;
             }
 
-            // Neue Vials als exakte Batches hinzufügen
-            for(let i=0; i<vialCount; i++) {
+            if (invArt === 'tablette') {
+                // Eine Packung statt vieler Einzelchargen. Intern bleibt
+                // alles in mg, damit Abzug und Reichweite unveraendert
+                // rechnen - nur die Anzeige zaehlt in Stueck.
                 inv[id].batches.push({
                     batchId: Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                    mgPerVial: mgPerVial,
-                    currentMg: mgPerVial
+                    form: 'tablette',
+                    mgProStk: mgPerVial,
+                    stkStart: vialCount,
+                    mgPerVial: mgPerVial * vialCount,
+                    currentMg: mgPerVial * vialCount,
+                    isOpen: true
                 });
+            } else {
+                // Neue Vials als exakte Batches hinzufügen
+                for(let i=0; i<vialCount; i++) {
+                    inv[id].batches.push({
+                        batchId: Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                        mgPerVial: mgPerVial,
+                        currentMg: mgPerVial
+                    });
+                }
             }
             
             writeStore('peptide_inventory', inv);
@@ -5673,6 +5835,21 @@ function removeBatch(pepId, batchId) {
 
         // Rechnet aus einem angesetzten Vial die Kennzahlen des Geraets
         function ansatzInfo(b) {
+            // Tabletten brauchen kein Ansetzen - sie sind fertig.
+            if (b.form === 'tablette') {
+                const proStk = b.mgProStk || 1;
+                const rest = Math.floor(b.currentMg / proStk + 0.0001);
+                return {
+                    symbol: '💊', name: 'Tabletten',
+                    zeilen: [
+                        '<span class="font-mono">' + proStk + '</span> mg je Stück',
+                        '<span class="font-mono">' + rest + '</span> von <span class="font-mono">' +
+                            (b.stkStart || rest) + '</span> übrig'
+                    ],
+                    alter: ''
+                };
+            }
+
             const form = FORMEN[b.form];
 
             // Nur angebrochen, nicht angesetzt: alte Darstellung
@@ -5927,7 +6104,11 @@ function renderInventory() {
             const now = Date.now();
             const oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
 
-            Object.keys(inv).forEach(id => {
+            Object.keys(inv)
+                .map(id => ({ id: id, name: (RAW_DATA.find(p => p[0] === id) || [,,'zzz'])[2] }))
+                .sort((a, b) => a.name.localeCompare(b.name, 'de'))
+                .map(x => x.id)
+                .forEach(id => {
                 const data = inv[id];
                 const pep = RAW_DATA.find(p => p[0] === id);
                 if(!pep) return;
@@ -5952,7 +6133,9 @@ function renderInventory() {
         data.batches.forEach(b => {
             totalMgCalc += b.currentMg;
             // Ein Vial ist voll, wenn es keinen Verbrauch hat UND nicht manuell geöffnet wurde
-            if(Math.abs(b.currentMg - b.mgPerVial) < 0.001 && !b.isOpen) {
+            if(b.form === 'tablette') {
+                openVialsList.push(b);
+            } else if(Math.abs(b.currentMg - b.mgPerVial) < 0.001 && !b.isOpen) {
                 fullVialsMap[b.mgPerVial] = (fullVialsMap[b.mgPerVial] || 0) + 1;
             } else if (b.currentMg > 0) {
                 openVialsList.push(b);
@@ -6057,6 +6240,12 @@ function renderInventory() {
                                 <h4 class="font-bold text-white text-base">${pep[2]}</h4>
                                 <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-2">
                                     <span class="bg-slate-900/80 px-2 py-0.5 rounded text-blue-400 border border-white/5 font-mono shadow-inner">${totalMgCalc.toFixed(1)} mg Gesamt</span>
+                                    ${(() => {
+                                        const tab = (data.batches || []).filter(b => b.form === 'tablette');
+                                        if (!tab.length) return '';
+                                        const stk = tab.reduce((s, b) => s + Math.floor(b.currentMg / (b.mgProStk || 1) + 0.0001), 0);
+                                        return `<span class="bg-slate-900/80 px-2 py-0.5 rounded text-emerald-400 border border-white/5 font-mono shadow-inner">${stk} Stück</span>`;
+                                    })()}
                                     ${avgDailyUse > 0 ? `<span class="opacity-50">| Ø ${avgDailyUse.toFixed(2)} mg/Tag</span>` : ''}
                                 </div>
                             </div>
@@ -6137,7 +6326,11 @@ function renderInventory() {
             if(!select) return;
             let inv = readStore('peptide_inventory');
             const opts = [];
-            Object.keys(inv).forEach(id => {
+            Object.keys(inv)
+                .map(id => [id, (RAW_DATA.find(p => p[0] === id) || [,,''])[2]])
+                .sort((a, b) => a[1].localeCompare(b[1], 'de'))
+                .map(x => x[0])
+                .forEach(id => {
                 const pep = RAW_DATA.find(p => p[0] === id);
                 if(!pep) return;
                 let totalVials = 0;
@@ -6170,13 +6363,13 @@ function renderInventory() {
                 let dateStr = dateObj.toLocaleDateString('de-DE', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
                 
                 let doseStr = item.dose ? ` <span class="text-xs text-slate-400 ml-1">(${item.dose})</span>` : '';
-                let subHtml = item.substance ? `<span class="text-[11px] text-brand-400 block mt-0.5">${item.substance}${doseStr}</span>` : '';
+                let subHtml = item.substance ? `<span class="text-[11px] text-brand-400 block mt-0.5">${esc(item.substance)}${doseStr}</span>` : '';
 
                 html += `
                     <div class="flex items-center gap-3 p-2.5 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors rounded-lg">
                         <span class="text-xl">💉</span>
                         <div class="flex-grow">
-                            <span class="text-xs font-bold text-white block leading-none">${item.zone}</span>
+                            <span class="text-xs font-bold text-white block leading-none">${esc(item.zone)}</span>
                             ${subHtml}
                         </div>
                         <span class="text-[11px] text-slate-500 font-mono">${dateStr}</span>
@@ -6261,7 +6454,7 @@ function renderInventory() {
             const select = document.getElementById('blood-select');
             if(!select) return;
             select.innerHTML = '<option value="">-- Bitte wählen --</option>' +
-                RAW_DATA.map(p => `<option value="${p[0]}">${p[2]}</option>`).join('');
+                nachNamen(RAW_DATA).map(p => `<option value="${p[0]}">${p[2]}</option>`).join('');
         }
 
         function renderBloodPanel() {
@@ -6301,7 +6494,7 @@ function renderInventory() {
             const list = document.getElementById('stack-list');
             if(!list) return;
             let html = '';
-            RAW_DATA.forEach(p => {
+            nachNamen(RAW_DATA).forEach(p => {
                 html += `
                     <label class="flex items-center gap-3 p-3 bg-slate-800/40 rounded-xl border border-white/5 cursor-pointer hover:bg-slate-800 transition-colors stack-item-lbl" data-search="${p[2].toLowerCase()} ${p[3].toLowerCase()}">
                         <input type="checkbox" value="${p[2]}" onchange="generateStackReport()" class="stack-checkbox w-5 h-5 rounded border-slate-600 text-brand-500 focus:ring-brand-500 bg-slate-900">
@@ -6523,7 +6716,10 @@ function renderInventory() {
         }
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && isMobileMenuOpen) toggleMobileMenu();
+            if (e.key !== 'Escape') return;
+            const b = document.getElementById('briefing');
+            if (b && !b.classList.contains('hidden')) { closeBriefing(); return; }
+            if (isMobileMenuOpen) toggleMobileMenu();
         });
 
         // --- OFFLINE ---------------------------------------------------
@@ -6576,8 +6772,9 @@ function renderInventory() {
             if (rechner) {
                 // Substanzen mit nasaler Applikation nach oben, der Rest
                 // bleibt waehlbar - manche setzen anderes selbst an.
-                const nasale = RAW_DATA.filter(p => /nasal/i.test(p[9].form || ''));
-                const rest = RAW_DATA.filter(p => !/nasal/i.test(p[9].form || ''));
+                const sortiert = nachNamen(RAW_DATA);
+                const nasale = sortiert.filter(p => /nasal/i.test(p[9].form || ''));
+                const rest = sortiert.filter(p => !/nasal/i.test(p[9].form || ''));
                 const opt = p => `<option value="${p[0]}">${p[2]}</option>`;
                 rechner.innerHTML = '<option value="">-- Manuelle Eingabe --</option>' +
                     '<optgroup label="Nasal in der Datenbank">' + nasale.map(opt).join('') + '</optgroup>' +
@@ -6590,13 +6787,15 @@ function renderInventory() {
             const sel = document.getElementById('nas-log-sub');
             if (!sel) return;
             const inv = readStore('peptide_inventory');
-            const opts = Object.keys(inv).map(id => {
-                const p = RAW_DATA.find(x => x[0] === id);
-                if (!p) return '';
-                let mg = 0;
-                (inv[id].batches || []).forEach(b => mg += b.currentMg);
-                return `<option value="${id}">${p[2]} (${mg.toFixed(1)} mg)</option>`;
-            }).join('');
+            const opts = Object.keys(inv)
+                .map(id => ({ id: id, p: RAW_DATA.find(x => x[0] === id) }))
+                .filter(x => x.p)
+                .sort((a, b) => a.p[2].localeCompare(b.p[2], 'de'))
+                .map(x => {
+                    let mg = 0;
+                    (inv[x.id].batches || []).forEach(b => mg += b.currentMg);
+                    return `<option value="${x.id}">${x.p[2]} (${mg.toFixed(1)} mg)</option>`;
+                }).join('');
             sel.innerHTML = '<option value="">-- Bitte wählen --</option>' + opts;
         }
 
@@ -6867,7 +7066,7 @@ function renderInventory() {
                 return `<div class="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl border border-white/5">
                     <span class="text-lg">👃</span>
                     <div class="flex-grow min-w-0">
-                        <span class="text-sm font-bold text-white block truncate">${e.substanz}</span>
+                        <span class="text-sm font-bold text-white block truncate">${esc(e.substanz)}</span>
                         <span class="text-[11px] text-slate-400">
                             <span class="font-mono">${e.huebe}</span> Hub · <span class="font-mono">${e.mg.toFixed(2)}</span> mg ·
                             <span class="${farbe} font-bold">${e.seite}</span>
@@ -6891,6 +7090,250 @@ function renderInventory() {
             writeStore('nasal_log', []);
             renderNasalLog();
             nasalSeitenTipp();
+        }
+
+        // ============================================================
+        // TAGESBRIEFING
+        // Einmal am Tag beim ersten Oeffnen. Zieht die Lage aus allen
+        // Bereichen zusammen, statt sie auf fuenf Ansichten zu
+        // verteilen.
+        // ============================================================
+        function briefingFaellig() {
+            const b = readStore('briefing_stand', {});
+            return b.datum !== localDateISO();
+        }
+
+        function briefingGesehen() {
+            writeStore('briefing_stand', { datum: localDateISO() });
+        }
+
+        function briefingBegruessung() {
+            const s = new Date().getHours();
+            if (s < 5)  return { text: 'Noch wach?',    symbol: '🌙' };
+            if (s < 11) return { text: 'Guten Morgen',  symbol: '☀️' };
+            if (s < 18) return { text: 'Guten Tag',     symbol: '🌤️' };
+            return          { text: 'Guten Abend', symbol: '🌙' };
+        }
+
+        // --- Bausteine ------------------------------------------------
+        function briefBlock(symbol, titel, inhalt, rand) {
+            return '<div class="bg-slate-900/50 border ' + (rand || 'border-white/5') +
+                ' rounded-2xl p-4"><div class="flex items-center gap-2 mb-2.5">' +
+                '<span class="text-base leading-none">' + symbol + '</span>' +
+                '<span class="text-xs font-bold text-white uppercase tracking-wider">' + titel + '</span>' +
+                '</div>' + inhalt + '</div>';
+        }
+
+        function briefTagesplan() {
+            let s = readStore('daily_schedule');
+
+            // Plan fuer heute noch nicht erzeugt? Aus dem Wochenplan
+            // fuellen, damit das Briefing nicht leer bleibt.
+            if (s.date !== localDateISO()) {
+                const routine = readStore('weekly_routine', []);
+                const dow = new Date().getDay();
+                s = { date: localDateISO(), items: [] };
+                routine.forEach(rule => {
+                    if (!rule.days || rule.days.indexOf(dow) === -1) return;
+                    const p = RAW_DATA.find(x => x[0] === rule.pepId);
+                    s.items.push({
+                        id: 'sched_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                        pepId: rule.pepId, name: p ? p[2] : rule.pepId,
+                        doseMg: rule.dose, completed: false
+                    });
+                });
+                if (s.items.length) writeStore('daily_schedule', s);
+            }
+
+            const offen = (s.items || []).filter(i => !i.completed);
+            const fertig = (s.items || []).filter(i => i.completed);
+
+            if (!s.items || !s.items.length) {
+                return briefBlock('📋', 'Heute', '<p class="text-[11px] text-slate-400">Nichts eingeplant. Über den Wochenplan im Cockpit lässt sich das automatisieren.</p>');
+            }
+            if (!offen.length) {
+                return briefBlock('📋', 'Heute',
+                    '<p class="text-[11px] text-emerald-400">Alles erledigt — ' + fertig.length +
+                    ' von ' + s.items.length + ' abgehakt.</p>', 'border-emerald-500/20');
+            }
+            return briefBlock('📋', 'Heute',
+                offen.map(i => '<div class="flex justify-between gap-2 py-1 border-b border-white/5 last:border-0">' +
+                    '<span class="text-sm text-white">' + esc(i.name) + '</span>' +
+                    '<span class="text-xs font-mono text-slate-400">' + i.doseMg + ' mg</span></div>').join('') +
+                (fertig.length ? '<p class="text-[11px] text-slate-500 mt-2">' + fertig.length + ' bereits erledigt</p>' : ''),
+                'border-brand-500/25');
+        }
+
+        function briefZone() {
+            const hist = readStore('injection_history');
+            if (!hist.length) return '';
+            const zonen = aiZonenStatus().sort((a, b) => {
+                if (a.std === null) return -1;
+                if (b.std === null) return 1;
+                return b.std - a.std;
+            });
+            const empf = zonen[0];
+            const gesperrt = zonen.filter(z => z.std !== null && z.std < 72);
+
+            return briefBlock('📍', 'Zone',
+                '<p class="text-sm text-white mb-1">' + empf.name +
+                ' <span class="text-[11px] text-slate-400">(' + empf.art + ')</span></p>' +
+                '<p class="text-[11px] text-slate-400">' +
+                (empf.std === null ? 'Noch nie benutzt.' : 'Zuletzt vor ' + empf.std + ' Stunden.') +
+                (gesperrt.length ? ' Gesperrt sind noch: ' + gesperrt.map(z => z.name).join(', ') + '.' : '') +
+                '</p>');
+        }
+
+        function briefBestand() {
+            const inv = readStore('peptide_inventory');
+            const knapp = [];
+            Object.keys(inv).forEach(id => {
+                const p = RAW_DATA.find(x => x[0] === id);
+                if (!p) return;
+                let mg = 0;
+                (inv[id].batches || []).forEach(b => mg += b.currentMg);
+                const proTag = aiVerbrauchProTag(p[2]);
+                if (proTag <= 0) return;
+                const tage = Math.floor(mg / proTag);
+                if (tage < 21) knapp.push({ name: p[2], tage: tage });
+            });
+            if (!knapp.length) return '';
+            knapp.sort((a, b) => a.tage - b.tage);
+            return briefBlock('📦', 'Wird knapp',
+                knapp.map(k => '<div class="flex justify-between gap-2 py-0.5">' +
+                    '<span class="text-sm text-white">' + esc(k.name) + '</span>' +
+                    '<span class="text-xs font-bold ' + (k.tage < 14 ? 'text-danger' : 'text-warning') + '">' +
+                    k.tage + ' Tage</span></div>').join(''),
+                knapp[0].tage < 14 ? 'border-danger/30' : 'border-warning/25');
+        }
+
+        function briefAnsaetze() {
+            const inv = readStore('peptide_inventory');
+            const alt = [];
+            Object.keys(inv).forEach(id => {
+                const p = RAW_DATA.find(x => x[0] === id);
+                if (!p) return;
+                (inv[id].batches || []).forEach(b => {
+                    if (!b.angesetztAm) return;
+                    const tage = Math.floor((Date.now() - b.angesetztAm) / 864e5);
+                    if (tage > 30) alt.push({ name: p[2], tage: tage });
+                });
+            });
+            if (!alt.length) return '';
+            return briefBlock('⏳', 'Angesetzt seit längerem',
+                alt.map(a => '<div class="flex justify-between gap-2 py-0.5">' +
+                    '<span class="text-sm text-white">' + esc(a.name) + '</span>' +
+                    '<span class="text-xs text-danger font-bold">' + a.tage + ' Tage</span></div>').join('') +
+                '<p class="text-[11px] text-slate-400 mt-2">Über 30 Tage angesetzt — Wirkstärke prüfen.</p>',
+                'border-danger/30');
+        }
+
+        function briefWerte() {
+            const log = readStore('tracker_data').filter(e => e.type === 'feedback');
+            if (log.length < 2) {
+                return briefBlock('📊', 'Befinden',
+                    '<p class="text-[11px] text-slate-400">Noch zu wenig Daten. Zwei, drei Einträge und ich kann einen Verlauf zeigen.</p>');
+            }
+
+            const grenze = Date.now() - 7 * 864e5;
+            const vor = Date.now() - 14 * 864e5;
+            const zeit = e => new Date(e.date + 'T12:00:00').getTime();
+            const woche = log.filter(e => zeit(e) > grenze);
+            const davor = log.filter(e => zeit(e) <= grenze && zeit(e) > vor);
+
+            const mittel = (liste, feld) => liste.length
+                ? liste.reduce((s, e) => s + (+e[feld] || 5), 0) / liste.length : null;
+
+            const zeile = (name, feld, gut) => {
+                const jetzt = mittel(woche, feld);
+                if (jetzt === null) return '';
+                const alt = mittel(davor, feld);
+                let pfeil = '';
+                if (alt !== null) {
+                    const d = jetzt - alt;
+                    if (Math.abs(d) >= 0.5) {
+                        const besser = gut === 'hoch' ? d > 0 : d < 0;
+                        pfeil = '<span class="' + (besser ? 'text-success' : 'text-warning') +
+                            ' text-[11px] ml-1.5">' + (d > 0 ? '▲' : '▼') + ' ' +
+                            Math.abs(d).toFixed(1) + '</span>';
+                    }
+                }
+                return '<div class="flex justify-between gap-2 py-0.5">' +
+                    '<span class="text-[11px] text-slate-400">' + name + '</span>' +
+                    '<span class="text-sm font-mono text-white">' + jetzt.toFixed(1) + pfeil + '</span></div>';
+            };
+
+            return briefBlock('📊', 'Befinden, 7 Tage',
+                zeile('Schlaf', 'sleep', 'hoch') +
+                zeile('Schmerz', 'pain', 'niedrig') +
+                zeile('Energie', 'mood', 'hoch') +
+                (davor.length ? '<p class="text-[11px] text-slate-500 mt-2">Pfeile im Vergleich zur Vorwoche.</p>' : ''));
+        }
+
+        function briefAlarme() {
+            const a = readStore('peptide_alarms', []).filter(x => x.active);
+            if (!a.length) return '';
+            a.sort((x, y) => x.time.localeCompare(y.time));
+            return briefBlock('🔔', 'Erinnerungen heute',
+                a.map(x => '<div class="flex justify-between gap-2 py-0.5">' +
+                    '<span class="text-xs font-mono text-warning">' + esc(x.time) + '</span>' +
+                    '<span class="text-[11px] text-slate-300 text-right">' + esc(x.text) + '</span></div>').join(''));
+        }
+
+        // --- Zusammenbauen und anzeigen -------------------------------
+        function renderBriefing() {
+            const gruss = briefingBegruessung();
+            const symbolEl = document.getElementById('briefing-symbol');
+            const titelEl = document.getElementById('briefing-titel');
+            const datumEl = document.getElementById('briefing-datum');
+            const box = document.getElementById('briefing-inhalt');
+            if (!box) return;
+
+            if (symbolEl) symbolEl.innerText = gruss.symbol;
+            if (titelEl) titelEl.innerText = gruss.text;
+            if (datumEl) datumEl.innerText = new Date().toLocaleDateString('de-DE',
+                { weekday: 'long', day: 'numeric', month: 'long' });
+
+            const teile = [
+                briefTagesplan(),
+                briefZone(),
+                briefBestand(),
+                briefAnsaetze(),
+                briefWerte(),
+                briefAlarme()
+            ].filter(Boolean);
+
+            box.innerHTML = teile.join('');
+        }
+
+        function openBriefing() {
+            renderBriefing();
+            const el = document.getElementById('briefing');
+            if (!el) return;
+            el.classList.remove('hidden');
+            el.classList.add('flex');
+            el.setAttribute('aria-hidden', 'false');
+            const schliessen = el.querySelector('button');
+            if (schliessen) schliessen.focus();
+        }
+
+        function closeBriefing() {
+            const el = document.getElementById('briefing');
+            if (!el) return;
+            el.classList.add('hidden');
+            el.classList.remove('flex');
+            el.setAttribute('aria-hidden', 'true');
+            briefingGesehen();
+            // Die Ansichten kennen den frisch erzeugten Tagesplan noch nicht
+            if (typeof renderDailySchedule === 'function') renderDailySchedule();
+            if (typeof renderDashboard === 'function') renderDashboard();
+        }
+
+        // Startet nach dem Intro, damit sich beides nicht überlagert
+        function briefingBeimStart() {
+            if (!briefingFaellig()) return;
+            const wartet = document.getElementById('intro') ? 3400 : 700;
+            setTimeout(openBriefing, wartet);
         }
 
         window.onload = function() {
@@ -6920,6 +7363,7 @@ function renderInventory() {
             if(typeof renderDashboard === "function") renderDashboard();
             if(typeof startAlarmEngine === "function") startAlarmEngine();
             if(typeof initOffline === "function") initOffline();
+            if(typeof briefingBeimStart === "function") briefingBeimStart();
             if(typeof initNasalPresets === "function") initNasalPresets();
             if(typeof calcNasal === "function") calcNasal();
             if(typeof renderNasalLog === "function") renderNasalLog();
@@ -7068,8 +7512,8 @@ function renderInventory() {
                     dashLog.innerHTML = `
                         <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
                             <span class="text-[11px] text-slate-500 block mb-2">${dateStr}, ${timeStr} Uhr</span>
-                            <strong class="text-sm text-white block mb-1">${last.zone}</strong>
-                            <span class="text-xs text-brand-400 flex items-center"><span class="text-[11px] mr-1.5">💉</span> ${last.substance || 'Unbekannt'}${doseDisplay}</span>
+                            <strong class="text-sm text-white block mb-1">${esc(last.zone)}</strong>
+                            <span class="text-xs text-brand-400 flex items-center"><span class="text-[11px] mr-1.5">💉</span> ${esc(last.substance || 'Unbekannt')}${doseDisplay}</span>
                         </div>
                         <button onclick="router('map')" class="w-full text-[11px] text-slate-500 hover:text-white transition-colors text-center mt-3 block">Zur Body-Map →</button>
                     `;
@@ -7101,12 +7545,12 @@ function renderInventory() {
                     stackKeys.slice(0, 3).forEach(pep => {
                         let count = activePeptides[pep];
                         let freqStr = count >= 10 ? "Tägl." : (count >= 4 ? "Oft" : "Selten");
-                        const safe = pep.replace(/'/g, "\\'");
+                        const safe = escAttr(pep);
                         html += `
                             <div class="flex justify-between items-center gap-2 p-2.5 bg-slate-900/50 rounded-lg mb-2 border border-purple-500/20 group">
-                                <span class="text-xs font-bold text-white truncate flex-1 min-w-0">${pep}</span>
+                                <span class="text-xs font-bold text-white truncate flex-1 min-w-0">${esc(pep)}</span>
                                 <span class="text-[11px] text-purple-400 shrink-0">${freqStr} (${count}x)</span>
-                                <button onclick="deleteFromStack('${safe}')" title="${pep} aus dem Verlauf löschen" aria-label="${pep} aus dem Verlauf löschen" class="text-slate-600 hover:text-rose-400 transition-colors shrink-0 px-0.5 text-xs">✖</button>
+                                <button onclick="deleteFromStack('${safe}')" title="${esc(pep)} aus dem Verlauf löschen" aria-label="${esc(pep)} aus dem Verlauf löschen" class="text-slate-600 hover:text-rose-400 transition-colors shrink-0 px-0.5 text-xs">✖</button>
                             </div>
                         `;
                     });
@@ -7498,7 +7942,7 @@ function renderInventory() {
                                     <svg class="w-4 h-4 text-white transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                 </div>
                             </label>
-                            <span class="text-sm font-bold text-white ${item.completed ? 'line-through text-slate-500' : ''}">${item.name}</span>
+                            <span class="text-sm font-bold text-white ${item.completed ? 'line-through text-slate-500' : ''}">${esc(item.name)}</span>
                         </div>
                         
                         <div class="flex items-center gap-3">
@@ -7554,11 +7998,24 @@ function renderInventory() {
             'cardarin': 'cardarine', 'enclo': 'enclomiphene'
         };
 
+        // Vereinheitlicht Text fuer den Vergleich. Umlaute werden
+        // ausgeschrieben, damit "huebe" und "hübe" gleich behandelt
+        // werden. Dezimalzahlen bleiben als Zahl erhalten: frueher
+        // wurde aus "0,25 mg" ein "0 25 mg" und damit 25 mg.
         function aiNorm(s) {
             return (s || '').toLowerCase()
-                .replace(/\u00e4/g, 'ae').replace(/\u00f6/g, 'oe').replace(/\u00fc/g, 'ue').replace(/\u00df/g, 'ss')
-                .replace(/[^a-z0-9+\s-]/g, ' ')
+                .replace(/\u00e4/g, 'ae').replace(/\u00f6/g, 'oe')
+                .replace(/\u00fc/g, 'ue').replace(/\u00df/g, 'ss')
+                .replace(/(\d)[.,](\d)/g, '$1.$2')      // Dezimaltrenner retten
+                .replace(/[^a-z0-9+.\s-]/g, ' ')
                 .replace(/\s+/g, ' ').trim();
+        }
+
+        // Wandelt ein Suchwort genauso um wie den Text. Damit muss man
+        // Muster nicht mehr von Hand entumlauten - genau daran sind
+        // "kühlschrank" und "hübe" vorher gescheitert.
+        function aiMuster(woerter) {
+            return new RegExp('\\b(' + woerter.map(aiNorm).join('|') + ')\\w*\\b');
         }
 
         // Fuellwoerter, die nie eine Substanz meinen
@@ -7635,7 +8092,7 @@ function renderInventory() {
         }
 
         function aiOpenInDb(name) {
-            const safe = name.replace(/'/g, "\\'");
+            const safe = escAttr(name);
             return '<button onclick="toggleAIChat(); router(\'db\'); setTimeout(() => { const s = document.getElementById(\'searchInput\'); s.value = \'' + safe + '\'; applyFilters(); }, 100);" class="mt-2 w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[11px] font-bold transition-all">Vollen Datenbank-Eintrag oeffnen</button>';
         }
 
@@ -7712,6 +8169,101 @@ function renderInventory() {
                 '</div>';
         }
 
+        // ---------------------------------------------- Lagerung von Material
+        // Nicht nur Wirkstoffe, auch das Zubehoer. Jeder Eintrag nennt
+        // ungeoeffnet und angebrochen getrennt, weil sich genau daran
+        // die Regeln unterscheiden.
+        const LAGERUNG = [
+            {
+                schluessel: ['bac', 'bacwasser', 'bac-wasser', 'bakteriostatisch', 'benzylalkohol'],
+                titel: 'Bakteriostatisches Wasser (BAC)',
+                zu: 'Ungeöffnet bei Raumtemperatur, 20 bis 25 Grad. In den Karton oder eine dunkle Schublade — Benzylalkohol ist lichtempfindlich und zerfällt unter UV schneller. Kein Kühlschrank nötig. Haltbar bis zum aufgedruckten Datum, meist 18 bis 24 Monate.',
+                auf: 'Ab dem ersten Einstich läuft eine zweite Uhr: <strong>28 Tage</strong>, dann wegwerfen, egal wie viel noch drin ist.',
+                hinweis: 'Zum Kühlschrank gehen die Angaben auseinander. Das Herstelleretikett (Hospira) nennt nur Raumtemperatur und weder ein Verfallsdatum nach Anbruch noch eine Kühlpflicht. Die 28 Tage stammen aus USP-Kapitel 797, das Mehrdosisbehältnisse allgemein regelt. Kühlen nach dem Anbruch ist verbreitete Praxis und bremst den Zerfall des Benzylalkohols — vorgeschrieben ist es nicht.',
+                nie: 'Niemals einfrieren. Der Gummistopfen bekommt Mikrorisse, und darüber kommen Keime hinein.'
+            },
+            {
+                schluessel: ['nacl', 'kochsalz', 'kochsalzlösung', 'natriumchlorid', 'saline'],
+                titel: 'Kochsalzlösung 0,9 % (NaCl)',
+                zu: 'Ungeöffnet bei Raumtemperatur, trocken und dunkel.',
+                auf: 'Enthält kein Konservierungsmittel. Angebrochen deutlich kürzer haltbar als BAC-Wasser — Einmalampullen sind für den einmaligen Gebrauch gedacht und gehören nach der Anwendung weg.',
+                hinweis: 'Für Nasenspray ist NaCl das richtige Lösungsmittel, für Injektionen BAC-Wasser. Der Unterschied liegt am Konservierungsmittel: Benzylalkohol reizt die Nasenschleimhaut.',
+                nie: 'Nicht als Mehrdosisbehältnis behandeln, nur weil noch etwas übrig ist.'
+            },
+            {
+                schluessel: ['pulver', 'lyophilisiert', 'ungeöffnet', 'unangesetzt', 'vial', 'vials'],
+                titel: 'Lyophilisiertes Peptid (Pulver im Vial)',
+                zu: 'Im Kühlschrank bei 2 bis 8 Grad, im Karton oder dunkel. So über Monate bis Jahre stabil. Für kurze Transportwege ist Raumtemperatur unkritisch, als Dauerlösung nicht.',
+                auf: 'Solange es Pulver ist, gilt weiter die lange Haltbarkeit. Die Uhr startet erst mit dem Anmischen.',
+                hinweis: 'Tiefkühlen verlängert die Haltbarkeit weiter, aber nur ungelöstes Pulver und ohne wiederholtes Auftauen — jeder Auftauzyklus kostet Substanz.',
+                nie: null
+            },
+            {
+                schluessel: ['angemischt', 'angesetzt', 'rekonstituiert', 'gelöst', 'flüssig', 'fertig'],
+                titel: 'Angemischte Lösung',
+                zu: null,
+                auf: 'Sofort nach dem Anmischen in den Kühlschrank, 2 bis 8 Grad. Dort in der Regel 30 bis 40 Tage stabil. Bei Zimmertemperatur zerfällt gelöstes Peptid innerhalb von Tagen.',
+                hinweis: 'Nicht in die Kühlschranktür — dort schwankt die Temperatur bei jedem Öffnen. Dunkel lagern. Im Bestand siehst du das Ansetzdatum und wie viele Tage vergangen sind.',
+                nie: 'Niemals einfrieren. Eiskristalle zerreißen die Peptidketten mechanisch, danach ist der Inhalt weitgehend wertlos.'
+            },
+            {
+                schluessel: ['nadel', 'nadeln', 'spritze', 'spritzen', 'kanüle', 'insulinspritze'],
+                titel: 'Nadeln und Spritzen',
+                zu: 'Trocken und bei Raumtemperatur in der Originalverpackung. Die Sterilverpackung hat ein aufgedrucktes Datum.',
+                auf: 'Einmalartikel. Nach Gebrauch in einen durchstichsicheren Behälter, nicht in den Hausmüll.',
+                hinweis: 'Eine Nadel wird beim ersten Durchstechen des Gummistopfens bereits stumpf. Für Aufziehen und Injizieren getrennte Nadeln zu nehmen, tut weniger weh und schont das Gewebe.',
+                nie: 'Nadeln nicht wiederverwenden, auch nicht bei derselben Person.'
+            },
+            {
+                schluessel: ['alkohol', 'alkoholtupfer', 'tupfer', 'pads', 'desinfektion'],
+                titel: 'Alkoholtupfer',
+                zu: 'Raumtemperatur, dicht verschlossen. Einzelverpackt bleiben sie feucht, in offenen Dosen trocknen sie aus und wirken dann nicht mehr.',
+                auf: 'Vor jedem Einstich Stopfen und Haut wischen und <strong>trocknen lassen</strong>. Die Desinfektion wirkt über die Verdunstung — feucht einstechen bringt nichts und brennt.',
+                hinweis: null,
+                nie: null
+            },
+            {
+                schluessel: ['tablette', 'tabletten', 'kapsel', 'kapseln', 'oral'],
+                titel: 'Tabletten und Kapseln',
+                zu: 'Trocken, dunkel und bei Raumtemperatur. Feuchtigkeit ist der Hauptfeind — deshalb nicht im Badezimmer und nicht in der Küche über dem Herd.',
+                auf: 'In der Originalverpackung mit dem Trockenmittel-Beutel lassen. Der ist kein Verpackungsmüll.',
+                hinweis: 'Kühlschrank bringt hier nichts und schadet eher: Beim Herausnehmen schlägt sich Kondenswasser nieder.',
+                nie: null
+            }
+        ];
+
+        function aiAnswerLagerungMaterial(text) {
+            const norm = aiNorm(text);
+            const treffer = LAGERUNG.find(m =>
+                m.schluessel.some(s => norm.indexOf(aiNorm(s)) !== -1));
+            if (!treffer) return null;
+
+            let html = '<div class="space-y-2.5">' +
+                '<div class="text-white font-bold text-sm">' + treffer.titel + '</div>';
+
+            if (treffer.zu) {
+                html += '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2.5">' +
+                    '<span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block mb-1">Ungeöffnet</span>' +
+                    '<span class="text-[11px]">' + treffer.zu + '</span></div>';
+            }
+            if (treffer.auf) {
+                html += '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2.5">' +
+                    '<span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block mb-1">Nach dem Anbruch</span>' +
+                    '<span class="text-[11px]">' + treffer.auf + '</span></div>';
+            }
+            if (treffer.nie) {
+                html += '<div class="bg-rose-500/10 border border-rose-500/30 rounded-lg p-2.5 text-[11px] text-rose-200">' +
+                    treffer.nie + '</div>';
+            }
+            if (treffer.hinweis) {
+                html += '<div class="text-[11px] text-slate-400 border-l-2 border-slate-600 pl-2.5 leading-relaxed">' +
+                    treffer.hinweis + '</div>';
+            }
+
+            html += '<button onclick="toggleAIChat(); router(\'storage\');" class="w-full py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-bold transition-all">Stabilitäts-Simulator öffnen</button></div>';
+            return html;
+        }
+
         // ---------------------------------------------- Antwort: Lagerung
         function aiAnswerStorage(p) {
             return '<div class="space-y-2">' +
@@ -7778,20 +8330,65 @@ function renderInventory() {
                 '<button onclick="toggleAIChat(); router(\'tracker\'); setTimeout(() => toggleTrackerView(\'analytics\'), 150);" class="mt-1 w-full py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[11px] font-bold transition-all">Analytics &ouml;ffnen</button></div>';
         }
 
-        function aiAnswerHelp() {
-            return '<div class="space-y-1.5 text-[11px]">' +
-                '<div>Ich lese aus der Datenbank dieser App und aus deinen eigenen Eintr&auml;gen. Probier zum Beispiel:</div>' +
-                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-1 text-[11px] font-mono text-slate-300">' +
-                '<div>was ist reta</div><div>kann ich bpc und tb500 zusammen</div>' +
-                '<div>welche blutwerte bei rad140</div><div>wie lagere ich semaglutid</div>' +
-                '<div>mein bestand</div><div>1mg reta bauch</div>' +
-                '<div>gym r&uuml;cken 12 s&auml;tze rpe 8</div><div>schlaf 8 schmerz 3 energie 7</div>' +
+        function aiLagerUebersicht() {
+            return '<div class="space-y-2 text-[11px]">' +
+                '<div>Wozu genau? Ich habe etwas zu:</div>' +
+                '<div class="flex flex-wrap gap-1.5">' +
+                LAGERUNG.map(m => '<button onclick="askAI(\'Wie lagere ich ' + m.schluessel[0] + '\')" ' +
+                    'class="px-2 py-1 rounded-full bg-slate-900 border border-slate-700 text-[10px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">' +
+                    m.titel.split(' (')[0] + '</button>').join('') +
                 '</div>' +
-                '<div class="text-[11px] text-slate-400">Ich bin ein Nachschlagewerk, kein Arzt &mdash; und ich empfehle nichts.</div></div>';
+                '<div class="text-slate-400">Oder nenn mir eine Substanz, dann sage ich dir die Haltbarkeit dazu.</div></div>';
+        }
+
+        function aiAnswerHelp() {
+            return '<div class="space-y-2 text-[11px]">' +
+                '<div>Ich lese aus der Datenbank dieser App und aus deinen eigenen Eintr\u00e4gen. Alles offline.</div>' +
+
+                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-[10px] font-mono text-slate-300">' +
+                '<div class="text-brand-400 font-bold mb-1">Nachschlagen</div>' +
+                '<div>was ist reta</div><div>und die blutwerte?</div>' +
+                '<div>kann ich bpc und tb500 zusammen</div>' +
+                '<div>wo lagere ich bac wasser</div>' +
+                '</div>' +
+
+                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-[10px] font-mono text-slate-300">' +
+                '<div class="text-emerald-400 font-bold mb-1">Dein Tag</div>' +
+                '<div>was steht heute an</div><div>bpc erledigt</div>' +
+                '<div>wo soll ich heute spritzen</div>' +
+                '<div>wo intramuskul\u00e4r spritzen</div>' +
+                '</div>' +
+
+                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-[10px] font-mono text-slate-300">' +
+                '<div class="text-amber-400 font-bold mb-1">Eintragen</div>' +
+                '<div>1mg reta bauch</div>' +
+                '<div>gym r\u00fccken 12 s\u00e4tze rpe 8</div>' +
+                '<div>schlaf 8 schmerz 3 energie 7</div>' +
+                '<div>notiz: schulter ziept seit gestern</div>' +
+                '<div>erinnere mich um 8 an bpc</div>' +
+                '</div>' +
+
+                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-[10px] font-mono text-slate-300">' +
+                '<div class="text-accent font-bold mb-1">Rechnen und Vorrat</div>' +
+                '<div>wie viele h\u00fcbe f\u00fcr 300 mcg</div>' +
+                '<div>wie viel mcg sind 0,25 mg</div>' +
+                '<div>reicht mein bpc noch</div><div>was geht zur neige</div>' +
+                '<div>wie alt ist mein semax</div>' +
+                '</div>' +
+
+                '<div class="text-slate-400">Ich merke mir die zuletzt genannte Substanz f\u00fcr zehn Minuten \u2014 R\u00fcckfragen ohne Namen funktionieren also.</div>' +
+                '<div class="text-slate-400">Ich bin ein Nachschlagewerk, kein Arzt \u2014 und ich empfehle nichts.</div></div>';
         }
 
         // ---------------------------------------------- Protokollierung
-        function aiTryLogging(text) {
+        function aiTryLogging(text, roh) {
+            // Eine Frage ist kein Eintrag. Ohne diese Sperre wurde aus
+            // "wie viele Hübe für 600 mcg" eine protokollierte Gabe.
+            if (/^\s*(wie|was|wo|wann|warum|welche|wieviel|wie viel|darf|kann|soll|muss)\b/.test(text) ||
+                text.indexOf('?') !== -1) {
+                return null;
+            }
+
             const today = new Date();
             const dateStr = today.getFullYear() + '-' +
                 String(today.getMonth() + 1).padStart(2, '0') + '-' +
@@ -7823,11 +8420,11 @@ function renderInventory() {
             }
 
             // -- Injektion (nur wenn Substanz UND Dosis erkannt)
-            const dose = text.match(/(\d+[.,]?\d*)\s*(mg|mcg|iu|ml)\b/);
+            const dose = aiZahl(roh || text, 'mg|mcg|iu|ml');
             const pep = aiFindSubstance(text);
             if (pep && dose) {
-                const val = parseFloat(dose[1].replace(',', '.'));
-                const unit = dose[2];
+                const val = dose.wert;
+                const unit = dose.einheit;
                 const doseStr = val + unit;
                 const zoneM = text.match(/\b(bauch|bein|schulter|h[u\u00fc]fte|gluteus|po|arm)\b/);
                 let zone = zoneM ? zoneM[1].charAt(0).toUpperCase() + zoneM[1].slice(1) : 'Subkutan';
@@ -7889,32 +8486,522 @@ function renderInventory() {
             return null;
         }
 
+        // ============================================================
+        // GESPRAECHSKONTEXT
+        // Merkt sich die zuletzt genannte Substanz, damit Rueckfragen
+        // ohne Namen funktionieren: "was ist reta" -> "und die
+        // Blutwerte?". Nach zehn Minuten verfaellt der Bezug, sonst
+        // beantwortet er spaeter etwas voellig anderes.
+        // ============================================================
+        let aiKontext = { pepId: null, zeit: 0 };
+
+        function aiMerke(pepId) {
+            aiKontext = { pepId: pepId, zeit: Date.now() };
+        }
+
+        function aiKontextSubstanz() {
+            if (!aiKontext.pepId) return null;
+            if (Date.now() - aiKontext.zeit > 600000) return null;
+            return RAW_DATA.find(p => p[0] === aiKontext.pepId) || null;
+        }
+
+        // ============================================================
+        // TIPPFEHLER
+        // Levenshtein-Abstand: wie viele Zeichen muessten geaendert
+        // werden. Bis zwei Abweichungen fragen wir nach, statt stumm
+        // ins Leere zu laufen.
+        // ============================================================
+        function aiAbstand(a, b) {
+            if (Math.abs(a.length - b.length) > 3) return 99;
+            const m = [];
+            for (let i = 0; i <= b.length; i++) m[i] = [i];
+            for (let j = 0; j <= a.length; j++) m[0][j] = j;
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    m[i][j] = b.charAt(i-1) === a.charAt(j-1)
+                        ? m[i-1][j-1]
+                        : Math.min(m[i-1][j-1] + 1, m[i][j-1] + 1, m[i-1][j] + 1);
+                }
+            }
+            return m[b.length][a.length];
+        }
+
+        function aiMeintest(text) {
+            const woerter = aiNorm(text).split(' ')
+                .filter(w => w.length >= 4 && !AI_STOPWORDS.has(w));
+            let best = null, bestD = 3;
+            woerter.forEach(w => {
+                RAW_DATA.forEach(p => {
+                    const name = aiNorm(p[2]).replace(/[^a-z0-9]/g, '');
+                    const d = aiAbstand(w.replace(/[^a-z0-9]/g, ''), name);
+                    if (d < bestD) { bestD = d; best = p; }
+                });
+            });
+            return best;
+        }
+
+        // ============================================================
+        // INJEKTIONSZONEN
+        // Die Historie speichert die Zone als Freitext ("Abdomen
+        // (Position 3 Uhr)"). Deshalb wird ueber Stichworte
+        // zurueckgeordnet statt ueber eine ID.
+        // ============================================================
+        const AI_ZONEN = [
+            { name: 'Bauch',        art: 'SC', treffer: ['abdomen', 'bauch'] },
+            { name: 'Hüfte',        art: 'SC', treffer: ['hufte', 'huefte', 'love', 'flanke', 'ruecken'] },
+            { name: 'Oberarm',      art: 'SC', treffer: ['oberarm', 'trizeps'] },
+            { name: 'Schulter',     art: 'IM', treffer: ['schulter', 'deltoid'] },
+            { name: 'Oberschenkel', art: 'IM', treffer: ['oberschenkel', 'vastus', 'bein'] },
+            { name: 'Gesäß',        art: 'IM', treffer: ['gesa', 'gluteus'] }
+        ];
+
+        function aiZonenStatus() {
+            const hist = readStore('injection_history');
+            return AI_ZONEN.map(z => {
+                const letzte = hist.find(e =>
+                    z.treffer.some(t => aiNorm(e.zone || '').indexOf(t) !== -1));
+                return {
+                    name: z.name, art: z.art,
+                    std: letzte ? Math.floor((Date.now() - letzte.time) / 3600000) : null
+                };
+            });
+        }
+
+        function aiAnswerZonenvorschlag(text) {
+            const norm = aiNorm(text);
+            // Wer nach intramuskulaer fragt, will keine Bauchdecke
+            const nurIM = /\b(im|intramusk\w*|muskel)\b/.test(norm);
+            const nurSC = /\b(sc|subkutan|subq|fett)\w*\b/.test(norm);
+
+            let zonen = aiZonenStatus();
+            if (nurIM) zonen = zonen.filter(z => z.art === 'IM');
+            if (nurSC) zonen = zonen.filter(z => z.art === 'SC');
+            if (!zonen.length) zonen = aiZonenStatus();
+
+            // Nie benutzt zuerst, danach die am laengsten freie
+            zonen.sort((a, b) => {
+                if (a.std === null) return -1;
+                if (b.std === null) return 1;
+                return b.std - a.std;
+            });
+
+            const frei = zonen.filter(z => z.std === null || z.std >= 72);
+            const empf = frei[0] || zonen[0];
+
+            const zeile = z => {
+                const farbe = z.std === null ? 'text-emerald-400'
+                            : z.std < 72 ? 'text-rose-400'
+                            : z.std < 168 ? 'text-amber-400' : 'text-emerald-400';
+                const rest = z.std === null ? 'nie benutzt'
+                           : z.std < 72 ? 'gesperrt, noch ' + (72 - z.std) + ' h'
+                           : 'frei, vor ' + z.std + ' h';
+                return '<div class="flex justify-between gap-2 text-[11px] py-0.5">' +
+                    '<span>' + z.name + ' <span class="text-slate-500">' + z.art + '</span></span>' +
+                    '<span class="' + farbe + '">' + rest + '</span></div>';
+            };
+
+            return '<div class="space-y-2.5">' +
+                '<div class="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-3">' +
+                '<span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block mb-1">Vorschlag</span>' +
+                '<span class="text-sm font-bold text-white">' + empf.name + '</span> ' +
+                '<span class="text-[11px] text-slate-400">(' + empf.art + ')</span>' +
+                (empf.std !== null && empf.std < 72
+                    ? '<div class="text-[11px] text-amber-200 mt-1">Alle Zonen sind noch gesperrt. Diese ist am längsten her.</div>'
+                    : '') +
+                '</div>' +
+                '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2.5">' +
+                '<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Alle Zonen</span>' +
+                zonen.map(zeile).join('') + '</div>' +
+                '<div class="text-[11px] text-slate-400 border-l-2 border-slate-600 pl-2.5">Gewebe braucht etwa 72 Stunden, sonst drohen Verhärtungen. Innerhalb einer Zone zusätzlich den Einstichpunkt verschieben.</div>' +
+                '<button onclick="toggleAIChat(); router(\'map\');" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[10px] font-bold transition-all">Zur Body-Map</button></div>';
+        }
+
+        // ============================================================
+        // TAGESPLAN
+        // ============================================================
+        function aiAnswerHeute() {
+            const s = readStore('daily_schedule');
+            if (s.date !== localDateISO() || !s.items || !s.items.length) {
+                return '<div class="space-y-2 text-[11px]"><div>Für heute steht nichts im Tagesplan.</div>' +
+                    '<button onclick="toggleAIChat(); router(\'dashboard\');" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[10px] font-bold transition-all">Plan im Cockpit erzeugen</button></div>';
+            }
+            const offen = s.items.filter(i => !i.completed);
+            const fertig = s.items.filter(i => i.completed);
+
+            let html = '<div class="space-y-2.5">';
+            if (offen.length) {
+                html += '<div><span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block mb-1">Offen</span>' +
+                    offen.map(i => '<div class="flex justify-between gap-2 text-[11px] py-0.5">' +
+                        '<span class="text-white font-bold">' + i.name + '</span>' +
+                        '<span class="font-mono text-slate-400">' + i.doseMg + ' mg</span></div>').join('') +
+                    '</div>';
+            }
+            if (fertig.length) {
+                html += '<div><span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block mb-1">Erledigt</span>' +
+                    fertig.map(i => '<div class="text-[11px] text-slate-500 line-through py-0.5">' + i.name + '</div>').join('') +
+                    '</div>';
+            }
+            if (!offen.length) {
+                html += '<div class="text-[11px] text-emerald-400">Alles abgehakt für heute.</div>';
+            } else {
+                html += '<div class="text-[11px] text-slate-400">Zum Abhaken einfach schreiben: &bdquo;' +
+                    offen[0].name.toLowerCase() + ' erledigt&ldquo;</div>';
+            }
+            return html + '</div>';
+        }
+
+        // Abhaken per Zuruf. Nutzt dieselbe Funktion wie die Checkbox,
+        // damit Bestand und Journal identisch fortgeschrieben werden.
+        function aiTryAbhaken(text) {
+            if (!/\b(erledigt|gemacht|genommen|fertig|abhaken|gespritzt|check)\b/.test(text)) return null;
+            const s = readStore('daily_schedule');
+            if (s.date !== localDateISO() || !s.items) return null;
+
+            const offen = s.items.filter(i => !i.completed);
+            if (!offen.length) return 'Für heute ist schon alles abgehakt.';
+
+            const subs = aiFindSubstances(text);
+            let ziel = null;
+            if (subs.length) ziel = offen.find(i => i.name === subs[0][2]);
+            // Ohne Namen nur abhaken, wenn es gar keine Verwechslung gibt
+            if (!ziel && !subs.length && offen.length === 1) ziel = offen[0];
+
+            if (!ziel) {
+                if (subs.length) return '<strong class="text-white">' + subs[0][2] +
+                    '</strong> steht heute nicht offen im Plan.';
+                return 'Welches denn? Offen sind: ' + offen.map(i => i.name).join(', ') + '.';
+            }
+
+            toggleScheduleItem(ziel.id);
+            const rest = readStore('daily_schedule').items.filter(i => !i.completed);
+            return '<strong class="text-white">' + ziel.name + '</strong> abgehakt, ' +
+                ziel.doseMg + ' mg vom Bestand abgezogen und im Journal vermerkt.' +
+                (rest.length ? ' Offen bleibt: ' + rest.map(i => i.name).join(', ') + '.'
+                             : ' Damit ist der Tag durch.');
+        }
+
+        // ============================================================
+        // RECHNEN
+        // ============================================================
+        // Zahlen immer aus dem Rohtext holen: aiNorm macht aus dem
+        // Komma ein Leerzeichen, "0,25 mg" wuerde sonst 25 mg ergeben.
+        function aiZahl(roh, einheiten) {
+            const m = String(roh).toLowerCase()
+                .match(new RegExp('(\\d+(?:[.,]\\d+)?)\\s*(' + einheiten + ')\\b'));
+            if (!m) return null;
+            return { wert: parseFloat(m[1].replace(',', '.')), einheit: m[2] };
+        }
+
+        function aiAnswerUmrechnen(text, roh) {
+            const m = aiZahl(roh || text, 'mg|mcg|ug');
+            if (!m) return null;
+            const wert = m.wert;
+            const ein = m.einheit === 'mg' ? 'mg' : 'mcg';
+            const um = ein === 'mg' ? wert * 1000 : wert / 1000;
+            const zielEin = ein === 'mg' ? 'mcg' : 'mg';
+            return '<div class="text-center py-2">' +
+                '<span class="font-mono text-lg text-white">' + wert + ' ' + ein + '</span>' +
+                '<span class="text-slate-500 mx-2">=</span>' +
+                '<span class="font-mono text-lg text-brand-400">' +
+                (zielEin === 'mcg' ? Math.round(um) : um) + ' ' + zielEin + '</span></div>' +
+                '<div class="text-[11px] text-slate-400 text-center">1 mg sind 1000 mcg.</div>';
+        }
+
+        // Huebe oder Units aus einem angesetzten Vial
+        function aiAnswerDosisRechnen(text, ziel, roh) {
+            const m = aiZahl(roh || text, 'mcg|ug|mg');
+            if (!m || !ziel) return null;
+            let menge = m.wert;
+            if (m.einheit === 'mg') menge *= 1000;   // intern in mcg
+
+            const inv = readStore('peptide_inventory');
+            const batches = (inv[ziel[0]] && inv[ziel[0]].batches) || [];
+            const b = batches.find(x => x.ml && x.form && x.form !== 'tablette');
+
+            if (!b) {
+                return 'Dafür müsste <strong class="text-white">' + ziel[2] +
+                    '</strong> im Bestand angesetzt sein — dann kenne ich die Konzentration. ' +
+                    'Im Bestand auf „Ansetzen" tippen, Lösungsmenge und Gerät angeben.';
+            }
+
+            const f = FORMEN[b.form];
+            const konz = b.mgPerVial / b.ml;
+            const proDosis = konz * (b.geraetUl || f.ulProDosis);
+            const anzahl = menge / proDosis;
+            const ganz = Math.max(1, Math.round(anzahl));
+            const real = ganz * proDosis;
+
+            return '<div class="space-y-2">' +
+                '<div class="text-[11px]">' + ziel[2] + ', angesetzt als ' + f.name +
+                ' mit <span class="font-mono">' + konz.toFixed(2) + '</span> mg/ml:</div>' +
+                '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-3 text-center">' +
+                '<span class="font-mono text-2xl font-bold text-brand-400">' + ganz + '</span> ' +
+                '<span class="text-sm text-slate-300">' + (ganz === 1 ? f.einheitEz : f.einheit) + '</span>' +
+                '<div class="text-[11px] text-slate-400 mt-1">ergibt ' + Math.round(real) + ' mcg' +
+                (Math.abs(real - menge) > menge * 0.05
+                    ? ' statt der gewünschten ' + Math.round(menge) + ' mcg' : '') + '</div></div>' +
+                (Math.abs(real - menge) > menge * 0.05
+                    ? '<div class="text-[11px] text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded p-2">Ganze ' +
+                      f.einheit + ' treffen die Menge nicht genau. Mit einer anderen Lösungsmenge geht es auf — der Nasenspray-Rechner zeigt welche.</div>'
+                    : '') + '</div>';
+        }
+
+        // ============================================================
+        // REICHWEITE UND VORRAT
+        // ============================================================
+        function aiVerbrauchProTag(name) {
+            const log = readStore('tracker_data');
+            const woche = Date.now() - 7 * 864e5;
+            let mg = 0, erste = Date.now();
+            log.forEach(e => {
+                if (e.peptide !== name) return;
+                if (e.type && e.type !== 'injection' && e.type !== 'nasal') return;
+                const t = new Date(e.date + 'T12:00:00').getTime();
+                if (isNaN(t)) return;
+                if (t < erste) erste = t;
+                if (t > woche) mg += doseToMgAI(e.dose);
+            });
+            const tage = Math.max(1, Math.min(7, (Date.now() - erste) / 864e5));
+            return mg / tage;
+        }
+
+        function doseToMgAI(str) {
+            const s = String(str || '');
+            let v = parseFloat(s.replace(',', '.').replace(/[^0-9.]/g, '')) || 0;
+            if (s.toLowerCase().indexOf('mcg') !== -1) v /= 1000;
+            return v;
+        }
+
+        function aiAnswerReichweite(pep) {
+            const inv = readStore('peptide_inventory');
+            if (!inv[pep[0]]) {
+                return '<strong class="text-white">' + pep[2] + '</strong> liegt nicht in deinem Bestand.';
+            }
+            let mg = 0;
+            (inv[pep[0]].batches || []).forEach(b => mg += b.currentMg);
+            const proTag = aiVerbrauchProTag(pep[2]);
+
+            if (proTag <= 0) {
+                return '<div class="space-y-1.5"><div class="text-[11px]">Von <strong class="text-white">' +
+                    pep[2] + '</strong> sind noch <span class="font-mono text-blue-400">' + mg.toFixed(1) +
+                    ' mg</span> da.</div><div class="text-[11px] text-slate-400">Für eine Reichweite brauche ich Verbrauch aus dem Journal — protokollier ein paar Gaben, dann rechne ich.</div></div>';
+            }
+
+            const tage = Math.floor(mg / proTag);
+            const farbe = tage < 14 ? 'text-rose-400' : tage < 30 ? 'text-amber-400' : 'text-emerald-400';
+            return '<div class="space-y-2">' +
+                '<div class="text-[11px]"><strong class="text-white">' + pep[2] + '</strong></div>' +
+                '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-3 text-center">' +
+                '<span class="font-mono text-2xl font-bold ' + farbe + '">' + tage + '</span>' +
+                '<span class="text-sm text-slate-300"> Tage</span>' +
+                '<div class="text-[11px] text-slate-400 mt-1"><span class="font-mono">' + mg.toFixed(1) +
+                '</span> mg im Bestand, Verbrauch <span class="font-mono">' + proTag.toFixed(2) + '</span> mg/Tag</div></div>' +
+                (tage < 14 ? '<div class="text-[11px] text-rose-200 bg-rose-500/10 border border-rose-500/30 rounded p-2">Unter zwei Wochen — Zeit zum Nachbestellen.</div>' : '') +
+                '</div>';
+        }
+
+        function aiAnswerVorratKnapp() {
+            const inv = readStore('peptide_inventory');
+            const zeilen = [];
+            Object.keys(inv).forEach(id => {
+                const p = RAW_DATA.find(x => x[0] === id);
+                if (!p) return;
+                let mg = 0;
+                (inv[id].batches || []).forEach(b => mg += b.currentMg);
+                const proTag = aiVerbrauchProTag(p[2]);
+                if (proTag <= 0) return;
+                const tage = Math.floor(mg / proTag);
+                if (tage < 30) zeilen.push({ name: p[2], tage: tage });
+            });
+            if (!zeilen.length) return 'Nichts geht in den nächsten 30 Tagen zur Neige.';
+            zeilen.sort((a, b) => a.tage - b.tage);
+            return '<div class="space-y-1.5"><div class="text-[11px]">Wird knapp:</div>' +
+                zeilen.map(z => '<div class="flex justify-between gap-2 text-[11px]">' +
+                    '<span class="text-white font-bold">' + z.name + '</span>' +
+                    '<span class="' + (z.tage < 14 ? 'text-rose-400' : 'text-amber-400') + '">' +
+                    z.tage + ' Tage</span></div>').join('') + '</div>';
+        }
+
+        // ============================================================
+        // ANGESETZTE VIALS
+        // ============================================================
+        function aiAnswerAlter(pep) {
+            const inv = readStore('peptide_inventory');
+            const batches = ((inv[pep[0]] || {}).batches || []).filter(b => b.angesetztAm);
+            if (!batches.length) {
+                return 'Von <strong class="text-white">' + pep[2] +
+                    '</strong> ist im Bestand nichts als angesetzt vermerkt.';
+            }
+            return '<div class="space-y-1.5">' + batches.map(b => {
+                const tage = Math.floor((Date.now() - b.angesetztAm) / 864e5);
+                const f = FORMEN[b.form];
+                const kritisch = tage > 30;
+                return '<div class="bg-slate-900/60 border ' +
+                    (kritisch ? 'border-rose-500/30' : 'border-white/5') + ' rounded-lg p-2.5 text-[11px]">' +
+                    '<div class="flex justify-between"><span class="text-white font-bold">' +
+                    (f ? f.symbol + ' ' + f.name : 'Angesetzt') + '</span>' +
+                    '<span class="font-mono ' + (kritisch ? 'text-rose-400' : 'text-slate-300') + '">vor ' +
+                    tage + ' ' + (tage === 1 ? 'Tag' : 'Tagen') + '</span></div>' +
+                    (kritisch ? '<div class="text-rose-200 mt-1">Über 30 Tage — Wirkstärke fraglich.</div>' : '') +
+                    '</div>';
+            }).join('') + '</div>';
+        }
+
+        // ============================================================
+        // NOTIZ UND ALARM
+        // ============================================================
+        function aiTryNotiz(text, roh) {
+            const m = roh.match(/^\s*(?:notiz|merk dir|notier)\s*:?\s*(.+)$/i);
+            if (!m) return null;
+            const inhalt = m[1].trim();
+            if (!inhalt) return 'Was soll ich notieren?';
+            const log = readStore('tracker_data');
+            log.unshift({ id: String(Date.now()), date: localDateISO(), type: 'note', note: inhalt });
+            writeStore('tracker_data', log);
+            if (typeof renderTrackerCalendar === 'function') renderTrackerCalendar();
+            if (typeof renderTrackerRecent === 'function') renderTrackerRecent();
+            return 'Notiert: &bdquo;' + esc(inhalt) + '&ldquo;';
+        }
+
+        function aiTryAlarm(text, roh) {
+            if (!/\b(erinner|alarm|wecker)\w*\b/.test(aiNorm(roh))) return null;
+            const zeit = roh.match(/(\d{1,2})[:.]?(\d{2})?\s*(uhr)?/);
+            if (!zeit) return 'Um wie viel Uhr soll ich erinnern?';
+            const std = String(Math.min(23, parseInt(zeit[1]))).padStart(2, '0');
+            const min = String(zeit[2] ? Math.min(59, parseInt(zeit[2])) : 0).padStart(2, '0');
+
+            let was = roh.replace(/.*\ban\s+/i, '').trim();
+            const subsA = aiFindSubstances(was || roh);
+            if (subsA.length) {
+                // Schreibweise aus der Datenbank statt der Eingabe
+                was = subsA[0][2];
+            } else if (!was || was === roh.trim()) {
+                was = 'Erinnerung';
+            }
+
+            const alarme = readStore('peptide_alarms', []);
+            alarme.push({ id: String(Date.now()), time: std + ':' + min,
+                          text: was, active: true, lastFired: '' });
+            writeStore('peptide_alarms', alarme);
+            if (typeof renderAlarms === 'function') renderAlarms();
+
+            return 'Alarm gestellt für <span class="font-mono text-white">' + std + ':' + min +
+                '</span> — &bdquo;' + esc(was) + '&ldquo;.' +
+                '<div class="text-[11px] text-slate-400 mt-1.5">Damit die Meldung ankommt, muss die Glocke im Cockpit einmal aktiviert sein.</div>';
+        }
+
         // ---------------------------------------------- Router
         function aiRespond(msg) {
             const text = aiNorm(msg);
+            const roh = String(msg || '');
 
             if (/\b(hilfe|help|was kannst du|befehle|kommandos)\b/.test(text)) return aiAnswerHelp();
 
-            const logged = aiTryLogging(text);
+            // Freitext zuerst, sonst schluckt die Substanzerkennung
+            // Woerter aus der Notiz.
+            const notiz = aiTryNotiz(text, roh);
+            if (notiz) return notiz;
+
+            const alarm = aiTryAlarm(text, roh);
+            if (alarm) return alarm;
+
+            const abgehakt = aiTryAbhaken(text);
+            if (abgehakt) return abgehakt;
+
+            const logged = aiTryLogging(text, roh);
             if (logged) return logged;
 
             const subs = aiFindSubstances(text);
+            if (subs.length) aiMerke(subs[0][0]);
 
+            // In dieser Nachricht ausdrücklich genannt
+            const genannt = subs.length ? subs[0] : null;
+
+            // Für Rückfragen, die sich klar auf das Vorherige beziehen.
+            // Ohne so ein Wort greift der Kontext nicht - sonst
+            // beantwortet eine Unsinn-Eingabe die letzte Substanz.
+            const rueckbezug = /\b(das|es|dazu|davon|dafuer|dabei|damit|und|auch|dessen)\b/.test(text);
+
+            // Für substanzbezogene Fragen darf der Kontext immer gelten
+            const zielSpez = genannt || aiKontextSubstanz();
+            // Für die reine Substanzauskunft nur bei echtem Rückbezug
+            const zielFall = genannt || (rueckbezug ? aiKontextSubstanz() : null);
+
+            // --- Zonenvorschlag --------------------------------------
+            // Vor dem Tagesplan: "wo soll ich heute spritzen" enthält
+            // "heute" und wäre sonst dort gelandet.
+            if (/\bwo\b.*\b(spritz|injizier|setz|stech)\w*\b/.test(text) ||
+                /\b(zone|einstich)\w*\b/.test(text) ||
+                /\b(spritz|injizier)\w*\b.*\bwo\b/.test(text)) {
+                return aiAnswerZonenvorschlag(text);
+            }
+
+            // --- Tagesplan -------------------------------------------
+            if (/\b(heute|tagesplan|ansteht|anstehen|to ?do)\b/.test(text)) return aiAnswerHeute();
+
+            // --- Kombinationen ---------------------------------------
             if (/\b(kombinier|stack|zusammen|gleichzeitig|mischen)\w*\b/.test(text) && subs.length >= 2) {
                 return aiAnswerStack(subs.slice(0, 3));
             }
-            if (/\b(blutwert|blutbild|labor|biomarker)\w*\b/.test(text) && subs.length) {
-                return aiAnswerBlood(subs[0]);
+
+            // --- Blutwerte -------------------------------------------
+            if (/\b(blutwert|blutbild|labor|biomarker)\w*\b/.test(text) && zielSpez) {
+                return aiAnswerBlood(zielSpez);
             }
-            if (/\b(lager|haltbar|aufbewahr|k[u\u00fc]hlschrank|einfrier)\w*\b/.test(text) && subs.length) {
-                return aiAnswerStorage(subs[0]);
+
+            // --- Lagerung --------------------------------------------
+            if (aiMuster(['lager', 'haltbar', 'aufbewahr', 'einfrier', 'entsorg', 'wegwerf']).test(text) ||
+                /\bwo\b.*\b(hin|auf)?bewahr/.test(text)) {
+                const mat = aiAnswerLagerungMaterial(text);
+                if (mat) return mat;
+                if (zielSpez) return aiAnswerStorage(zielSpez);
+                return aiLagerUebersicht();
             }
-            if (/\b(bestand|k[u\u00fc]hlschrank|vorrat|vials?)\b/.test(text)) return aiAnswerInventory();
+
+            // --- Alter angesetzter Vials -----------------------------
+            if (/\b(wie alt|angesetzt|angemischt seit|frisch)\w*\b/.test(text) && zielSpez) {
+                return aiAnswerAlter(zielSpez);
+            }
+
+            // --- Reichweite ------------------------------------------
+            // Übersicht nur, wenn in dieser Nachricht keine Substanz
+            // steht - sonst würde der Kontext sie kapern.
+            if (/\b(zur neige|knapp|nachbestell|ausgeh)\w*\b/.test(text) && !genannt) {
+                return aiAnswerVorratKnapp();
+            }
+            if (/\b(reicht|reichweite|wie lange|noch da|genug)\b/.test(text) && zielSpez) {
+                return aiAnswerReichweite(zielSpez);
+            }
+
+            // --- Rechnen ---------------------------------------------
+            if (aiMuster(['hub', 'hübe', 'sprühst', 'unit', 'units', 'klick', 'klicks', 'einheiten']).test(text) &&
+                /\d/.test(text) && zielSpez) {
+                const r = aiAnswerDosisRechnen(text, zielSpez, roh);
+                if (r) return r;
+            }
+            // Reine Umrechnung: nur wenn hier keine Substanz steht.
+            if (/\b(umrechn|wie viel|wieviel|entspricht|sind)\b/.test(text) &&
+                /\d+[.,]?\d*\s*(mg|mcg|ug)\b/.test(text) && !genannt) {
+                const u = aiAnswerUmrechnen(text, roh);
+                if (u) return u;
+            }
+
+            // --- Eigene Daten ----------------------------------------
+            if (aiMuster(['bestand', 'kühlschrank', 'vorrat', 'vial', 'vials']).test(text)) return aiAnswerInventory();
             if (/\b(letzte|letzten)\b.*\b(injektion|spritze|gabe)\b/.test(text) ||
                 /\b(injektion|spritze)\b.*\b(letzte|wann)\b/.test(text)) return aiAnswerLastInjection();
             if (/\b(schlaf|energie|schmerz|durchschnitt|statistik|trend)\w*\b/.test(text)) return aiAnswerStats();
 
-            if (subs.length) return aiAnswerSubstance(subs[0]);
+            // --- Substanz --------------------------------------------
+            if (zielFall) return aiAnswerSubstance(zielFall);
+
+            // --- Tippfehler ------------------------------------------
+            const vielleicht = aiMeintest(text);
+            if (vielleicht) {
+                return 'Das kenne ich nicht. Meintest du <button onclick="askAI(\'' +
+                    vielleicht[2].replace(/'/g, "\\'") + '\')" class="text-brand-400 underline font-bold">' +
+                    vielleicht[2] + '</button>?';
+            }
 
             return null;
         }
@@ -7976,7 +9063,7 @@ function renderInventory() {
             h = readStore('ai_chat_history');
 
             if (!h.length) {
-                c.innerHTML = aiBubble('Gude! Ich bin Prof. Dr. Pep. Ich schlage dir Substanzen aus der Datenbank nach, pr&uuml;fe Kombinationen und trage deine Dosen ins Journal ein. Tipp &bdquo;Hilfe&ldquo; f&uuml;r Beispiele.', 'ai');
+                c.innerHTML = aiBubble('Gude! Ich bin Prof. Dr. Pep. Ich schlage Substanzen nach, sage dir wo du heute spritzen kannst, rechne Hübe und Units aus und trage alles ins Journal ein. Tipp &bdquo;Hilfe&ldquo; für die ganze Liste.', 'ai');
                 return;
             }
             c.innerHTML = h.map(e => aiBubble(e.m, e.s)).join('');
@@ -8020,7 +9107,7 @@ function renderInventory() {
 
             aiBusy = true;
             if (btn) btn.classList.add('opacity-50', 'pointer-events-none');
-            addChatMessage(msg.replace(/</g, '&lt;'), 'user');
+            addChatMessage(esc(msg), 'user');
             input.value = '';
             aiShowTyping();
 
@@ -8179,7 +9266,7 @@ function renderInventory() {
                     <div class="flex justify-between items-center bg-slate-800/80 border border-slate-600/50 p-3 rounded-xl transition-all ${alarm.active ? '' : 'opacity-50'}">
                         <div class="flex items-center gap-3">
                             <span class="text-sm font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-1 rounded-lg">${alarm.time}</span>
-                            <span class="text-sm font-semibold text-white">${alarm.text}</span>
+                            <span class="text-sm font-semibold text-white">${esc(alarm.text)}</span>
                         </div>
                         <div class="flex items-center gap-4">
                             <label class="relative inline-flex items-center cursor-pointer">
