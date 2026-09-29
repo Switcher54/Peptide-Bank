@@ -36,8 +36,9 @@
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Feste Major-Version: ohne sie landet jede neue Chart.js-Version
+         ungeprueft in der App. three.js laedt erst die Koerperkarte. -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -3301,6 +3302,7 @@
 
             // NEU: Fix für leere Injektions-Map (Erzwingt Neuberechnung der 3D Engine wenn Tab sichtbar wird)
             if(viewId === 'map') {
+                ladeKoerperkarte();
                 setTimeout(() => {
                     window.dispatchEvent(new Event('resize'));
                 }, 50);
@@ -5053,6 +5055,35 @@
         }
 
         // --- NEU: 3D Engine für das Sci-Fi Hologramm ---
+        // three.js ist rund 600 KB gross und wird nur fuer die
+        // Koerperkarte gebraucht. Es wird deshalb erst geladen, wenn die
+        // Map zum ersten Mal offen ist. Der Service Worker legt die Datei
+        // weiterhin in den Cache, offline klappt es also wie bisher.
+        const THREE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+        let threeWirdGeladen = null;
+
+        function ladeKoerperkarte() {
+            if (typeof THREE !== 'undefined') { initThreeJSMap(); return; }
+            if (!threeWirdGeladen) {
+                threeWirdGeladen = new Promise((fertig, fehler) => {
+                    const s = document.createElement('script');
+                    s.src = THREE_URL;
+                    s.onload = fertig;
+                    s.onerror = fehler;
+                    document.head.appendChild(s);
+                });
+            }
+            threeWirdGeladen
+                .then(() => {
+                    initThreeJSMap();
+                    window.dispatchEvent(new Event('resize'));
+                })
+                .catch(() => {
+                    threeWirdGeladen = null; // beim naechsten Oeffnen erneut versuchen
+                    initThreeJSMap();        // blendet die Ladeanzeige aus
+                });
+        }
+
         function initThreeJSMap() {
             const container = document.getElementById('threejs-container');
             const loading = document.getElementById('threejs-loading');
@@ -6786,9 +6817,9 @@ function renderInventory() {
 
         // --- OFFLINE ---------------------------------------------------
         // Die App rechnet nur mit lokalen Daten, laedt zum Start aber
-        // Tailwind, Chart.js und three aus dem Netz. Der Service Worker
-        // legt beides in den Cache, damit sie auch ohne Verbindung
-        // startet. Er laeuft nur ueber https oder localhost - beim
+        // Tailwind und Chart.js aus dem Netz, three.js beim ersten Oeffnen
+        // der Karte. Der Service Worker legt alles in den Cache, damit
+        // sie auch ohne Verbindung startet. Er laeuft nur ueber https oder localhost - beim
         // Oeffnen per Doppelklick schlaegt die Registrierung fehl, das
         // ist erwartet und wird still hingenommen.
         function initOffline() {
@@ -7419,7 +7450,6 @@ function renderInventory() {
             if(typeof updateMapSubstancePresets === "function") updateMapSubstancePresets();
             if(typeof renderInjectionLog === "function") renderInjectionLog();
             if(typeof renderPKChart === "function") renderPKChart();
-            if(typeof initThreeJSMap === "function") initThreeJSMap();
             if(typeof initTracker === "function") initTracker();
             
             if(typeof renderDashboard === "function") renderDashboard();
