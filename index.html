@@ -798,62 +798,57 @@
                 </div>
             </div>
 
-            <nav aria-label="Hauptnavigation" class="flex items-center justify-center sm:justify-start gap-1.5 bg-slate-900/50 p-1.5 rounded-3xl sm:rounded-full border border-white/5 shadow-inner w-full xl:w-auto flex-wrap relative z-50">
-                
-                <button onclick="router('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md">🏠 Cockpit</button>
+            <!-- Unter md uebernimmt die Leiste unten. Die Menues oeffnen per
+                 Klick, Tap und Tastatur; Hover bleibt als Abkuerzung. -->
+            <nav aria-label="Hauptnavigation" class="hidden md:flex items-center justify-center sm:justify-start gap-1.5 bg-slate-900/50 p-1.5 rounded-3xl sm:rounded-full border border-white/5 shadow-inner w-full xl:w-auto flex-wrap relative z-50">
+
+                <button onclick="router('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 bg-brand-500 text-white shadow-md">Übersicht</button>
                 <button onclick="router('db')" id="nav-db" class="nav-btn px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 text-slate-400 hover:text-white">Datenbank</button>
-                
-                <!-- Tools Dropdown -->
-                <div class="relative group">
-                    <button class="px-4 py-2 rounded-full text-xs font-semibold text-slate-400 group-hover:text-white transition-all duration-300 flex items-center gap-1.5">
-                        Tools <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+
+                <div class="relative group nav-drop">
+                    <button type="button" onclick="toggleNavMenu(this)" aria-expanded="false" aria-controls="menu-tools" class="nav-drop-btn px-4 py-2 rounded-full text-xs font-semibold text-slate-400 group-hover:text-white aria-expanded:text-white transition-all duration-300 flex items-center gap-1.5">
+                        Tools <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:flex flex-col bg-slate-800/95 backdrop-blur-md border border-white/10 rounded-2xl p-2 shadow-2xl min-w-[160px] z-50 before:absolute before:inset-x-0 before:-top-3 before:h-3">
-                        <button onclick="router('calc')" id="nav-calc" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"><span>🧪</span> Rechner</button>
-                        <button onclick="router('map')" id="nav-map" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"><span>📍</span> Map / Injektion</button>
-                        <button onclick="router('nasal')" id="nav-nasal" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"><span>👃</span> Nasenspray</button>
-                        <button onclick="router('stack')" id="nav-stack" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center justify-between">
-                            <div class="flex items-center gap-2"><span>🧬</span> Stacker</div> <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
-                        </button>
+                    <div id="menu-tools" class="nav-menu absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:flex flex-col bg-slate-800/95 backdrop-blur-md border border-white/10 rounded-2xl p-2 shadow-2xl min-w-[170px] z-50 before:absolute before:inset-x-0 before:-top-3 before:h-3">
+                        <button onclick="router('calc')" id="nav-calc" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Rechner</button>
+                        <button onclick="router('map')" id="nav-map" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Body-Map</button>
+                        <button onclick="router('nasal')" id="nav-nasal" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Nasenspray</button>
+                        <button onclick="router('stack')" id="nav-stack" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Stack-Check</button>
                     </div>
                 </div>
 
-                <!-- Labor Dropdown -->
-                <div class="relative group">
-                    <button class="px-4 py-2 rounded-full text-xs font-semibold text-slate-400 group-hover:text-white transition-all duration-300 flex items-center gap-1.5">
-                        Labor <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <div class="relative group nav-drop">
+                    <button type="button" onclick="toggleNavMenu(this)" aria-expanded="false" aria-controls="menu-labor" class="nav-drop-btn px-4 py-2 rounded-full text-xs font-semibold text-slate-400 group-hover:text-white aria-expanded:text-white transition-all duration-300 flex items-center gap-1.5">
+                        Labor <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:flex flex-col bg-slate-800/95 backdrop-blur-md border border-white/10 rounded-2xl p-2 shadow-2xl min-w-[160px] z-50 before:absolute before:inset-x-0 before:-top-3 before:h-3">
-                        <button onclick="router('tracker')" id="nav-tracker" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center justify-between">
-                            <div class="flex items-center gap-2"><span>📊</span> Journal</div> <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-glow-success"></span>
+                    <div id="menu-labor" class="nav-menu absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:flex flex-col bg-slate-800/95 backdrop-blur-md border border-white/10 rounded-2xl p-2 shadow-2xl min-w-[170px] z-50 before:absolute before:inset-x-0 before:-top-3 before:h-3">
+                        <button onclick="router('tracker')" id="nav-tracker" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Journal</button>
+                        <button onclick="router('inventory')" id="nav-inventory" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center justify-between gap-2">
+                            Bestand <span id="nav-inv-warn" class="hidden w-2 h-2 rounded-full bg-amber-400" title="Bestand knapp"></span>
                         </button>
-                        <button onclick="router('inventory')" id="nav-inventory" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center justify-between">
-                            <div class="flex items-center gap-2"><span>📦</span> Bestand</div> <span id="nav-inv-warn" class="hidden text-[11px]">⚠️</span>
-                        </button>
-                        <button onclick="router('blood')" id="nav-blood" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"><span>🩸</span> Blutbild</button>
-                        <button onclick="router('storage')" id="nav-storage" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"><span>❄️</span> Stabilität</button>
+                        <button onclick="router('blood')" id="nav-blood" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Blutbild</button>
+                        <button onclick="router('storage')" id="nav-storage" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Stabilität</button>
                     </div>
                 </div>
 
-                <!-- Wissen Dropdown -->
-                <div class="relative group">
-                    <button class="px-4 py-2 rounded-full text-xs font-semibold text-slate-400 group-hover:text-white transition-all duration-300 flex items-center gap-1.5">
-                        Wissen <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <div class="relative group nav-drop">
+                    <button type="button" onclick="toggleNavMenu(this)" aria-expanded="false" aria-controls="menu-wissen" class="nav-drop-btn px-4 py-2 rounded-full text-xs font-semibold text-slate-400 group-hover:text-white aria-expanded:text-white transition-all duration-300 flex items-center gap-1.5">
+                        Wissen <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:flex flex-col bg-slate-800/95 backdrop-blur-md border border-white/10 rounded-2xl p-2 shadow-2xl min-w-[160px] z-50 before:absolute before:inset-x-0 before:-top-3 before:h-3">
-                        <button onclick="router('wiki')" id="nav-wiki" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"><span>📚</span> Wiki</button>
-                        <button onclick="router('tutorial')" id="nav-tutorial" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"><span>💡</span> Misch-Guide</button>
-                        <button onclick="router('sport')" id="nav-sport" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"><span>🏅</span> Protokolle</button>
+                    <div id="menu-wissen" class="nav-menu absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:flex flex-col bg-slate-800/95 backdrop-blur-md border border-white/10 rounded-2xl p-2 shadow-2xl min-w-[170px] z-50 before:absolute before:inset-x-0 before:-top-3 before:h-3">
+                        <button onclick="router('wiki')" id="nav-wiki" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Wiki</button>
+                        <button onclick="router('tutorial')" id="nav-tutorial" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Misch-Guide</button>
+                        <button onclick="router('sport')" id="nav-sport" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Protokolle</button>
                     </div>
                 </div>
 
                 <div class="w-px h-5 bg-white/10 mx-2 hidden sm:block shrink-0"></div>
 
                 <button onclick="router('coupons')" id="nav-coupons" class="nav-btn shrink-0 px-4 py-2 rounded-full text-xs font-semibold text-amber-400 hover:text-amber-300 transition-all duration-300 flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg> Partner
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg> Rabattcodes
                 </button>
-                <a href="https://janoshik.com/verification/" target="_blank" class="shrink-0 px-4 py-2 rounded-full text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all duration-300 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> HPLC
+                <a href="https://janoshik.com/verification/" target="_blank" rel="noopener noreferrer" title="Chargen bei einem unabhängigen Prüflabor nachschlagen" class="shrink-0 px-4 py-2 rounded-full text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all duration-300 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> HPLC
                 </a>
             </nav>
         </div>
@@ -882,7 +877,7 @@
 
         <div id="view-dashboard" class="view-panel block animate-fade-in-up space-y-8">
             <div class="text-center space-y-4 mb-10">
-                <h2 class="text-4xl font-extrabold text-white tracking-tight">Dein <span class="text-gradient">Cockpit</span></h2>
+                <h2 class="text-4xl font-extrabold text-white tracking-tight">Deine <span class="text-gradient">Übersicht</span></h2>
                 <p class="text-slate-400 text-sm max-w-2xl mx-auto">Willkommen zurück. Hier ist deine persönliche Übersicht über Bestand, Journal und anstehende Aufgaben.</p>
             </div>
 
@@ -2145,7 +2140,7 @@
         <div id="view-stack" class="view-panel hidden space-y-8">
             <div class="glass-card rounded-3xl p-6 sm:p-10">
                 <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-white mb-2">Synergie Stacker</h2>
+                    <h2 class="text-3xl font-bold text-white mb-2">Stack-Check</h2>
                     <p class="text-slate-400 text-sm">Wähle Moleküle aus, um ihre biochemische Überlagerung zu prüfen.</p>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -2571,31 +2566,30 @@
     </button>
 
     <!-- Mobile Bottom Navigation Bar -->
-    <nav aria-label="Hauptnavigation (mobil)" class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-white/10 z-[100] px-2 py-3 pb-safe flex justify-around items-center shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
-        <button onclick="router('dashboard')" id="mob-nav-dashboard" class="mob-nav-btn flex flex-col items-center gap-1 text-brand-400 relative drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]">
-            <span class="text-lg leading-none mb-0.5">🏠</span>
-            <span class="text-[11px] font-bold tracking-wider uppercase">Home</span>
+    <nav aria-label="Hauptnavigation (mobil)" class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-white/10 z-[100] px-1 py-2 pb-safe flex justify-around items-center shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+        <button onclick="router('dashboard')" id="mob-nav-dashboard" class="mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-brand-400 relative">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span class="text-xs font-semibold">Übersicht</span>
         </button>
-        <button onclick="router('db')" id="mob-nav-db" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition-colors relative">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-            <span class="text-[11px] font-bold tracking-wider uppercase">DB</span>
+        <button onclick="router('db')" id="mob-nav-db" class="mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-slate-400 hover:text-slate-200 transition-colors relative">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+            <span class="text-xs font-semibold">Datenbank</span>
         </button>
-        <button onclick="router('calc')" id="mob-nav-calc" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-            <span class="text-[11px] font-bold tracking-wider uppercase">Rechner</span>
+        <button onclick="router('calc')" id="mob-nav-calc" class="mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-slate-400 hover:text-slate-200 transition-colors relative">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <span class="text-xs font-semibold">Rechner</span>
         </button>
-        <button onclick="router('map')" id="mob-nav-map" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-            <span class="text-[11px] font-bold tracking-wider uppercase">Map</span>
+        <button onclick="router('map')" id="mob-nav-map" class="mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-slate-400 hover:text-slate-200 transition-colors relative">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            <span class="text-xs font-semibold">Map</span>
         </button>
-        <button onclick="toggleMobileMenu()" id="mob-nav-menu" aria-expanded="false" aria-controls="mobile-menu-sheet" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition-colors relative">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            <span class="text-[11px] font-bold tracking-wider uppercase">Menü</span>
+        <button onclick="router('tracker')" id="mob-nav-tracker" class="mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-slate-400 hover:text-slate-200 transition-colors relative">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            <span class="text-xs font-semibold">Journal</span>
         </button>
-        <button onclick="router('tracker')" id="mob-nav-tracker" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition-colors relative">
-            <div class="absolute top-0 right-1 w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.8)] border border-slate-900"></div>
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-            <span class="text-[11px] font-bold tracking-wider uppercase">Journal</span>
+        <button onclick="toggleMobileMenu()" id="mob-nav-menu" aria-expanded="false" aria-controls="mobile-menu-sheet" class="mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-slate-400 hover:text-slate-200 transition-colors relative">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <span class="text-xs font-semibold">Mehr</span>
         </button>
     </nav>
 
@@ -2605,40 +2599,28 @@
         <div class="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mt-3 mb-4"></div>
         <div class="overflow-y-auto px-6 pb-6 space-y-6 scrollbar-hide flex-grow">
             <div>
-                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Labor & Tools</h4>
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Labor &amp; Tools</h4>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="router('inventory')" class="bg-slate-800/50 border border-white/5 p-3 rounded-xl flex items-center gap-3 text-left">
-                        <span class="text-xl">📦</span><span class="text-xs font-bold text-white">Bestand</span>
-                    </button>
-                    <button onclick="router('blood')" class="bg-slate-800/50 border border-white/5 p-3 rounded-xl flex items-center gap-3 text-left">
-                        <span class="text-xl">🩸</span><span class="text-xs font-bold text-white">Blutbild</span>
-                    </button>
-                    <button onclick="router('storage')" class="bg-slate-800/50 border border-white/5 p-3 rounded-xl flex items-center gap-3 text-left">
-                        <span class="text-xl">❄️</span><span class="text-xs font-bold text-white">Stabilität</span>
-                    </button>
-                    <button onclick="router('stack')" class="bg-slate-800/50 border border-white/5 p-3 rounded-xl flex items-center gap-3 text-left">
-                        <span class="text-xl">🧬</span><span class="text-xs font-bold text-white">Stacker</span>
-                    </button>
-                    <button onclick="router('nasal')" class="bg-slate-800/50 border border-white/5 p-3 rounded-xl flex items-center gap-3 text-left">
-                        <span class="text-xl">👃</span><span class="text-xs font-bold text-white">Nasenspray</span>
-                    </button>
+                    <button onclick="router('inventory')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Bestand</button>
+                    <button onclick="router('blood')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Blutbild</button>
+                    <button onclick="router('storage')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Stabilität</button>
+                    <button onclick="router('stack')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Stack-Check</button>
+                    <button onclick="router('nasal')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Nasenspray</button>
                 </div>
             </div>
             <div>
-                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Wissen & Community</h4>
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Wissen</h4>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="router('wiki')" class="bg-slate-800/50 border border-white/5 p-3 rounded-xl flex items-center gap-3 text-left">
-                        <span class="text-xl">📚</span><span class="text-xs font-bold text-white">Wiki</span>
-                    </button>
-                    <button onclick="router('tutorial')" class="bg-slate-800/50 border border-white/5 p-3 rounded-xl flex items-center gap-3 text-left">
-                        <span class="text-xl">💡</span><span class="text-xs font-bold text-white">Misch-Guide</span>
-                    </button>
-                    <button onclick="router('sport')" class="bg-slate-800/50 border border-white/5 p-3 rounded-xl flex items-center gap-3 text-left">
-                        <span class="text-xl">🏅</span><span class="text-xs font-bold text-white">Protokolle</span>
-                    </button>
-                    <button onclick="router('coupons')" class="bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl flex items-center gap-3 text-left">
-                        <span class="text-xl">🤝</span><span class="text-xs font-bold text-amber-400">Partner</span>
-                    </button>
+                    <button onclick="router('wiki')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Wiki</button>
+                    <button onclick="router('tutorial')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Misch-Guide</button>
+                    <button onclick="router('sport')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Protokolle</button>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Shops &middot; Werbung</h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="router('coupons')" class="bg-amber-500/10 border border-amber-500/20 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-amber-400">Rabattcodes</button>
+                    <a href="https://janoshik.com/verification/" target="_blank" rel="noopener noreferrer" class="bg-emerald-500/10 border border-emerald-500/20 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-emerald-400 flex items-center">Chargen prüfen (HPLC)</a>
                 </div>
             </div>
         </div>
@@ -3300,6 +3282,7 @@
             if (typeof isMobileMenuOpen !== 'undefined' && isMobileMenuOpen) {
                 toggleMobileMenu();
             }
+            closeNavMenus();
 
             document.querySelectorAll('.view-panel').forEach(p => { 
                 p.classList.add('hidden'); 
@@ -3345,21 +3328,51 @@
 
             // Update Mobile Bottom Nav
             document.querySelectorAll('.mob-nav-btn').forEach(btn => {
-                btn.className = "mob-nav-btn flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition-colors relative";
+                btn.className = "mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-slate-400 hover:text-slate-200 transition-colors relative";
             });
             const activeMobBtn = document.getElementById('mob-nav-' + viewId);
             if(activeMobBtn) {
-                activeMobBtn.className = "mob-nav-btn flex flex-col items-center gap-1 text-brand-400 relative drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]";
+                activeMobBtn.className = "mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-brand-400 relative";
+                activeMobBtn.setAttribute('aria-current', 'page');
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Menues in der Kopfleiste. Sie oeffnen per Klick, Tap und
+        // Tastatur; das Ueberfahren mit der Maus bleibt als Abkuerzung.
+        function closeNavMenus(ausser) {
+            document.querySelectorAll('.nav-drop-btn').forEach(btn => {
+                if (btn === ausser) return;
+                btn.setAttribute('aria-expanded', 'false');
+                const menu = document.getElementById(btn.getAttribute('aria-controls'));
+                if (menu) { menu.classList.add('hidden'); menu.classList.remove('flex'); }
+            });
+        }
+
+        function toggleNavMenu(btn) {
+            const menu = document.getElementById(btn.getAttribute('aria-controls'));
+            if (!menu) return;
+            const offen = btn.getAttribute('aria-expanded') === 'true';
+            closeNavMenus(btn);
+            btn.setAttribute('aria-expanded', offen ? 'false' : 'true');
+            menu.classList.toggle('hidden', offen);
+            menu.classList.toggle('flex', !offen);
+        }
+
+        // Klick oder Fokus ausserhalb schliesst offene Menues
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.nav-drop')) closeNavMenus();
+        });
+        document.addEventListener('focusin', e => {
+            if (!e.target.closest('.nav-drop')) closeNavMenus();
+        });
+
         // Zurück- und Vorwärts-Taste, Lesezeichen, geteilte Links
         window.addEventListener('hashchange', function () {
             const roh = (location.hash || '').replace(/^#\/?/, '');
             // Fremde Anker in Ruhe lassen - etwa die Sprungmarke
-            // "#hauptinhalt". Sonst wuerde sie aufs Cockpit werfen.
+            // "#hauptinhalt". Sonst wuerde sie auf die Uebersicht werfen.
             if (roh && VIEWS.indexOf(roh) === -1) return;
             applyView(viewAusHash());
         });
@@ -4002,10 +4015,10 @@
                         <!-- Quick Actions -->
                         <div class="mt-4 pt-4 border-t border-white/5 flex gap-2">
                             <button onclick="router('calc'); loadDirectToCalc('${p.id}')" class="flex-1 py-2 rounded-xl text-[11px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
-                                🧪 Rechner
+                                Rechner
                             </button>
                             <button onclick="router('stack'); setTimeout(() => { document.querySelectorAll('.stack-checkbox').forEach(cb => { if(cb.value === '${p.name.replace(/'/g, "\\'")}') cb.checked = true; }); generateStackReport(); }, 100);" class="flex-1 py-2 rounded-xl text-[11px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
-                                🧬 Stacker
+                                Stack-Check
                             </button>
                         </div>
                     </div>
@@ -6766,6 +6779,8 @@ function renderInventory() {
             if (e.key !== 'Escape') return;
             const b = document.getElementById('briefing');
             if (b && !b.classList.contains('hidden')) { closeBriefing(); return; }
+            const offenesMenue = document.querySelector('.nav-drop-btn[aria-expanded="true"]');
+            if (offenesMenue) { closeNavMenus(); offenesMenue.focus(); return; }
             if (isMobileMenuOpen) toggleMobileMenu();
         });
 
@@ -7196,7 +7211,7 @@ function renderInventory() {
             const fertig = (s.items || []).filter(i => i.completed);
 
             if (!s.items || !s.items.length) {
-                return briefBlock('📋', 'Heute', '<p class="text-[11px] text-slate-400">Nichts eingeplant. Über den Wochenplan im Cockpit lässt sich das automatisieren.</p>');
+                return briefBlock('📋', 'Heute', '<p class="text-[11px] text-slate-400">Nichts eingeplant. Über den Wochenplan in der Übersicht lässt sich das automatisieren.</p>');
             }
             if (!offen.length) {
                 return briefBlock('📋', 'Heute',
@@ -7421,7 +7436,7 @@ function renderInventory() {
             if(typeof reportStoreWarnings === "function") setTimeout(reportStoreWarnings, 400);
 
             // Ansicht aus der Adresse wiederherstellen. Ohne Hash das
-            // Cockpit, aber ohne einen Verlaufseintrag anzulegen.
+            // die Uebersicht, aber ohne einen Verlaufseintrag anzulegen.
             applyView(viewAusHash());
         };
 
@@ -7607,7 +7622,7 @@ function renderInventory() {
                         `;
                     });
                     if(stackKeys.length > 3) html += `<div class="text-[11px] text-slate-500 text-center mt-2">+ ${stackKeys.length - 3} weitere aktiv</div>`;
-                    dashStack.innerHTML = html + `<button onclick="router('stack')" class="w-full text-[11px] text-purple-400 hover:text-purple-300 transition-colors text-center mt-3 block">Zum Stacker →</button>`;
+                    dashStack.innerHTML = html + `<button onclick="router('stack')" class="w-full text-[11px] text-purple-400 hover:text-purple-300 transition-colors text-center mt-3 block">Zum Stack-Check →</button>`;
                 } else {
                     dashStack.innerHTML = `<p class="text-xs text-slate-500 italic mb-3">Kein aktiver Zyklus erkannt.</p><button onclick="router('tracker')" class="w-full py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-lg text-[11px] font-bold transition-all hover:bg-purple-500/30">Injektion loggen</button>`;
                 }
@@ -8204,7 +8219,7 @@ function renderInventory() {
             }
             return head + '<div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-2.5 text-[11px]">' +
                 'F&uuml;r diese Kombination liegt mir keine hinterlegte Bewertung vor. Mit jeder zus&auml;tzlichen Substanz steigen die Wechselwirkungen, die niemand vorhergesagt hat.</div>' + warn +
-                '<button onclick="toggleAIChat(); router(\'stack\');" class="mt-2 w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[11px] font-bold transition-all">Im Stacker pr&uuml;fen</button>';
+                '<button onclick="toggleAIChat(); router(\'stack\');" class="mt-2 w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[11px] font-bold transition-all">Im Stack-Check pr&uuml;fen</button>';
         }
 
         // ---------------------------------------------- Antwort: Blutwerte
@@ -8676,7 +8691,7 @@ function renderInventory() {
             const s = readStore('daily_schedule');
             if (s.date !== localDateISO() || !s.items || !s.items.length) {
                 return '<div class="space-y-2 text-[11px]"><div>Für heute steht nichts im Tagesplan.</div>' +
-                    '<button onclick="toggleAIChat(); router(\'dashboard\');" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[10px] font-bold transition-all">Plan im Cockpit erzeugen</button></div>';
+                    '<button onclick="toggleAIChat(); router(\'dashboard\');" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[10px] font-bold transition-all">Plan in der Übersicht erzeugen</button></div>';
             }
             const offen = s.items.filter(i => !i.completed);
             const fertig = s.items.filter(i => i.completed);
@@ -8940,7 +8955,7 @@ function renderInventory() {
 
             return 'Alarm gestellt für <span class="font-mono text-white">' + std + ':' + min +
                 '</span> — &bdquo;' + esc(was) + '&ldquo;.' +
-                '<div class="text-[11px] text-slate-400 mt-1.5">Damit die Meldung ankommt, muss die Glocke im Cockpit einmal aktiviert sein.</div>';
+                '<div class="text-[11px] text-slate-400 mt-1.5">Die Meldung kommt nur, solange die App geöffnet ist und Benachrichtigungen in der Übersicht erlaubt sind. Für mehr Verlässlichkeit: in den Kalender übernehmen.</div>';
         }
 
         // ---------------------------------------------- Router
