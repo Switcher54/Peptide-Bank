@@ -499,7 +499,7 @@
                 <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-xl shadow-glow-brand shrink-0" id="briefing-symbol">☀️</div>
                 <div class="min-w-0">
                     <h2 class="text-xl font-bold text-white" id="briefing-titel">Guten Morgen</h2>
-                    <p class="text-[11px] text-slate-400" id="briefing-datum">Montag, 1. Januar</p>
+                    <p class="text-xs text-slate-400" id="briefing-datum">Montag, 1. Januar</p>
                 </div>
                 <button onclick="closeBriefing()" aria-label="Briefing schließen" class="ml-auto text-slate-500 hover:text-white transition-colors shrink-0 text-lg leading-none">✖</button>
             </div>
@@ -762,7 +762,7 @@
     <div id="offline-pille" role="status" aria-live="polite"
          class="hidden fixed bottom-24 left-4 z-[80] items-center gap-2 px-3 py-2 rounded-xl
                 bg-slate-900/95 border border-amber-500/40 backdrop-blur-md shadow-lift
-                text-[11px] font-bold text-amber-400">
+                text-xs font-bold text-amber-400">
         <span class="w-2 h-2 rounded-full bg-amber-400"></span>
         Offline &mdash; deine Daten sind da, externe Links nicht
     </div>
@@ -794,7 +794,7 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-white">Peptide <span class="text-brand-400 font-normal">Bank</span></h1>
-                    <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider block">Referenzdatenbank &amp; Journal</span>
+                    <span class="text-xs text-slate-400 font-medium uppercase tracking-wider block">Referenzdatenbank &amp; Journal</span>
                 </div>
             </div>
 
@@ -1140,7 +1140,7 @@
 
                                 <div id="syringe-rod" class="absolute right-0 h-3 bg-white/5 border-y border-white/10 top-1/2 -translate-y-1/2 transition-all duration-700 ease-out z-0" style="width: 90%;"></div>
 
-                                <div class="absolute inset-0 flex justify-between px-4 items-end pb-1 pointer-events-none select-none font-mono text-[11px] text-slate-300 font-bold z-40">
+                                <div class="absolute inset-0 flex justify-between px-4 items-end pb-1 pointer-events-none select-none font-mono text-xs text-slate-300 font-bold z-40">
                                     <div class="flex flex-col items-center justify-end h-full"><span class="mb-1">0</span><div class="w-px h-2.5 bg-slate-400/80"></div></div>
                                     <div class="flex flex-col items-center justify-end h-full"><span class="mb-1">10</span><div class="w-px h-2.5 bg-slate-400/80"></div></div>
                                     <div class="flex flex-col items-center justify-end h-full"><span class="mb-1">20</span><div class="w-px h-2.5 bg-slate-400/80"></div></div>
@@ -1185,7 +1185,7 @@
                         <div class="space-y-2">
                             <div class="flex justify-between items-center">
                                 <label class="text-xs font-semibold text-slate-300">Dosis pro Intervall (mg)</label>
-                                <select id="cycle-freq" aria-label="Intervall der Dosis" onchange="calculateCycleBudget(); updateCycleLabel();" class="bg-slate-800 border border-slate-600 rounded px-2 py-0.5 text-[11px] text-white outline-none cursor-pointer">
+                                <select id="cycle-freq" aria-label="Intervall der Dosis" onchange="calculateCycleBudget(); updateCycleLabel();" class="bg-slate-800 border border-slate-600 rounded px-2 py-0.5 text-xs text-white outline-none cursor-pointer">
                                     <option value="daily">Täglich</option>
                                     <option value="weekly">Wöchentlich</option>
                                 </select>
@@ -1195,18 +1195,18 @@
                                 <span id="cycle-mg-label" class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mg/Tag</span>
                             </div>
                         </div>
-                        <p class="text-[11px] text-slate-500 mt-2">Hinweis: Die Fläschchen-Größe (Vial mg) wird automatisch von "Wirkstoff 1" des oberen Rechners übernommen.</p>
+                        <p class="text-xs text-slate-500 mt-2">Hinweis: Die Fläschchen-Größe (Vial mg) wird automatisch von "Wirkstoff 1" des oberen Rechners übernommen.</p>
                     </div>
                     
                     <div class="lg:col-span-7 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
                         <h3 class="text-lg font-bold text-white mb-4 border-b border-white/5 pb-4">Wirtschaftlichkeits-Analyse</h3>
                         <div class="grid grid-cols-2 gap-4 mb-6">
                             <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center">
-                                <span class="text-slate-400 text-[11px] uppercase tracking-wider font-semibold block mb-1">Gesamtbedarf</span>
+                                <span class="text-slate-400 text-xs uppercase tracking-wider font-semibold block mb-1">Gesamtbedarf</span>
                                 <span class="text-white font-mono font-bold text-lg" id="cycle-res-mg">0 mg</span>
                             </div>
                             <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center">
-                                <span class="text-slate-400 text-[11px] uppercase tracking-wider font-semibold block mb-1">Benötigte Vials</span>
+                                <span class="text-slate-400 text-xs uppercase tracking-wider font-semibold block mb-1">Benötigte Vials</span>
                                 <span class="text-amber-400 font-mono font-bold text-lg" id="cycle-res-vials">0 Stück</span>
                             </div>
                         </div>
@@ -1452,11 +1452,11 @@
                             <div id="map-info-content" class="hidden h-full flex-col">
                                 <div class="flex justify-between items-start mb-4 border-b border-white/10 pb-4">
                                     <div>
-                                        <span id="map-info-badge" class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider mb-2 inline-block">Applikation</span>
+                                        <span id="map-info-badge" class="px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider mb-2 inline-block">Applikation</span>
                                         <h3 id="map-info-title" class="text-xl font-bold text-white">Zonen Name</h3>
                                     </div>
                                     <div class="text-right">
-                                        <span class="block text-[11px] text-slate-500 uppercase">Winkel</span>
+                                        <span class="block text-xs text-slate-500 uppercase">Winkel</span>
                                         <span id="map-info-angle" class="font-bold text-white text-lg">45°</span>
                                     </div>
                                 </div>
@@ -1476,7 +1476,7 @@
                                         <h4 class="font-bold text-brand-400 mb-6 flex items-center gap-2"><span class="text-lg">🕒</span> Interaktive Uhren-Methode</h4>
                                         <div id="clock-ui" class="relative w-48 h-48 rounded-full border-2 border-dashed border-slate-600/50 flex items-center justify-center">
                                         </div>
-                                        <p class="text-[11px] text-slate-500 mt-6 text-center leading-relaxed">Klicke nach der Injektion auf eine Zahl. Sie wird für 72 Stunden gesperrt (Rot), um Gewebeverhärtungen zu vermeiden.</p>
+                                        <p class="text-xs text-slate-500 mt-6 text-center leading-relaxed">Klicke nach der Injektion auf eine Zahl. Sie wird für 72 Stunden gesperrt (Rot), um Gewebeverhärtungen zu vermeiden.</p>
                                     </div>
                                     
                                     <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5 mt-4">
@@ -1494,7 +1494,7 @@
                                                 <button onclick="setMapSide('Links', this)" class="map-side-btn flex-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-600 text-white shadow-sm transition-all">Links</button>
                                                 <button onclick="setMapSide('Rechts', this)" class="map-side-btn flex-1 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all">Rechts</button>
                                             </div>
-                                            <p class="text-[11px] text-slate-500 mt-1">Wichtig für den Seitenwechsel.</p>
+                                            <p class="text-xs text-slate-500 mt-1">Wichtig für den Seitenwechsel.</p>
                                         </div>
 
                                         <label class="text-xs font-semibold text-slate-300 block mb-1">Protokollierte Substanz & Menge</label>
@@ -1507,7 +1507,7 @@
                                                 <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mg</span>
                                             </div>
                                         </div>
-                                        <p class="text-[11px] text-slate-500">Zieht bei Protokollierung exakt diese Menge (mg) vom Bestand ab.</p>
+                                        <p class="text-xs text-slate-500">Zieht bei Protokollierung exakt diese Menge (mg) vom Bestand ab.</p>
                                     </div>
                                 </div>
 
@@ -1569,10 +1569,10 @@
                                     <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
                                     <strong class="text-sm text-emerald-300">Isotone Kochsalzlösung, 0,9 % NaCl</strong>
                                 </div>
-                                <p class="text-[11px] text-emerald-100/80 leading-relaxed">Entspricht dem Salzgehalt der Schleimhaut und brennt nicht.</p>
+                                <p class="text-xs text-emerald-100/80 leading-relaxed">Entspricht dem Salzgehalt der Schleimhaut und brennt nicht.</p>
                                 <div class="mt-3 pt-3 border-t border-emerald-500/20 flex items-start gap-2.5">
                                     <span class="text-rose-400 text-sm leading-none mt-0.5 shrink-0">✖</span>
-                                    <p class="text-[11px] text-rose-200/90 leading-relaxed"><strong class="text-rose-300">Kein BAC-Wasser.</strong> Der enthaltene Benzylalkohol reizt die Nasenschleimhaut — Brennen, Trockenheit, und gereiztes Gewebe nimmt schlechter auf. Für Injektionen ist BAC richtig, für die Nase nicht.</p>
+                                    <p class="text-xs text-rose-200/90 leading-relaxed"><strong class="text-rose-300">Kein BAC-Wasser.</strong> Der enthaltene Benzylalkohol reizt die Nasenschleimhaut — Brennen, Trockenheit, und gereiztes Gewebe nimmt schlechter auf. Für Injektionen ist BAC richtig, für die Nase nicht.</p>
                                 </div>
                             </div>
                         </div>
@@ -1591,13 +1591,13 @@
                         <div class="space-y-2">
                             <div class="flex justify-between items-baseline">
                                 <label class="text-xs font-semibold text-slate-300" for="nas-hub">Sprühvolumen pro Hub</label>
-                                <span class="text-[11px] text-slate-500">typisch 50&ndash;140 µl</span>
+                                <span class="text-xs text-slate-500">typisch 50&ndash;140 µl</span>
                             </div>
                             <div class="relative">
                                 <input type="number" id="nas-hub" value="100" min="10" step="5" oninput="calcNasal()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 pl-3 pr-12 text-sm text-white focus:border-brand-500 outline-none font-mono">
                                 <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">µl</span>
                             </div>
-                            <p class="text-[11px] text-slate-500 leading-relaxed">Steht meist auf der Pumpe oder im Datenblatt des Herstellers. Ohne Angabe ist 100 µl ein üblicher Ausgangswert &mdash; dann aber nachmessen.</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">Steht meist auf der Pumpe oder im Datenblatt des Herstellers. Ohne Angabe ist 100 µl ein üblicher Ausgangswert &mdash; dann aber nachmessen.</p>
                         </div>
 
                         <div class="space-y-2 pt-2 border-t border-white/5">
@@ -1611,7 +1611,7 @@
                         <div class="flex items-center justify-between p-3 bg-slate-900/60 rounded-xl border border-slate-800">
                             <div>
                                 <span class="text-xs font-semibold text-white block">Totvolumen abziehen</span>
-                                <span class="text-[11px] text-slate-500">Die Pumpe erreicht den Rest nicht</span>
+                                <span class="text-xs text-slate-500">Die Pumpe erreicht den Rest nicht</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="nas-tot" checked onchange="calcNasal()" class="sr-only peer" aria-label="Totvolumen der Pumpe abziehen">
@@ -1643,26 +1643,26 @@
 
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             <div class="bg-slate-900/50 border border-white/5 rounded-xl p-3 text-center">
-                                <span class="text-[11px] text-slate-500 uppercase tracking-wider block mb-1">Konzentration</span>
+                                <span class="text-xs text-slate-500 uppercase tracking-wider block mb-1">Konzentration</span>
                                 <span class="font-mono font-bold text-white text-sm" id="nas-konz">5.00 mg/ml</span>
                             </div>
                             <div class="bg-slate-900/50 border border-white/5 rounded-xl p-3 text-center">
-                                <span class="text-[11px] text-slate-500 uppercase tracking-wider block mb-1">Pro Hub</span>
+                                <span class="text-xs text-slate-500 uppercase tracking-wider block mb-1">Pro Hub</span>
                                 <span class="font-mono font-bold text-brand-400 text-sm" id="nas-prohub">500 mcg</span>
                             </div>
                             <div class="bg-slate-900/50 border border-white/5 rounded-xl p-3 text-center">
-                                <span class="text-[11px] text-slate-500 uppercase tracking-wider block mb-1">Hübe je Flasche</span>
+                                <span class="text-xs text-slate-500 uppercase tracking-wider block mb-1">Hübe je Flasche</span>
                                 <span class="font-mono font-bold text-white text-sm" id="nas-gesamt">20</span>
                             </div>
                             <div class="bg-slate-900/50 border border-white/5 rounded-xl p-3 text-center">
-                                <span class="text-[11px] text-slate-500 uppercase tracking-wider block mb-1">Gaben je Flasche</span>
+                                <span class="text-xs text-slate-500 uppercase tracking-wider block mb-1">Gaben je Flasche</span>
                                 <span class="font-mono font-bold text-emerald-400 text-sm" id="nas-gaben">6</span>
                             </div>
                         </div>
 
                         <div class="bg-slate-900/50 border border-white/5 rounded-2xl p-5 space-y-3">
                             <h4 class="text-sm font-bold text-white flex items-center gap-2"><span>💡</span> Zum Ansetzen</h4>
-                            <ul class="space-y-2 text-[11px] text-slate-400 leading-relaxed list-disc list-inside">
+                            <ul class="space-y-2 text-xs text-slate-400 leading-relaxed list-disc list-inside">
                                 <li>Vor der ersten Gabe muss die Pumpe angespült werden, bis ein voller Nebel kommt. Diese Hübe zählen zum Verbrauch, liefern aber keine verlässliche Menge.</li>
                                 <li>Zum Nachmessen des Sprühvolumens: zehn Hübe in ein Gefäß auf einer Feinwaage geben und durch zehn teilen. Ein Milligramm Wasser entspricht etwa einem Mikroliter.</li>
                                 <li>Beim Sprühen aufrecht sitzen und nicht hochziehen &mdash; sonst läuft die Lösung in den Rachen statt an der Schleimhaut zu bleiben.</li>
@@ -1712,11 +1712,11 @@
                                 <button onclick="setNasenloch('Rechts', this)" class="nas-seite-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all">Rechts</button>
                                 <button onclick="setNasenloch('Beide', this)" class="nas-seite-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all">Beide</button>
                             </div>
-                            <p id="nas-seiten-tipp" class="text-[11px] text-slate-500"></p>
+                            <p id="nas-seiten-tipp" class="text-xs text-slate-500"></p>
                         </div>
 
                         <div class="bg-slate-900/60 border border-white/5 rounded-xl p-3 text-center">
-                            <span class="text-[11px] text-slate-500 uppercase tracking-wider block mb-1">Wird abgezogen</span>
+                            <span class="text-xs text-slate-500 uppercase tracking-wider block mb-1">Wird abgezogen</span>
                             <span class="font-mono font-bold text-white" id="nas-log-summe">0.50 mg</span>
                         </div>
 
@@ -1728,7 +1728,7 @@
                     <div class="lg:col-span-7 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
                         <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-4">
                             <h3 class="text-lg font-bold text-white">Letzte Gaben</h3>
-                            <button onclick="customConfirm('Möchtest du das Nasenspray-Protokoll wirklich leeren? Journal und Bestand bleiben unberührt.', clearNasalLog)" class="text-[11px] text-rose-400 hover:text-rose-300 transition-colors">Protokoll leeren</button>
+                            <button onclick="customConfirm('Möchtest du das Nasenspray-Protokoll wirklich leeren? Journal und Bestand bleiben unberührt.', clearNasalLog)" class="text-xs text-rose-400 hover:text-rose-300 transition-colors">Protokoll leeren</button>
                         </div>
                         <div id="nas-log-list" class="space-y-2 flex-grow overflow-y-auto max-h-[340px] pr-2 scrollbar-hide"></div>
                     </div>
@@ -1893,12 +1893,12 @@
                     <div class="lg:col-span-7 bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col">
                         <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-4">
                             <h3 class="text-lg font-bold text-white">Aktueller Vorrat</h3>
-                            <button onclick="customConfirm('Möchtest du wirklich deinen gesamten Bestand löschen?', clearInventory)" class="text-[11px] text-rose-400 hover:text-rose-300 transition-colors">Bestand leeren</button>
+                            <button onclick="customConfirm('Möchtest du wirklich deinen gesamten Bestand löschen?', clearInventory)" class="text-xs text-rose-400 hover:text-rose-300 transition-colors">Bestand leeren</button>
                         </div>
                         
                         <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 mb-4 flex items-start gap-2">
                             <span class="text-blue-400">💡</span>
-                            <p class="text-[11px] text-slate-300 leading-relaxed">Dein Bestand wird <strong>vollautomatisch in Echtzeit abgezogen</strong>, sobald du eine Injektion im <strong>Journal</strong> (in mcg/mg) oder über die <strong>Body-Map</strong> protokollierst!</p>
+                            <p class="text-xs text-slate-300 leading-relaxed">Dein Bestand wird <strong>vollautomatisch in Echtzeit abgezogen</strong>, sobald du eine Injektion im <strong>Journal</strong> (in mcg/mg) oder über die <strong>Body-Map</strong> protokollierst!</p>
                         </div>
 
                         <div id="inv-list" class="space-y-3 flex-grow overflow-y-auto max-h-[400px] pr-2 scrollbar-hide">
@@ -1951,19 +1951,19 @@
                             <div id="trk-form-feedback" class="trk-form-section block space-y-4 animate-fade-in-up">
                                 <div class="grid grid-cols-3 gap-3">
                                     <div class="space-y-1">
-                                        <label class="text-[11px] text-slate-300 uppercase tracking-wider font-bold">Schlaf</label>
+                                        <label class="text-xs text-slate-300 uppercase tracking-wider font-bold">Schlaf</label>
                                         <select id="trk-sleep" aria-label="Schlafqualität von 1 bis 10" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-2 text-xs text-white focus:border-emerald-500 outline-none cursor-pointer">
                                             <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
                                         </select>
                                     </div>
                                     <div class="space-y-1">
-                                        <label class="text-[11px] text-slate-300 uppercase tracking-wider font-bold">Schmerz</label>
+                                        <label class="text-xs text-slate-300 uppercase tracking-wider font-bold">Schmerz</label>
                                         <select id="trk-pain" aria-label="Schmerzlevel von 1 bis 10" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-2 text-xs text-white focus:border-rose-500 outline-none cursor-pointer">
                                             <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
                                         </select>
                                     </div>
                                     <div class="space-y-1">
-                                        <label class="text-[11px] text-slate-300 uppercase tracking-wider font-bold">Energie</label>
+                                        <label class="text-xs text-slate-300 uppercase tracking-wider font-bold">Energie</label>
                                         <select id="trk-mood" aria-label="Energielevel von 1 bis 10" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-2 text-xs text-white focus:border-brand-500 outline-none cursor-pointer">
                                             <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
                                         </select>
@@ -2002,7 +2002,7 @@
                         <div class="bg-slate-900/30 p-6 rounded-2xl border border-white/5">
                             <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
                                 <h3 class="text-sm font-bold text-white">Letzte Einträge</h3>
-                                <button onclick="customConfirm('Möchtest du den gesamten Quantified Self Verlauf wirklich löschen?', clearTrackerData)" class="text-[11px] text-rose-400 hover:text-rose-300 transition-colors">Verlauf löschen</button>
+                                <button onclick="customConfirm('Möchtest du den gesamten Quantified Self Verlauf wirklich löschen?', clearTrackerData)" class="text-xs text-rose-400 hover:text-rose-300 transition-colors">Verlauf löschen</button>
                             </div>
                             <div id="tracker-recent-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2 scrollbar-hide">
                             </div>
@@ -2036,7 +2036,7 @@
                             <div id="tracker-calendar-grid" class="grid grid-cols-7 gap-2 flex-grow">
                             </div>
                             
-                            <div class="mt-6 flex gap-4 text-[11px] text-slate-400 justify-center">
+                            <div class="mt-6 flex gap-4 text-xs text-slate-400 justify-center">
                                 <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-500/80"></span> Injektion</div>
                                 <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></span> Bio-Feedback</div>
                                 <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400/80"></span> Notiz</div>
@@ -2050,15 +2050,15 @@
                         <div id="tracker-analytics-view" class="hidden flex-col gap-6 flex-grow">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="bg-slate-900/50 border border-emerald-500/20 p-4 rounded-xl text-center">
-                                    <span class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider block mb-1">Ø Schlaf</span>
+                                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block mb-1">Ø Schlaf</span>
                                     <span class="text-2xl font-bold text-white" id="stat-sleep-avg">-</span>
                                 </div>
                                 <div class="bg-slate-900/50 border border-rose-500/20 p-4 rounded-xl text-center">
-                                    <span class="text-[11px] font-bold text-rose-400 uppercase tracking-wider block mb-1">Ø Schmerz</span>
+                                    <span class="text-xs font-bold text-rose-400 uppercase tracking-wider block mb-1">Ø Schmerz</span>
                                     <span class="text-2xl font-bold text-white" id="stat-pain-avg">-</span>
                                 </div>
                                 <div class="bg-slate-900/50 border border-brand-500/20 p-4 rounded-xl text-center">
-                                    <span class="text-[11px] font-bold text-brand-400 uppercase tracking-wider block mb-1">Ø Energie</span>
+                                    <span class="text-xs font-bold text-brand-400 uppercase tracking-wider block mb-1">Ø Energie</span>
                                     <span class="text-2xl font-bold text-white" id="stat-mood-avg">-</span>
                                 </div>
                             </div>
@@ -2097,22 +2097,22 @@
                     <button onclick="setSportChannel('heal', this)" class="sport-ch-btn p-4 rounded-xl border border-emerald-500/50 bg-emerald-500/10 text-left transition-all">
                         <span class="text-2xl block mb-2">🩹</span>
                         <h4 class="font-bold text-sm text-white">Regeneration</h4>
-                        <p class="text-[11px] text-slate-400 uppercase mt-1">Sehnen & Gelenke</p>
+                        <p class="text-xs text-slate-400 uppercase mt-1">Sehnen & Gelenke</p>
                     </button>
                     <button onclick="setSportChannel('muscle', this)" class="sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-brand-500/50 text-left transition-all">
                         <span class="text-2xl block mb-2">💪</span>
                         <h4 class="font-bold text-sm text-white">Hypertrophie</h4>
-                        <p class="text-[11px] text-slate-400 uppercase mt-1">Muskelaufbau</p>
+                        <p class="text-xs text-slate-400 uppercase mt-1">Muskelaufbau</p>
                     </button>
                     <button onclick="setSportChannel('fat', this)" class="sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-amber-500/50 text-left transition-all">
                         <span class="text-2xl block mb-2">🔥</span>
                         <h4 class="font-bold text-sm text-white">Lipolyse</h4>
-                        <p class="text-[11px] text-slate-400 uppercase mt-1">Fettabbau</p>
+                        <p class="text-xs text-slate-400 uppercase mt-1">Fettabbau</p>
                     </button>
                     <button onclick="setSportChannel('cell', this)" class="sport-ch-btn p-4 rounded-xl border border-slate-700 hover:border-purple-500/50 text-left transition-all">
                         <span class="text-2xl block mb-2">🧬</span>
                         <h4 class="font-bold text-sm text-white">Ausdauer</h4>
-                        <p class="text-[11px] text-slate-400 uppercase mt-1">Mitochondrien</p>
+                        <p class="text-xs text-slate-400 uppercase mt-1">Mitochondrien</p>
                     </button>
                 </div>
                 
@@ -2243,7 +2243,7 @@
                         </div>
                         <div class="space-y-3">
                             <button onclick="copyCoupon('OUTLAW15', this, 'amber')" class="w-full flex justify-between items-center bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                                <span>Code: OUTLAW15</span> <span class="bg-amber-500 text-white px-2 py-0.5 rounded text-[11px]">-15%</span>
+                                <span>Code: OUTLAW15</span> <span class="bg-amber-500 text-white px-2 py-0.5 rounded text-xs">-15%</span>
                             </button>
                         </div>
                     </div>
@@ -2255,7 +2255,7 @@
                         </div>
                         <div class="space-y-3">
                             <button onclick="copyCoupon('OUTLAW15', this, 'brand')" class="w-full flex justify-between items-center bg-brand-500/10 border border-brand-500/30 text-brand-400 hover:bg-brand-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                                <span>Code: OUTLAW15</span> <span class="bg-brand-500 text-white px-2 py-0.5 rounded text-[11px]">-15%</span>
+                                <span>Code: OUTLAW15</span> <span class="bg-brand-500 text-white px-2 py-0.5 rounded text-xs">-15%</span>
                             </button>
                         </div>
                     </div>
@@ -2266,7 +2266,7 @@
                             <h3 class="text-lg font-bold text-white">Drakon Peptides</h3>
                         </div>
                         <button onclick="copyCoupon('SIMONPROVES', this, 'rose')" class="w-full flex justify-between items-center bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: SIMONPROVES</span> <span class="bg-rose-500 text-white px-2 py-0.5 rounded text-[11px]">-10%</span>
+                            <span>Code: SIMONPROVES</span> <span class="bg-rose-500 text-white px-2 py-0.5 rounded text-xs">-10%</span>
                         </button>
                     </div>
 
@@ -2276,7 +2276,7 @@
                             <h3 class="text-lg font-bold text-white">Rebirth Labs</h3>
                         </div>
                         <button onclick="copyCoupon('SAM', this, 'emerald')" class="w-full flex justify-between items-center bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: SAM</span> <span class="bg-emerald-500 text-white px-2 py-0.5 rounded text-[11px]">-10%</span>
+                            <span>Code: SAM</span> <span class="bg-emerald-500 text-white px-2 py-0.5 rounded text-xs">-10%</span>
                         </button>
                     </div>
 
@@ -2286,7 +2286,7 @@
                             <h3 class="text-lg font-bold text-white">Verra Labs</h3>
                         </div>
                         <button onclick="copyCoupon('MORTY', this, 'purple')" class="w-full flex justify-between items-center bg-purple-500/10 border border-purple-500/30 text-purple-400 hover:bg-purple-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: MORTY</span> <span class="bg-purple-500 text-white px-2 py-0.5 rounded text-[11px]">-10%</span>
+                            <span>Code: MORTY</span> <span class="bg-purple-500 text-white px-2 py-0.5 rounded text-xs">-10%</span>
                         </button>
                     </div>
 
@@ -2296,7 +2296,7 @@
                             <h3 class="text-lg font-bold text-white">RCpeptides</h3>
                         </div>
                         <button onclick="copyCoupon('FOLGT', this, 'cyan')" class="w-full flex justify-between items-center bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: FOLGT</span> <span class="bg-cyan-500 text-white px-2 py-0.5 rounded text-[11px]">Wartet</span>
+                            <span>Code: FOLGT</span> <span class="bg-cyan-500 text-white px-2 py-0.5 rounded text-xs">Wartet</span>
                         </button>
                     </div>
 
@@ -2306,7 +2306,7 @@
                             <h3 class="text-lg font-bold text-white">Nova Labs</h3>
                         </div>
                         <button onclick="copyCoupon('Nova10', this, 'indigo')" class="w-full flex justify-between items-center bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: Nova10</span> <span class="bg-indigo-500 text-white px-2 py-0.5 rounded text-[11px]">-10%</span>
+                            <span>Code: Nova10</span> <span class="bg-indigo-500 text-white px-2 py-0.5 rounded text-xs">-10%</span>
                         </button>
                     </div>
 
@@ -2316,9 +2316,9 @@
                             <h3 class="text-lg font-bold text-white">Premium Research</h3>
                         </div>
                         <button onclick="copyCoupon('Newsletter', this, 'fuchsia')" class="w-full flex justify-between items-center bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-400 hover:bg-fuchsia-500/20 py-3 px-4 rounded-xl font-mono text-sm font-bold transition-all">
-                            <span>Code: Newsletter</span> <span class="bg-fuchsia-500 text-white px-2 py-0.5 rounded text-[11px]">-27%</span>
+                            <span>Code: Newsletter</span> <span class="bg-fuchsia-500 text-white px-2 py-0.5 rounded text-xs">-27%</span>
                         </button>
-                        <p class="text-[11px] text-slate-500 text-center mt-3 uppercase tracking-wider">Rabatt bei Newsletter-Anmeldung</p>
+                        <p class="text-xs text-slate-500 text-center mt-3 uppercase tracking-wider">Rabatt bei Newsletter-Anmeldung</p>
                     </div>
 
                     <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-emerald-500/50 transition-colors group">
@@ -2434,7 +2434,7 @@
                             <div class="pb-5 space-y-3">
                                 <p><strong class="text-white font-semibold">Research Use Only (RUO):</strong> Peptide werden rechtlich als Forschungschemikalien gehandelt. Sie besitzen in Deutschland (bis auf wenige Ausnahmen) keine Zulassung als Arzneimittel für Menschen.</p>
                                 <p><strong class="text-white font-semibold">Doping-Relevanz:</strong> Fast alle anabolen und regenerativen Peptide (wie BPC-157, TB-500, GHRPs, SARMs) stehen weltweit auf der Verbotsliste der <strong class="text-white font-semibold">WADA (Welt-Anti-Doping-Agentur)</strong>. Sie sind im kompetitiven Leistungssport strikt verboten und extrem lange nachweisbar.</p>
-                                <div class="mt-4 p-3 bg-rose-500/20 rounded-xl border border-rose-500/30 text-[11px] text-rose-50 uppercase tracking-wider font-bold">
+                                <div class="mt-4 p-3 bg-rose-500/20 rounded-xl border border-rose-500/30 text-xs text-rose-50 uppercase tracking-wider font-bold">
                                     Disclaimer: Diese App dient der Harm Reduction und als theoretisches Referenz-Werkzeug.
                                 </div>
                             </div>
@@ -2505,7 +2505,7 @@
                 <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white shadow-inner"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg></div>
                 <div>
                     <h3 class="font-bold text-white text-sm">Assistent</h3>
-                    <span class="text-[11px] text-brand-100">Nur App-Daten · keine Beratung</span>
+                    <span class="text-xs text-brand-100">Nur App-Daten · keine Beratung</span>
                 </div>
             </div>
             <div class="flex gap-2">
@@ -2516,8 +2516,8 @@
 
         <!-- Hilfe-Panel -->
         <div id="ai-settings-area" class="hidden bg-slate-800 p-4 border-b border-white/5 shadow-inner max-h-[220px] overflow-y-auto scrollbar-hide">
-            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Was ich kann</label>
-            <ul class="space-y-1.5 text-[11px] text-slate-300 leading-relaxed">
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Was ich kann</label>
+            <ul class="space-y-1.5 text-xs text-slate-300 leading-relaxed">
                 <li><span class="text-brand-400 font-bold">Nachschlagen</span> &mdash; &bdquo;was ist reta&ldquo;, &bdquo;erz&auml;hl mir &uuml;ber bpc&ldquo;</li>
                 <li><span class="text-brand-400 font-bold">Kombinationen</span> &mdash; &bdquo;kann ich bpc und tb500 zusammen&ldquo;</li>
                 <li><span class="text-brand-400 font-bold">Blutwerte</span> &mdash; &bdquo;welche blutwerte bei rad140&ldquo;</li>
@@ -2529,9 +2529,9 @@
             </ul>
             <div class="mt-3 pt-3 border-t border-white/10 flex items-start gap-2">
                 <span class="text-amber-400 text-sm leading-none mt-0.5">&#9888;</span>
-                <p class="text-[11px] text-slate-400 leading-relaxed">Ich lese ausschlie&szlig;lich aus der Datenbank dieser App und aus deinen eigenen Eintr&auml;gen. Keine Internetverbindung, kein externer Dienst &mdash; und keine medizinische Beratung.</p>
+                <p class="text-xs text-slate-400 leading-relaxed">Ich lese ausschlie&szlig;lich aus der Datenbank dieser App und aus deinen eigenen Eintr&auml;gen. Keine Internetverbindung, kein externer Dienst &mdash; und keine medizinische Beratung.</p>
             </div>
-            <button onclick="clearChatHistory()" class="w-full mt-3 bg-slate-900 text-slate-400 hover:text-rose-400 border border-slate-700 py-1.5 rounded-lg text-[11px] font-bold transition-colors">Chatverlauf l&ouml;schen</button>
+            <button onclick="clearChatHistory()" class="w-full mt-3 bg-slate-900 text-slate-400 hover:text-rose-400 border border-slate-700 py-1.5 rounded-lg text-xs font-bold transition-colors">Chatverlauf l&ouml;schen</button>
         </div>
 
         <!-- Chat History -->
@@ -2546,11 +2546,11 @@
 
         <!-- Input Area -->
         <div id="ai-chips" class="px-3 pt-2 bg-slate-800 border-t border-white/10 flex gap-1.5 overflow-x-auto scrollbar-hide">
-            <button onclick="askAI('Was steht heute an?')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Heute</button>
-            <button onclick="askAI('Wo soll ich heute spritzen?')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Wo spritzen?</button>
-            <button onclick="askAI('Was geht zur Neige?')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Zur Neige</button>
-            <button onclick="askAI('Mein Bestand')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Bestand</button>
-            <button onclick="askAI('Hilfe')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-[11px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Hilfe</button>
+            <button onclick="askAI('Was steht heute an?')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Heute</button>
+            <button onclick="askAI('Wo soll ich heute spritzen?')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Wo spritzen?</button>
+            <button onclick="askAI('Was geht zur Neige?')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Zur Neige</button>
+            <button onclick="askAI('Mein Bestand')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Bestand</button>
+            <button onclick="askAI('Hilfe')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">Hilfe</button>
         </div>
         <div class="p-3 bg-slate-800 flex gap-2">
             <input type="text" id="ai-input" placeholder="Frag mich etwas..." onkeypress="if(event.key === 'Enter') sendAIMessage()" class="flex-grow bg-slate-900 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white focus:border-brand-500 outline-none transition-colors">
@@ -3802,11 +3802,11 @@
                         let originBadge = "";
                         if (pr.origin) {
                             if (pr.origin === 'DE' || pr.origin === 'EU') {
-                                originBadge = `<div class="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Versand aus der EU</div>`;
+                                originBadge = `<div class="flex items-center gap-1.5 text-xs font-medium text-slate-400 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Versand aus der EU</div>`;
                             } else if (pr.origin === 'UK') {
-                                originBadge = `<div class="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Versand aus Großbritannien</div>`;
+                                originBadge = `<div class="flex items-center gap-1.5 text-xs font-medium text-slate-400 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Versand aus Großbritannien</div>`;
                             } else if (pr.origin === 'US' || pr.origin === 'CN') {
-                                originBadge = `<div class="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Versand aus Übersee</div>`;
+                                originBadge = `<div class="flex items-center gap-1.5 text-xs font-medium text-slate-400 mt-1.5"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Versand aus Übersee</div>`;
                             }
                         }
                         
@@ -3829,18 +3829,18 @@
                 let studyButtons = '';
                 if (SPECIFIC_STUDIES[p.id]) {
                     SPECIFIC_STUDIES[p.id].forEach(study => {
-                        studyButtons += `<a href="${study.url}" target="_blank" class="px-2 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded text-[11px] text-indigo-300 transition-colors flex items-center gap-1 shadow-inner">🔬 ${study.name}</a>`;
+                        studyButtons += `<a href="${study.url}" target="_blank" class="px-2 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded text-xs text-indigo-300 transition-colors flex items-center gap-1 shadow-inner">🔬 ${study.name}</a>`;
                     });
                 } else {
-                    studyButtons += `<a href="${pubMedLink}" target="_blank" class="px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[11px] text-slate-300 transition-colors">🇬🇧 PubMed (Suche)</a>`;
+                    studyButtons += `<a href="${pubMedLink}" target="_blank" class="px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs text-slate-300 transition-colors">🇬🇧 PubMed (Suche)</a>`;
                 }
-                studyButtons += `<a href="${scholarLink}" target="_blank" class="px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[11px] text-slate-300 transition-colors">🇩🇪 Scholar</a>`;
+                studyButtons += `<a href="${scholarLink}" target="_blank" class="px-2 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs text-slate-300 transition-colors">🇩🇪 Scholar</a>`;
                 
                 // Intelligente YouTube-Button-Logik
                 if (SPECIFIC_VIDEOS[p.id]) {
-                    studyButtons += `<a href="${SPECIFIC_VIDEOS[p.id].url}" target="_blank" class="px-2 py-1 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 border border-fuchsia-500/30 rounded text-[11px] text-fuchsia-400 transition-colors shadow-inner">${SPECIFIC_VIDEOS[p.id].name}</a>`;
+                    studyButtons += `<a href="${SPECIFIC_VIDEOS[p.id].url}" target="_blank" class="px-2 py-1 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 border border-fuchsia-500/30 rounded text-xs text-fuchsia-400 transition-colors shadow-inner">${SPECIFIC_VIDEOS[p.id].name}</a>`;
                 } else {
-                    studyButtons += `<a href="${fallbackYtLink}" target="_blank" class="px-2 py-1 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded text-[11px] text-red-400 transition-colors">▶ YouTube (Suche)</a>`;
+                    studyButtons += `<a href="${fallbackYtLink}" target="_blank" class="px-2 py-1 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded text-xs text-red-400 transition-colors">▶ YouTube (Suche)</a>`;
                 }
 
                 let angle = "N/A";
@@ -3871,16 +3871,16 @@
                                 </button>
                                 <div>
                                     <h3 class="text-base font-bold text-white flex items-center gap-1">${p.name} ${typeIcon}</h3>
-                                    <p class="text-[11px] text-slate-400 truncate max-w-[200px]">${p.aka}</p>
+                                    <p class="text-xs text-slate-400 truncate max-w-[200px]">${p.aka}</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 lg:w-[200px] flex-shrink-0">
-                                <span class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
-                                <span class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider ${riskClass}" title="${riskTitle}">${riskText}</span>
+                                <span class="px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
+                                <span class="px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider ${riskClass}" title="${riskTitle}">${riskText}</span>
                             </div>
                             <div class="flex items-center gap-3 flex-grow justify-start lg:justify-end">
                                 <div class="text-left lg:text-right mr-auto lg:mr-2">
-                                    <span class="block text-[11px] text-slate-500 uppercase tracking-widest">Bester Preis</span>
+                                    <span class="block text-xs text-slate-500 uppercase tracking-widest">Bester Preis</span>
                                     <span class="font-bold text-white text-sm">${bestPriceStr}</span>
                                 </div>
                                 <button onclick="const s = document.getElementById('searchInput'); s.dataset.autoFiltered = 'true'; toggleDbView('grid'); setTimeout(() => { s.value = '${p.name.replace(/'/g, "\\'")}'; applyFilters(); }, 50);" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-white/10 transition-colors whitespace-nowrap shadow-inner">
@@ -3901,10 +3901,10 @@
                         
                         <div class="flex justify-between items-start mb-4">
                             <div>
-                                <span class="text-[11px] font-mono text-slate-500 uppercase tracking-widest block mb-1">REF // ${p.nr}</span>
+                                <span class="text-xs font-mono text-slate-500 uppercase tracking-widest block mb-1">REF // ${p.nr}</span>
                                 <h3 class="text-xl font-bold text-white flex items-center gap-1">${p.name} ${typeIcon}</h3>
                                 <p class="text-xs text-slate-400">${p.aka}</p>
-                                <div class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/60 border border-white/5 text-[11px] text-slate-300 shadow-inner">
+                                <div class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/60 border border-white/5 text-xs text-slate-300 shadow-inner">
                                     <span class="text-brand-400 font-bold uppercase tracking-wider">⚙️ MoA:</span> ${moaText}
                                 </div>
                             </div>
@@ -3913,9 +3913,9 @@
                                     ${isFav ? '★' : '☆'}
                                 </button>
                                 <div class="flex flex-col gap-1 items-end">
-                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
-                                    <span class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider flex items-center gap-1 ${studyBadgeClass}"><span class="w-1.5 h-1.5 rounded-full ${studyDot}"></span> ${studyText}</span>
-                                    <span class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider ${riskClass}" title="${riskTitle}">Risiko: ${riskText}</span>
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
+                                    <span class="px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider flex items-center gap-1 ${studyBadgeClass}"><span class="w-1.5 h-1.5 rounded-full ${studyDot}"></span> ${studyText}</span>
+                                    <span class="px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider ${riskClass}" title="${riskTitle}">Risiko: ${riskText}</span>
                                 </div>
                             </div>
                         </div>
@@ -3947,12 +3947,12 @@
                         <!-- Tab Content: Dosierung -->
                         <div id="${p.id}-dose" class="card-tab-content hidden space-y-3 min-h-[120px]">
                             <div class="bg-slate-900/50 rounded-xl p-3 border border-white/5 grid grid-cols-2 gap-3 text-xs">
-                                <div><span class="block text-[11px] text-slate-500 uppercase">Standard-Dosis</span><span class="font-semibold text-brand-400">${p.dosage.normal}</span></div>
-                                <div><span class="block text-[11px] text-slate-500 uppercase">Max. Limit</span><span class="font-semibold text-danger">${p.dosage.max}</span></div>
-                                <div><span class="block text-[11px] text-slate-500 uppercase">Applikation</span><span class="font-semibold text-white">${p.dosage.form}</span></div>
-                                <div><span class="block text-[11px] text-slate-500 uppercase">Häufigkeit</span><span class="font-semibold text-white">${p.dosage.freq}</span></div>
-                                <div><span class="block text-[11px] text-slate-500 uppercase">Zeitpunkt</span><span class="font-semibold text-white">${p.dosage.timing}</span></div>
-                                <div><span class="block text-[11px] text-slate-500 uppercase">Halbwertszeit</span><span class="font-semibold text-white">${p.dosage.halflife}</span></div>
+                                <div><span class="block text-xs text-slate-500 uppercase">Standard-Dosis</span><span class="font-semibold text-brand-400">${p.dosage.normal}</span></div>
+                                <div><span class="block text-xs text-slate-500 uppercase">Max. Limit</span><span class="font-semibold text-danger">${p.dosage.max}</span></div>
+                                <div><span class="block text-xs text-slate-500 uppercase">Applikation</span><span class="font-semibold text-white">${p.dosage.form}</span></div>
+                                <div><span class="block text-xs text-slate-500 uppercase">Häufigkeit</span><span class="font-semibold text-white">${p.dosage.freq}</span></div>
+                                <div><span class="block text-xs text-slate-500 uppercase">Zeitpunkt</span><span class="font-semibold text-white">${p.dosage.timing}</span></div>
+                                <div><span class="block text-xs text-slate-500 uppercase">Halbwertszeit</span><span class="font-semibold text-white">${p.dosage.halflife}</span></div>
                             </div>
                         </div>
 
@@ -3961,24 +3961,24 @@
                             <!-- Applikation & Winkel -->
                             <div class="bg-slate-900/80 rounded-xl p-4 border border-white/5 mb-3 flex flex-col md:flex-row justify-between md:items-center gap-4">
                                 <div>
-                                    <span class="block text-[11px] text-slate-500 uppercase tracking-widest mb-1">Applikation</span>
+                                    <span class="block text-xs text-slate-500 uppercase tracking-widest mb-1">Applikation</span>
                                     <span class="font-bold text-white">${appType}</span>
                                 </div>
                                 <div class="md:text-right">
-                                    <span class="block text-[11px] text-slate-500 uppercase tracking-widest mb-1">Winkel</span>
+                                    <span class="block text-xs text-slate-500 uppercase tracking-widest mb-1">Winkel</span>
                                     <span class="font-bold ${angleColor} text-sm flex items-center md:justify-end gap-1">📐 ${angle}</span>
                                 </div>
                             </div>
 
                             <!-- Biomarker Check -->
                             <div class="bg-brand-500/10 rounded-xl p-3 border border-brand-500/20 mb-3 cursor-pointer hover:bg-brand-500/20 transition-all" onclick="router('blood'); document.getElementById('blood-select').value='${p.id}'; renderBloodPanel();">
-                                <span class="text-[11px] font-bold text-brand-400 uppercase tracking-wider block mb-1">🩸 Empfohlene Biomarker</span>
+                                <span class="text-xs font-bold text-brand-400 uppercase tracking-wider block mb-1">🩸 Empfohlene Biomarker</span>
                                 <p class="text-xs text-slate-300 leading-relaxed mb-2">${bio.short}</p>
-                                <span class="text-[11px] text-brand-400 font-bold">Klicke für detaillierte Checkliste →</span>
+                                <span class="text-xs text-brand-400 font-bold">Klicke für detaillierte Checkliste →</span>
                             </div>
 
                             <div class="bg-slate-900/50 rounded-xl p-3 border border-white/5">
-                                <span class="text-[11px] font-bold text-amber-400 uppercase tracking-wider block mb-2">Optimierung der Wirkung</span>
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block mb-2">Optimierung der Wirkung</span>
                                 ${getLifestyleTips(p.cat)}
                             </div>
                         </div>
@@ -3986,7 +3986,7 @@
                         <!-- Tab Content: Studien & Quellen -->
                         <div id="${p.id}-study" class="card-tab-content hidden space-y-3 min-h-[120px]">
                             <div class="bg-slate-900/50 border border-white/5 p-4 rounded-xl">
-                                <span class="text-[11px] font-bold ${studyTextColor} uppercase tracking-wider block mb-2 flex items-center gap-1.5">
+                                <span class="text-xs font-bold ${studyTextColor} uppercase tracking-wider block mb-2 flex items-center gap-1.5">
                                     <span class="w-2 h-2 rounded-full ${studyDot}"></span> Evidenz-Level: ${studyText}
                                 </span>
                                 <p class="text-xs text-slate-300 leading-relaxed border-l-2 ${studyBorderColor} pl-3 py-0.5">${p.study.text}</p>
@@ -4000,24 +4000,24 @@
                         <div id="${p.id}-price" class="card-tab-content hidden space-y-3 min-h-[120px]">
                             <div class="bg-slate-900/50 rounded-xl p-4 border border-white/5">
                                 <div class="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
-                                    <span class="block text-[11px] text-slate-500 uppercase font-bold">Shop-Preise · Werbung</span>
-                                    <a href="https://janoshik.com/verification/" target="_blank" rel="noopener noreferrer" class="text-[11px] text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 font-bold">
+                                    <span class="block text-xs text-slate-500 uppercase font-bold">Shop-Preise · Werbung</span>
+                                    <a href="https://janoshik.com/verification/" target="_blank" rel="noopener noreferrer" class="text-xs text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 font-bold">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Batch prüfen
                                     </a>
                                 </div>
                                 <div class="space-y-1">
                                     ${priceHtml || '<span class="text-xs text-slate-500">Keine Preise hinterlegt.</span>'}
                                 </div>
-                                <p class="text-[11px] text-slate-500 leading-relaxed mt-3 pt-3 border-t border-white/5">Ohne Gewähr, zuletzt ergänzt ${PREISSTAND}. Peptide Bank prüft weder Shops noch Ware.</p>
+                                <p class="text-xs text-slate-500 leading-relaxed mt-3 pt-3 border-t border-white/5">Ohne Gewähr, zuletzt ergänzt ${PREISSTAND}. Peptide Bank prüft weder Shops noch Ware.</p>
                             </div>
                         </div>
 
                         <!-- Quick Actions -->
                         <div class="mt-4 pt-4 border-t border-white/5 flex gap-2">
-                            <button onclick="router('calc'); loadDirectToCalc('${p.id}')" class="flex-1 py-2 rounded-xl text-[11px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
+                            <button onclick="router('calc'); loadDirectToCalc('${p.id}')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
                                 Rechner
                             </button>
-                            <button onclick="router('stack'); setTimeout(() => { document.querySelectorAll('.stack-checkbox').forEach(cb => { if(cb.value === '${p.name.replace(/'/g, "\\'")}') cb.checked = true; }); generateStackReport(); }, 100);" class="flex-1 py-2 rounded-xl text-[11px] font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
+                            <button onclick="router('stack'); setTimeout(() => { document.querySelectorAll('.stack-checkbox').forEach(cb => { if(cb.value === '${p.name.replace(/'/g, "\\'")}') cb.checked = true; }); generateStackReport(); }, 100);" class="flex-1 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-brand-500/20 text-slate-300 hover:text-brand-400 border border-white/10 transition-colors flex items-center justify-center gap-1.5">
                                 Stack-Check
                             </button>
                         </div>
@@ -4118,26 +4118,26 @@
                         </div>
                         <div class="grid grid-cols-3 gap-3">
                             <div class="space-y-1.5">
-                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">Vial (mg)</label>
+                                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block text-center">Vial (mg)</label>
                                 <input type="number" id="calc-mg-${idx}" value="10" step="1" min="1" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
                             </div>
                             <div class="space-y-1.5">
-                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">BAC (ml)</label>
+                                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block text-center">BAC (ml)</label>
                                 <input type="number" id="calc-ml-${idx}" value="1" step="0.5" min="0.5" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
                             </div>
                             <div class="space-y-1.5">
-                                <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">Dosis (mg)</label>
+                                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block text-center">Dosis (mg)</label>
                                 <input type="number" id="calc-dose-mg-${idx}" value="1" step="0.05" min="0.01" oninput="calculateSyringe()" class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-1 text-sm text-white focus:border-brand-500 outline-none font-mono text-center shadow-inner">
                             </div>
                         </div>
                         <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/50 shadow-inner">
                             <div class="flex flex-col">
-                                <span class="text-[11px] text-slate-400 uppercase tracking-wider">Menge für Spritze</span>
+                                <span class="text-xs text-slate-400 uppercase tracking-wider">Menge für Spritze</span>
                                 <span class="text-sm font-bold text-white font-mono" id="calc-units-out-${idx}">0.0 U</span>
                             </div>
                             <div class="text-right">
-                                <span class="text-[11px] font-medium text-slate-400 block"><span id="calc-conc-out-${idx}" class="text-slate-300 font-bold">10.00</span> mg/ml</span>
-                                <span class="text-[11px] font-medium text-slate-400 block"><span id="calc-doses-out-${idx}" class="text-slate-300 font-bold">10</span> Dosen pro Vial</span>
+                                <span class="text-xs font-medium text-slate-400 block"><span id="calc-conc-out-${idx}" class="text-slate-300 font-bold">10.00</span> mg/ml</span>
+                                <span class="text-xs font-medium text-slate-400 block"><span id="calc-doses-out-${idx}" class="text-slate-300 font-bold">10</span> Dosen pro Vial</span>
                             </div>
                         </div>
                     </div>
@@ -4528,7 +4528,7 @@
                         <div class="bg-slate-800/40 p-4 rounded-xl border-l-2 shadow-inner hover:bg-slate-800/60 transition-colors" style="border-left-color: ${color.border}">
                             <div class="flex justify-between items-start mb-3">
                                 <h4 class="font-bold text-white text-sm truncate pr-2" title="${sub.pep[2]}">${sub.pep[2]}</h4>
-                                <span class="text-[11px] px-2 py-0.5 rounded bg-slate-900 border border-white/5 text-slate-300 font-mono flex-shrink-0">${sub.dose.toFixed(2)} mg</span>
+                                <span class="text-xs px-2 py-0.5 rounded bg-slate-900 border border-white/5 text-slate-300 font-mono flex-shrink-0">${sub.dose.toFixed(2)} mg</span>
                             </div>
                             <div class="space-y-2">
                                 <div class="flex justify-between text-xs items-center bg-slate-900/50 px-2.5 py-1.5 rounded-lg border border-white/5" title="Wirkungsabfall unter 25% (2 Halbwertszeiten)">
@@ -4698,7 +4698,7 @@
 
             shopCosts.sort((a, b) => a.totalCost - b.totalCost);
 
-            let html = `<p class="text-[11px] text-slate-500 leading-relaxed pb-1">Shop-Preise sind Werbung und ohne Gewähr, zuletzt ergänzt ${PREISSTAND}.</p>`;
+            let html = `<p class="text-xs text-slate-500 leading-relaxed pb-1">Shop-Preise sind Werbung und ohne Gewähr, zuletzt ergänzt ${PREISSTAND}.</p>`;
             shopCosts.forEach((s, index) => {
                 const medal = `<span class="text-sm font-bold ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">${index + 1}.</span>`;
 
@@ -4711,12 +4711,12 @@
                             <span class="text-lg w-6 text-center flex-shrink-0">${medal}</span>
                             <div>
                                 <span class="font-bold ${textClass} block text-sm">${s.shop}</span>
-                                <span class="text-[11px] text-slate-500">${s.pricePerVial.toFixed(2)} € pro Vial <span class="mx-1 opacity-50">•</span> <strong class="text-brand-400">${s.pricePerMg.toFixed(2)} €/mg</strong></span>
+                                <span class="text-xs text-slate-500">${s.pricePerVial.toFixed(2)} € pro Vial <span class="mx-1 opacity-50">•</span> <strong class="text-brand-400">${s.pricePerMg.toFixed(2)} €/mg</strong></span>
                             </div>
                         </div>
                         <div class="text-right flex flex-col justify-center">
                             <span class="font-mono font-bold text-white block">${s.totalCost.toFixed(2)} €</span>
-                            ${s.link ? `<a href="${s.link}" target="_blank" rel="noopener noreferrer sponsored" class="text-[11px] text-brand-400 hover:text-brand-300 transition-colors mt-0.5">Zum Shop →</a>` : ''}
+                            ${s.link ? `<a href="${s.link}" target="_blank" rel="noopener noreferrer sponsored" class="text-xs text-brand-400 hover:text-brand-300 transition-colors mt-0.5">Zum Shop →</a>` : ''}
                         </div>
                     </div>
                 `;
@@ -4778,8 +4778,8 @@
             if(badge) {
                 badge.innerText = isIM ? "Intramuskulär (IM)" : "Subkutan (SC)";
                 badge.className = isIM 
-                    ? "px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider mb-2 inline-block bg-accent/10 text-accent border-accent/20"
-                    : "px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider mb-2 inline-block bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                    ? "px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider mb-2 inline-block bg-accent/10 text-accent border-accent/20"
+                    : "px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider mb-2 inline-block bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
             }
             if(angle) {
                 angle.innerText = isIM ? "90° (Senkrecht)" : "45° (Pinch)";
@@ -4906,10 +4906,10 @@
                 
                 if (locked) {
                     let remainingHours = Math.ceil((CLOCK_LOCK_HOURS * 3600 * 1000 - timeDiffMs) / (3600 * 1000));
-                    btn.className = "absolute w-7 h-7 -ml-3.5 -mt-3.5 rounded-full bg-rose-500/20 border border-rose-500/50 text-[11px] font-bold text-rose-400 flex items-center justify-center cursor-not-allowed transition-all z-20";
+                    btn.className = "absolute w-7 h-7 -ml-3.5 -mt-3.5 rounded-full bg-rose-500/20 border border-rose-500/50 text-xs font-bold text-rose-400 flex items-center justify-center cursor-not-allowed transition-all z-20";
                     btn.title = `Gesperrt für weitere ${remainingHours}h`;
                 } else {
-                    btn.className = "absolute w-7 h-7 -ml-3.5 -mt-3.5 rounded-full bg-emerald-500/20 border border-emerald-500/50 text-[11px] font-bold text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center cursor-pointer transition-all shadow-[0_0_10px_rgba(16,185,129,0.2)] hover:shadow-[0_0_15px_rgba(16,185,129,0.5)] z-20";
+                    btn.className = "absolute w-7 h-7 -ml-3.5 -mt-3.5 rounded-full bg-emerald-500/20 border border-emerald-500/50 text-xs font-bold text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center cursor-pointer transition-all shadow-[0_0_10px_rgba(16,185,129,0.2)] hover:shadow-[0_0_15px_rgba(16,185,129,0.5)] z-20";
                     btn.title = "Stelle frei. Klicke zur Injektion.";
                     btn.onclick = () => clickClockSpot(i);
                 }
@@ -5577,7 +5577,7 @@
                 else if (item.type === 'feedback' || (item.type === undefined && item.sleep)) {
                     icon = '<span class="text-emerald-400 text-lg">📊</span>';
                     contentHtml = `
-                        <div class="flex gap-3 text-[11px] font-mono mt-1 w-full justify-between pr-4">
+                        <div class="flex gap-3 text-xs font-mono mt-1 w-full justify-between pr-4">
                             <span class="text-emerald-400" title="Schlaf">SLP: ${item.sleep}</span>
                             <span class="text-rose-400" title="Schmerz">PAIN: ${item.pain}</span>
                             <span class="text-brand-400" title="Wohlbefinden">ENG: ${item.mood}</span>
@@ -5598,7 +5598,7 @@
                     contentHtml = `
                         <div class="flex flex-col gap-0.5">
                             <span class="text-sm font-bold text-white">${esc(item.focus || 'Training')}</span>
-                            <div class="flex gap-3 text-[11px] font-mono text-purple-300">
+                            <div class="flex gap-3 text-xs font-mono text-purple-300">
                                 <span title="Arbeitssätze">VOL: ${item.sets || 0} Sätze</span>
                                 <span title="Intensität">RPE: ${item.rpe || '-'}</span>
                             </div>
@@ -5610,7 +5610,7 @@
                     <div class="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl border border-white/5">
                         <div class="w-10 h-10 rounded-full bg-slate-900/80 flex items-center justify-center shrink-0 border border-white/5 shadow-inner">${icon}</div>
                         <div class="flex-grow">${contentHtml}</div>
-                        <span class="text-[11px] font-bold text-slate-500 font-mono shrink-0">${dateStr}</span>
+                        <span class="text-xs font-bold text-slate-500 font-mono shrink-0">${dateStr}</span>
                         <button onclick="deleteTrackerEntry('${item.id}')" class="text-slate-600 hover:text-rose-400 transition-colors px-2">✖</button>
                     </div>
                 `;
@@ -5675,7 +5675,7 @@
 
                 html += `
                     <div class="aspect-square flex flex-col items-center justify-between p-1 rounded-lg border ${bgClass} transition-colors hover:border-slate-500 cursor-pointer group">
-                        <span class="text-[11px] font-bold ${isToday ? 'text-white' : 'text-slate-400'} group-hover:text-white transition-colors">${i}</span>
+                        <span class="text-xs font-bold ${isToday ? 'text-white' : 'text-slate-400'} group-hover:text-white transition-colors">${i}</span>
                         <div class="flex gap-0.5 flex-wrap justify-center mt-auto mb-0.5 w-full px-0.5 h-3">
                             ${dots}
                         </div>
@@ -5920,7 +5920,7 @@ function removeBatch(pepId, batchId) {
             if (b.angesetztAm) {
                 const tage = Math.floor((Date.now() - b.angesetztAm) / 864e5);
                 const kritisch = tage > 30;
-                alter = '<div class="px-3 py-1.5 border-t border-amber-500/20 text-[11px] ' +
+                alter = '<div class="px-3 py-1.5 border-t border-amber-500/20 text-xs ' +
                     (kritisch ? 'text-rose-300 bg-rose-500/10' : 'text-amber-100/60') + '">' +
                     'Angesetzt vor <span class="font-mono">' + tage + '</span> ' +
                     (tage === 1 ? 'Tag' : 'Tagen') +
@@ -5947,7 +5947,7 @@ function removeBatch(pepId, batchId) {
                     <div class="bg-surface border border-white/10 rounded-2xl max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto scrollbar-hide">
                         <div class="p-5 border-b border-white/10">
                             <h3 class="text-lg font-bold text-white" id="ansatz-titel">${pep[2]} ansetzen</h3>
-                            <p class="text-[11px] text-slate-400 mt-1">Ein Vial mit <span class="font-mono text-slate-300">${batch.mgPerVial} mg</span> — wie soll es verabreicht werden?</p>
+                            <p class="text-xs text-slate-400 mt-1">Ein Vial mit <span class="font-mono text-slate-300">${batch.mgPerVial} mg</span> — wie soll es verabreicht werden?</p>
                         </div>
 
                         <div class="p-5 space-y-5">
@@ -5956,20 +5956,20 @@ function removeBatch(pepId, batchId) {
                                 <div class="grid grid-cols-3 gap-2">
                                     <button onclick="setAnsatzForm('spritze', this)" class="ansatz-form-btn p-3 rounded-xl border border-brand-500 bg-brand-500/10 text-center transition-all">
                                         <span class="text-xl block mb-1">💉</span>
-                                        <span class="text-[11px] font-bold text-white">Spritze</span>
+                                        <span class="text-xs font-bold text-white">Spritze</span>
                                     </button>
                                     <button onclick="setAnsatzForm('nasal', this)" class="ansatz-form-btn p-3 rounded-xl border border-slate-700 hover:border-slate-500 text-center transition-all">
                                         <span class="text-xl block mb-1">👃</span>
-                                        <span class="text-[11px] font-bold text-white">Nasenspray</span>
+                                        <span class="text-xs font-bold text-white">Nasenspray</span>
                                     </button>
                                     <button onclick="setAnsatzForm('pen', this)" class="ansatz-form-btn p-3 rounded-xl border border-slate-700 hover:border-slate-500 text-center transition-all">
                                         <span class="text-xl block mb-1">🖊️</span>
-                                        <span class="text-[11px] font-bold text-white">Pen</span>
+                                        <span class="text-xs font-bold text-white">Pen</span>
                                     </button>
                                 </div>
                             </div>
 
-                            <div id="ansatz-loesung" class="text-[11px] leading-relaxed p-3 rounded-xl border"></div>
+                            <div id="ansatz-loesung" class="text-xs leading-relaxed p-3 rounded-xl border"></div>
 
                             <div class="space-y-2">
                                 <label class="text-xs font-semibold text-slate-300 block" for="ansatz-ml">Lösungsmenge</label>
@@ -6026,10 +6026,10 @@ function removeBatch(pepId, batchId) {
 
             if (loes) {
                 if (form === 'nasal') {
-                    loes.className = 'text-[11px] leading-relaxed p-3 rounded-xl border bg-emerald-500/10 border-emerald-500/30 text-emerald-100';
+                    loes.className = 'text-xs leading-relaxed p-3 rounded-xl border bg-emerald-500/10 border-emerald-500/30 text-emerald-100';
                     loes.innerHTML = '<strong class="text-emerald-300">Mit NaCl 0,9 % ansetzen.</strong> Kein BAC-Wasser — der Benzylalkohol reizt die Nasenschleimhaut.';
                 } else {
-                    loes.className = 'text-[11px] leading-relaxed p-3 rounded-xl border bg-brand-500/10 border-brand-500/30 text-brand-100';
+                    loes.className = 'text-xs leading-relaxed p-3 rounded-xl border bg-brand-500/10 border-brand-500/30 text-brand-100';
                     loes.innerHTML = '<strong class="text-brand-300">Mit BAC-Wasser ansetzen.</strong> Das Benzylalkohol darin hält die Lösung keimfrei.';
                 }
             }
@@ -6053,7 +6053,7 @@ function removeBatch(pepId, batchId) {
                 : f.ulProDosis;
 
             if (ml <= 0 || ul <= 0) {
-                box.innerHTML = '<p class="text-[11px] text-slate-500">Lösungsmenge und Volumen angeben.</p>';
+                box.innerHTML = '<p class="text-xs text-slate-500">Lösungsmenge und Volumen angeben.</p>';
                 return;
             }
 
@@ -6062,9 +6062,9 @@ function removeBatch(pepId, batchId) {
             const dosen = Math.floor((ml * 1000) / ul);
 
             box.innerHTML = `
-                <div class="flex justify-between text-[11px]"><span class="text-slate-400">Konzentration</span><span class="font-mono font-bold text-white">${konz.toFixed(2)} mg/ml</span></div>
-                <div class="flex justify-between text-[11px]"><span class="text-slate-400">Je ${f.einheitEz}</span><span class="font-mono font-bold text-brand-400">${Math.round(mcgProDosis)} mcg</span></div>
-                <div class="flex justify-between text-[11px]"><span class="text-slate-400">${f.einheit} insgesamt</span><span class="font-mono font-bold text-white">${dosen}</span></div>`;
+                <div class="flex justify-between text-xs"><span class="text-slate-400">Konzentration</span><span class="font-mono font-bold text-white">${konz.toFixed(2)} mg/ml</span></div>
+                <div class="flex justify-between text-xs"><span class="text-slate-400">Je ${f.einheitEz}</span><span class="font-mono font-bold text-brand-400">${Math.round(mcgProDosis)} mcg</span></div>
+                <div class="flex justify-between text-xs"><span class="text-slate-400">${f.einheit} insgesamt</span><span class="font-mono font-bold text-white">${dosen}</span></div>`;
         }
 
         function closeAnsatz() {
@@ -6212,7 +6212,7 @@ function renderInventory() {
                 let avgDailyUse = 0;
 
                 if (!hasHistory || daysSinceFirstUse < 2 || consumedInLast7Days === 0) {
-                    reachText = `<span class="text-slate-500 italic text-[11px]">Berechne nach 1. Woche</span>`;
+                    reachText = `<span class="text-slate-500 italic text-xs">Berechne nach 1. Woche</span>`;
                 } else {
                     const timeframe = Math.min(7, Math.max(1, daysSinceFirstUse));
                     avgDailyUse = consumedInLast7Days / timeframe;
@@ -6228,7 +6228,7 @@ function renderInventory() {
                             reachText = `~${remainingDays} Tage`;
                         }
                     } else {
-                        reachText = `<span class="text-slate-500 italic text-[11px]">Pausiert</span>`;
+                        reachText = `<span class="text-slate-500 italic text-xs">Pausiert</span>`;
                     }
                 }
 
@@ -6247,11 +6247,11 @@ function renderInventory() {
                 <div class="w-full bg-amber-500/10 rounded-xl border border-amber-500/30 overflow-hidden shadow-sm">
                     <div class="flex items-center gap-2 px-3 py-2 border-b border-amber-500/20">
                         <span class="text-base leading-none">${f.symbol}</span>
-                        <span class="text-[11px] font-bold text-amber-300">${f.name}</span>
-                        <span class="ml-auto text-[11px] font-mono text-amber-200">${b.currentMg.toFixed(2)} / ${b.mgPerVial} mg</span>
-                        <button onclick="removeBatch('${id}', '${b.batchId}')" class="text-amber-500/70 hover:text-rose-400 transition-colors text-[11px] pl-1" title="Vial entsorgen" aria-label="Vial entsorgen">✖</button>
+                        <span class="text-xs font-bold text-amber-300">${f.name}</span>
+                        <span class="ml-auto text-xs font-mono text-amber-200">${b.currentMg.toFixed(2)} / ${b.mgPerVial} mg</span>
+                        <button onclick="removeBatch('${id}', '${b.batchId}')" class="text-amber-500/70 hover:text-rose-400 transition-colors text-xs pl-1" title="Vial entsorgen" aria-label="Vial entsorgen">✖</button>
                     </div>
-                    <div class="px-3 py-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-amber-100/80">
+                    <div class="px-3 py-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-amber-100/80">
                         ${f.zeilen.map(z => `<span>${z}</span>`).join('')}
                     </div>
                     ${f.alter}
@@ -6266,9 +6266,9 @@ function renderInventory() {
 
             vialsHtml += `
                 <div class="inline-flex items-center bg-slate-700/50 rounded border border-slate-600 overflow-hidden shadow-sm">
-                    <span class="text-slate-300 px-2 py-1 text-[11px] font-mono">${fullVialsMap[mg]}x ${mg}mg <span class="opacity-75">(Voll)</span></span>
-                    <button onclick="openAnsatzDialog('${id}', '${repBatch.batchId}')" class="px-2 py-1 bg-brand-500/20 text-brand-400 hover:bg-brand-500 hover:text-white transition-colors border-l border-slate-600 text-[11px]" title="Vial ansetzen und Darreichungsform wählen">💧 Ansetzen</button>
-                    <button onclick="removeOneVial('${id}', ${mg})" class="px-2 py-1 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white transition-colors border-l border-slate-600 text-[11px]" title="1 Vial entfernen">✖</button>
+                    <span class="text-slate-300 px-2 py-1 text-xs font-mono">${fullVialsMap[mg]}x ${mg}mg <span class="opacity-75">(Voll)</span></span>
+                    <button onclick="openAnsatzDialog('${id}', '${repBatch.batchId}')" class="px-2 py-1 bg-brand-500/20 text-brand-400 hover:bg-brand-500 hover:text-white transition-colors border-l border-slate-600 text-xs" title="Vial ansetzen und Darreichungsform wählen">💧 Ansetzen</button>
+                    <button onclick="removeOneVial('${id}', ${mg})" class="px-2 py-1 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white transition-colors border-l border-slate-600 text-xs" title="1 Vial entfernen">✖</button>
                 </div>
             `;
         });
@@ -6279,7 +6279,7 @@ function renderInventory() {
                         <div class="flex justify-between items-start">
                             <div>
                                 <h4 class="font-bold text-white text-base">${pep[2]}</h4>
-                                <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-2">
+                                <div class="text-xs text-slate-400 mt-1 flex items-center gap-2">
                                     <span class="bg-slate-900/80 px-2 py-0.5 rounded text-blue-400 border border-white/5 font-mono shadow-inner">${totalMgCalc.toFixed(1)} mg Gesamt</span>
                                     ${(() => {
                                         const tab = (data.batches || []).filter(b => b.form === 'tablette');
@@ -6292,12 +6292,12 @@ function renderInventory() {
                             </div>
                             <div class="text-right flex flex-col items-end min-w-[70px]">
                                 <span class="block text-xs font-bold ${isLow ? 'text-rose-400' : 'text-emerald-400'} mb-1">${reachText}</span>
-                                <button onclick="deleteInventoryItem('${id}')" class="text-[11px] px-2 py-1 bg-white/5 rounded hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors">🗑️ Alle löschen</button>
+                                <button onclick="deleteInventoryItem('${id}')" class="text-xs px-2 py-1 bg-white/5 rounded hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors">🗑️ Alle löschen</button>
                             </div>
                         </div>
                         
                         <!-- Vial Breakdown -->
-                        ${totalMgCalc > 0 ? vialsHtml : '<p class="text-[11px] text-slate-500 mt-3">Keine Vials im Bestand.</p>'}
+                        ${totalMgCalc > 0 ? vialsHtml : '<p class="text-xs text-slate-500 mt-3">Keine Vials im Bestand.</p>'}
                     </div>
                 `;
             });
@@ -6404,7 +6404,7 @@ function renderInventory() {
                 let dateStr = dateObj.toLocaleDateString('de-DE', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
                 
                 let doseStr = item.dose ? ` <span class="text-xs text-slate-400 ml-1">(${item.dose})</span>` : '';
-                let subHtml = item.substance ? `<span class="text-[11px] text-brand-400 block mt-0.5">${esc(item.substance)}${doseStr}</span>` : '';
+                let subHtml = item.substance ? `<span class="text-xs text-brand-400 block mt-0.5">${esc(item.substance)}${doseStr}</span>` : '';
 
                 html += `
                     <div class="flex items-center gap-3 p-2.5 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors rounded-lg">
@@ -6413,7 +6413,7 @@ function renderInventory() {
                             <span class="text-xs font-bold text-white block leading-none">${esc(item.zone)}</span>
                             ${subHtml}
                         </div>
-                        <span class="text-[11px] text-slate-500 font-mono">${dateStr}</span>
+                        <span class="text-xs text-slate-500 font-mono">${dateStr}</span>
                     </div>
                 `;
             });
@@ -6541,7 +6541,7 @@ function renderInventory() {
                         <input type="checkbox" value="${p[2]}" onchange="generateStackReport()" class="stack-checkbox w-5 h-5 rounded border-slate-600 text-brand-500 focus:ring-brand-500 bg-slate-900">
                         <div class="flex flex-col">
                             <span class="text-sm font-bold text-white">${p[2]}</span>
-                            <span class="text-[11px] text-slate-500">${p[5]}</span>
+                            <span class="text-xs text-slate-500">${p[5]}</span>
                         </div>
                     </label>
                 `;
@@ -7037,12 +7037,12 @@ function renderInventory() {
                     if (feld) feld.value = mcg;
                     const rest = Math.floor((b.currentMg / konz * 1000) / (b.geraetUl || 100));
                     if (hinweis) {
-                        hinweis.className = 'text-[11px] leading-relaxed p-2.5 rounded-lg border bg-emerald-500/10 border-emerald-500/30 text-emerald-200';
+                        hinweis.className = 'text-xs leading-relaxed p-2.5 rounded-lg border bg-emerald-500/10 border-emerald-500/30 text-emerald-200';
                         hinweis.innerHTML = 'Aus dem Bestand übernommen: <strong class="font-mono">' + mcg +
                             ' mcg</strong> je Hub, noch <strong class="font-mono">' + rest + '</strong> Hübe im Fläschchen.';
                     }
                 } else if (hinweis) {
-                    hinweis.className = 'text-[11px] leading-relaxed p-2.5 rounded-lg border bg-slate-800/60 border-slate-700 text-slate-400';
+                    hinweis.className = 'text-xs leading-relaxed p-2.5 rounded-lg border bg-slate-800/60 border-slate-700 text-slate-400';
                     hinweis.innerHTML = 'Diese Substanz ist im Bestand nicht als Nasenspray angesetzt. Menge je Hub bitte selbst eintragen — oder das Vial im Bestand ansetzen.';
                 }
             } else if (hinweis) {
@@ -7129,12 +7129,12 @@ function renderInventory() {
                     <span class="text-lg">👃</span>
                     <div class="flex-grow min-w-0">
                         <span class="text-sm font-bold text-white block truncate">${esc(e.substanz)}</span>
-                        <span class="text-[11px] text-slate-400">
+                        <span class="text-xs text-slate-400">
                             <span class="font-mono">${e.huebe}</span> Hub · <span class="font-mono">${e.mg.toFixed(2)}</span> mg ·
                             <span class="${farbe} font-bold">${e.seite}</span>
                         </span>
                     </div>
-                    <span class="text-[11px] text-slate-500 font-mono shrink-0">${d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})} ${d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</span>
+                    <span class="text-xs text-slate-500 font-mono shrink-0">${d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})} ${d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</span>
                     <button onclick="dropNasal('${e.id}')" class="text-slate-600 hover:text-rose-400 transition-colors px-1" aria-label="Eintrag entfernen">✖</button>
                 </div>`;
             }).join('');
@@ -7211,18 +7211,18 @@ function renderInventory() {
             const fertig = (s.items || []).filter(i => i.completed);
 
             if (!s.items || !s.items.length) {
-                return briefBlock('📋', 'Heute', '<p class="text-[11px] text-slate-400">Nichts eingeplant. Über den Wochenplan in der Übersicht lässt sich das automatisieren.</p>');
+                return briefBlock('📋', 'Heute', '<p class="text-xs text-slate-400">Nichts eingeplant. Über den Wochenplan in der Übersicht lässt sich das automatisieren.</p>');
             }
             if (!offen.length) {
                 return briefBlock('📋', 'Heute',
-                    '<p class="text-[11px] text-emerald-400">Alles erledigt — ' + fertig.length +
+                    '<p class="text-xs text-emerald-400">Alles erledigt — ' + fertig.length +
                     ' von ' + s.items.length + ' abgehakt.</p>', 'border-emerald-500/20');
             }
             return briefBlock('📋', 'Heute',
                 offen.map(i => '<div class="flex justify-between gap-2 py-1 border-b border-white/5 last:border-0">' +
                     '<span class="text-sm text-white">' + esc(i.name) + '</span>' +
                     '<span class="text-xs font-mono text-slate-400">' + i.doseMg + ' mg</span></div>').join('') +
-                (fertig.length ? '<p class="text-[11px] text-slate-500 mt-2">' + fertig.length + ' bereits erledigt</p>' : ''),
+                (fertig.length ? '<p class="text-xs text-slate-500 mt-2">' + fertig.length + ' bereits erledigt</p>' : ''),
                 'border-brand-500/25');
         }
 
@@ -7239,8 +7239,8 @@ function renderInventory() {
 
             return briefBlock('📍', 'Zone',
                 '<p class="text-sm text-white mb-1">' + empf.name +
-                ' <span class="text-[11px] text-slate-400">(' + empf.art + ')</span></p>' +
-                '<p class="text-[11px] text-slate-400">' +
+                ' <span class="text-xs text-slate-400">(' + empf.art + ')</span></p>' +
+                '<p class="text-xs text-slate-400">' +
                 (empf.std === null ? 'Noch nie benutzt.' : 'Zuletzt vor ' + empf.std + ' Stunden.') +
                 (gesperrt.length ? ' Gesperrt sind noch: ' + gesperrt.map(z => z.name).join(', ') + '.' : '') +
                 '</p>');
@@ -7286,7 +7286,7 @@ function renderInventory() {
                 alt.map(a => '<div class="flex justify-between gap-2 py-0.5">' +
                     '<span class="text-sm text-white">' + esc(a.name) + '</span>' +
                     '<span class="text-xs text-danger font-bold">' + a.tage + ' Tage</span></div>').join('') +
-                '<p class="text-[11px] text-slate-400 mt-2">Über 30 Tage angesetzt — Wirkstärke prüfen.</p>',
+                '<p class="text-xs text-slate-400 mt-2">Über 30 Tage angesetzt — Wirkstärke prüfen.</p>',
                 'border-danger/30');
         }
 
@@ -7294,7 +7294,7 @@ function renderInventory() {
             const log = readStore('tracker_data').filter(e => e.type === 'feedback');
             if (log.length < 2) {
                 return briefBlock('📊', 'Befinden',
-                    '<p class="text-[11px] text-slate-400">Noch zu wenig Daten. Zwei, drei Einträge und ich kann einen Verlauf zeigen.</p>');
+                    '<p class="text-xs text-slate-400">Noch zu wenig Daten. Zwei, drei Einträge und ich kann einen Verlauf zeigen.</p>');
             }
 
             const grenze = Date.now() - 7 * 864e5;
@@ -7316,12 +7316,12 @@ function renderInventory() {
                     if (Math.abs(d) >= 0.5) {
                         const besser = gut === 'hoch' ? d > 0 : d < 0;
                         pfeil = '<span class="' + (besser ? 'text-success' : 'text-warning') +
-                            ' text-[11px] ml-1.5">' + (d > 0 ? '▲' : '▼') + ' ' +
+                            ' text-xs ml-1.5">' + (d > 0 ? '▲' : '▼') + ' ' +
                             Math.abs(d).toFixed(1) + '</span>';
                     }
                 }
                 return '<div class="flex justify-between gap-2 py-0.5">' +
-                    '<span class="text-[11px] text-slate-400">' + name + '</span>' +
+                    '<span class="text-xs text-slate-400">' + name + '</span>' +
                     '<span class="text-sm font-mono text-white">' + jetzt.toFixed(1) + pfeil + '</span></div>';
             };
 
@@ -7329,7 +7329,7 @@ function renderInventory() {
                 zeile('Schlaf', 'sleep', 'hoch') +
                 zeile('Schmerz', 'pain', 'niedrig') +
                 zeile('Energie', 'mood', 'hoch') +
-                (davor.length ? '<p class="text-[11px] text-slate-500 mt-2">Pfeile im Vergleich zur Vorwoche.</p>' : ''));
+                (davor.length ? '<p class="text-xs text-slate-500 mt-2">Pfeile im Vergleich zur Vorwoche.</p>' : ''));
         }
 
         function briefAlarme() {
@@ -7339,7 +7339,7 @@ function renderInventory() {
             return briefBlock('🔔', 'Erinnerungen heute',
                 a.map(x => '<div class="flex justify-between gap-2 py-0.5">' +
                     '<span class="text-xs font-mono text-warning">' + esc(x.time) + '</span>' +
-                    '<span class="text-[11px] text-slate-300 text-right">' + esc(x.text) + '</span></div>').join(''));
+                    '<span class="text-xs text-slate-300 text-right">' + esc(x.text) + '</span></div>').join(''));
         }
 
         // --- Zusammenbauen und anzeigen -------------------------------
@@ -7505,7 +7505,7 @@ function renderInventory() {
                             <span class="text-xs text-slate-300">Ø Energie (5 Tage)</span>
                             <span class="text-lg font-bold text-brand-400">${eng}</span>
                         </div>
-                        <button onclick="router('tracker'); toggleTrackerView('analytics');" class="w-full text-[11px] text-slate-500 hover:text-white transition-colors text-center mt-3 block">Zur Analytics Engine →</button>
+                        <button onclick="router('tracker'); toggleTrackerView('analytics');" class="w-full text-xs text-slate-500 hover:text-white transition-colors text-center mt-3 block">Zur Analytics Engine →</button>
                     `;
                 } else {
                     dashTrend.innerHTML = `<p class="text-xs text-slate-500 italic">Noch kein Bio-Feedback protokolliert.</p>`;
@@ -7543,16 +7543,16 @@ function renderInventory() {
                             <div class="flex justify-between items-center p-2.5 bg-slate-800/40 rounded-lg mb-2 border border-white/5">
                                 <span class="text-xs font-bold text-white truncate max-w-[120px]">${pep[2]}</span>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[11px] font-mono text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">${totalMg.toFixed(1)} mg</span>
-                                    <span class="text-[11px] ${isLow ? 'text-rose-400 font-bold' : 'text-slate-400'}">${remainingDays} Tage übrig</span>
+                                    <span class="text-xs font-mono text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">${totalMg.toFixed(1)} mg</span>
+                                    <span class="text-xs ${isLow ? 'text-rose-400 font-bold' : 'text-slate-400'}">${remainingDays} Tage übrig</span>
                                 </div>
                             </div>
                         `;
                     });
-                    if(invKeys.length > 3) html += `<div class="text-[11px] text-slate-500 text-center mt-2">+ ${invKeys.length - 3} weitere im Bestand</div>`;
-                    dashInv.innerHTML = html + `<button onclick="router('inventory')" class="w-full text-[11px] text-brand-400 hover:text-brand-300 transition-colors text-center mt-3 block">Bestand verwalten →</button>`;
+                    if(invKeys.length > 3) html += `<div class="text-xs text-slate-500 text-center mt-2">+ ${invKeys.length - 3} weitere im Bestand</div>`;
+                    dashInv.innerHTML = html + `<button onclick="router('inventory')" class="w-full text-xs text-brand-400 hover:text-brand-300 transition-colors text-center mt-3 block">Bestand verwalten →</button>`;
                 } else {
-                    dashInv.innerHTML = `<p class="text-xs text-slate-500 italic mb-3">Dein Kühlschrank ist leer.</p><button onclick="router('inventory')" class="w-full py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[11px] font-bold transition-all hover:bg-blue-500/30">Bestand anlegen</button>`;
+                    dashInv.innerHTML = `<p class="text-xs text-slate-500 italic mb-3">Dein Kühlschrank ist leer.</p><button onclick="router('inventory')" class="w-full py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-xs font-bold transition-all hover:bg-blue-500/30">Bestand anlegen</button>`;
                 }
             }
 
@@ -7578,11 +7578,11 @@ function renderInventory() {
 
                     dashLog.innerHTML = `
                         <div class="p-4 bg-slate-900/50 border border-white/5 rounded-xl">
-                            <span class="text-[11px] text-slate-500 block mb-2">${dateStr}, ${timeStr} Uhr</span>
+                            <span class="text-xs text-slate-500 block mb-2">${dateStr}, ${timeStr} Uhr</span>
                             <strong class="text-sm text-white block mb-1">${esc(last.zone)}</strong>
-                            <span class="text-xs text-brand-400 flex items-center"><span class="text-[11px] mr-1.5">💉</span> ${esc(last.substance || 'Unbekannt')}${doseDisplay}</span>
+                            <span class="text-xs text-brand-400 flex items-center"><span class="text-xs mr-1.5">💉</span> ${esc(last.substance || 'Unbekannt')}${doseDisplay}</span>
                         </div>
-                        <button onclick="router('map')" class="w-full text-[11px] text-slate-500 hover:text-white transition-colors text-center mt-3 block">Zur Body-Map →</button>
+                        <button onclick="router('map')" class="w-full text-xs text-slate-500 hover:text-white transition-colors text-center mt-3 block">Zur Body-Map →</button>
                     `;
                 } else {
                     dashLog.innerHTML = `<p class="text-xs text-slate-500 italic">Noch keine Injektionen auf der Map geloggt.</p>`;
@@ -7616,15 +7616,15 @@ function renderInventory() {
                         html += `
                             <div class="flex justify-between items-center gap-2 p-2.5 bg-slate-900/50 rounded-lg mb-2 border border-purple-500/20 group">
                                 <span class="text-xs font-bold text-white truncate flex-1 min-w-0">${esc(pep)}</span>
-                                <span class="text-[11px] text-purple-400 shrink-0">${freqStr} (${count}x)</span>
+                                <span class="text-xs text-purple-400 shrink-0">${freqStr} (${count}x)</span>
                                 <button onclick="deleteFromStack('${safe}')" title="${esc(pep)} aus dem Verlauf löschen" aria-label="${esc(pep)} aus dem Verlauf löschen" class="text-slate-600 hover:text-rose-400 transition-colors shrink-0 px-0.5 text-xs">✖</button>
                             </div>
                         `;
                     });
-                    if(stackKeys.length > 3) html += `<div class="text-[11px] text-slate-500 text-center mt-2">+ ${stackKeys.length - 3} weitere aktiv</div>`;
-                    dashStack.innerHTML = html + `<button onclick="router('stack')" class="w-full text-[11px] text-purple-400 hover:text-purple-300 transition-colors text-center mt-3 block">Zum Stack-Check →</button>`;
+                    if(stackKeys.length > 3) html += `<div class="text-xs text-slate-500 text-center mt-2">+ ${stackKeys.length - 3} weitere aktiv</div>`;
+                    dashStack.innerHTML = html + `<button onclick="router('stack')" class="w-full text-xs text-purple-400 hover:text-purple-300 transition-colors text-center mt-3 block">Zum Stack-Check →</button>`;
                 } else {
-                    dashStack.innerHTML = `<p class="text-xs text-slate-500 italic mb-3">Kein aktiver Zyklus erkannt.</p><button onclick="router('tracker')" class="w-full py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-lg text-[11px] font-bold transition-all hover:bg-purple-500/30">Injektion loggen</button>`;
+                    dashStack.innerHTML = `<p class="text-xs text-slate-500 italic mb-3">Kein aktiver Zyklus erkannt.</p><button onclick="router('tracker')" class="w-full py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-lg text-xs font-bold transition-all hover:bg-purple-500/30">Injektion loggen</button>`;
                 }
             }
             
@@ -7720,7 +7720,7 @@ function renderInventory() {
                     const btnClass = isActive 
                         ? 'bg-brand-500 text-white border-brand-500 shadow-glow-brand' 
                         : 'bg-slate-900 text-slate-500 border-slate-700 hover:border-brand-500/50 hover:text-slate-300';
-                    dayButtons += `<button onclick="toggleWeeklyPlanDay(${index}, ${day.d})" class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg border text-[11px] sm:text-xs font-bold transition-all ${btnClass}">${day.l}</button>`;
+                    dayButtons += `<button onclick="toggleWeeklyPlanDay(${index}, ${day.d})" class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg border text-xs sm:text-xs font-bold transition-all ${btnClass}">${day.l}</button>`;
                 });
 
                 html += `
@@ -7729,13 +7729,13 @@ function renderInventory() {
                         
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4 pr-6 sm:pr-0">
                             <div class="md:col-span-8">
-                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Substanz</label>
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Substanz</label>
                                 <select onchange="updateWeeklyPlanPep(${index}, this.value)" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white focus:border-brand-500 outline-none">
                                     ${selectOptions.replace(`value="${item.pepId}"`, `value="${item.pepId}" selected`)}
                                 </select>
                             </div>
                             <div class="md:col-span-4">
-                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Dosis (mg)</label>
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Dosis (mg)</label>
                                 <div class="relative">
                                     <input type="number" step="0.05" min="0" value="${item.dose}" onchange="updateWeeklyPlanDose(${index}, this.value)" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-2 pl-3 pr-8 text-sm text-white font-mono outline-none focus:border-brand-500">
                                     <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">mg</span>
@@ -7744,7 +7744,7 @@ function renderInventory() {
                         </div>
                         
                         <div>
-                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Tage</label>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Tage</label>
                             <div class="flex gap-1.5 sm:gap-2">
                                 ${dayButtons}
                             </div>
@@ -8015,7 +8015,7 @@ function renderInventory() {
                         <div class="flex items-center gap-3">
                             <div class="relative w-24">
                                 <input type="number" value="${item.doseMg.toFixed(2)}" step="0.05" min="0" onchange="updateScheduleDose('${item.id}', this.value)" ${disabledInput} class="w-full bg-slate-900 border border-slate-600 rounded-lg py-1.5 pl-2 pr-8 text-xs text-white font-mono outline-none focus:border-brand-500">
-                                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] text-slate-400">mg</span>
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-slate-400">mg</span>
                             </div>
                             ${!item.completed ? `<button onclick="removeScheduleItem('${item.id}')" class="text-slate-500 hover:text-rose-400 transition-colors px-1" title="Entfernen">✖</button>` : `<span class="w-6 text-center text-emerald-500 text-sm">✓</span>`}
                         </div>
@@ -8161,7 +8161,7 @@ function renderInventory() {
 
         function aiOpenInDb(name) {
             const safe = escAttr(name);
-            return '<button onclick="toggleAIChat(); router(\'db\'); setTimeout(() => { const s = document.getElementById(\'searchInput\'); s.value = \'' + safe + '\'; applyFilters(); }, 100);" class="mt-2 w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[11px] font-bold transition-all">Vollen Datenbank-Eintrag oeffnen</button>';
+            return '<button onclick="toggleAIChat(); router(\'db\'); setTimeout(() => { const s = document.getElementById(\'searchInput\'); s.value = \'' + safe + '\'; applyFilters(); }, 100);" class="mt-2 w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-xs font-bold transition-all">Vollen Datenbank-Eintrag oeffnen</button>';
         }
 
         // ---------------------------------------------- Antwort: Substanz
@@ -8173,20 +8173,20 @@ function renderInventory() {
 
             return '<div class="space-y-2.5">' +
                 '<div><span class="text-white font-bold text-sm">' + p[2] + '</span> ' +
-                '<span class="text-[11px] px-1.5 py-0.5 rounded border ' + risk.b + ' ' + risk.c + ' font-bold uppercase tracking-wider ml-1">Risiko ' + risk.t + '</span></div>' +
-                '<div class="text-[11px] text-slate-400 italic">' + p[3] + '</div>' +
+                '<span class="text-xs px-1.5 py-0.5 rounded border ' + risk.b + ' ' + risk.c + ' font-bold uppercase tracking-wider ml-1">Risiko ' + risk.t + '</span></div>' +
+                '<div class="text-xs text-slate-400 italic">' + p[3] + '</div>' +
                 '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2">' +
-                '<span class="text-[11px] text-brand-400 font-bold uppercase tracking-wider block mb-0.5">Wirkprinzip</span>' +
-                '<span class="text-[11px]">' + getMoA(p[0], p[2], p[5]) + '</span></div>' +
-                '<div><span class="text-[11px] text-emerald-400 font-bold uppercase tracking-wider block mb-1">Erforschte Wirkung</span>' +
-                '<ul class="space-y-1 text-[11px]">' + effects + '</ul></div>' +
-                '<div><span class="text-[11px] text-rose-400 font-bold uppercase tracking-wider block mb-1">Bekannte Risiken</span>' +
-                '<ul class="space-y-1 text-[11px]">' + risks + '</ul></div>' +
-                '<div class="grid grid-cols-2 gap-1.5 text-[11px]">' +
+                '<span class="text-xs text-brand-400 font-bold uppercase tracking-wider block mb-0.5">Wirkprinzip</span>' +
+                '<span class="text-xs">' + getMoA(p[0], p[2], p[5]) + '</span></div>' +
+                '<div><span class="text-xs text-emerald-400 font-bold uppercase tracking-wider block mb-1">Erforschte Wirkung</span>' +
+                '<ul class="space-y-1 text-xs">' + effects + '</ul></div>' +
+                '<div><span class="text-xs text-rose-400 font-bold uppercase tracking-wider block mb-1">Bekannte Risiken</span>' +
+                '<ul class="space-y-1 text-xs">' + risks + '</ul></div>' +
+                '<div class="grid grid-cols-2 gap-1.5 text-xs">' +
                 '<div class="bg-slate-900/60 border border-white/5 rounded p-1.5"><span class="text-slate-500 block">Applikation</span><span class="text-white font-bold">' + d.form + '</span></div>' +
                 '<div class="bg-slate-900/60 border border-white/5 rounded p-1.5"><span class="text-slate-500 block">Halbwertszeit</span><span class="text-white font-bold">' + d.halflife + '</span></div>' +
                 '</div>' +
-                '<div class="text-[11px] text-slate-400 border-l-2 border-slate-600 pl-2">Datenlage: <strong class="text-slate-200">' + aiEvidence(p[10]) + '</strong> &mdash; ' + p[11] + '</div>' +
+                '<div class="text-xs text-slate-400 border-l-2 border-slate-600 pl-2">Datenlage: <strong class="text-slate-200">' + aiEvidence(p[10]) + '</strong> &mdash; ' + p[11] + '</div>' +
                 aiOpenInDb(p[2]) +
                 '</div>';
         }
@@ -8199,27 +8199,27 @@ function renderInventory() {
                 if (r.peptides.every(n => names.includes(n))) { rule = r; break; }
             }
 
-            let head = '<div class="text-[11px] mb-2">Gepr&uuml;ft: <strong class="text-white">' + names.join(' + ') + '</strong></div>';
+            let head = '<div class="text-xs mb-2">Gepr&uuml;ft: <strong class="text-white">' + names.join(' + ') + '</strong></div>';
 
             if (rule && rule.type === 'success') {
                 return head + '<div class="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2.5">' +
-                    '<strong class="text-emerald-400 text-[11px] block mb-1">' + rule.title + '</strong>' +
-                    '<span class="text-[11px]">' + rule.description + '</span></div>';
+                    '<strong class="text-emerald-400 text-xs block mb-1">' + rule.title + '</strong>' +
+                    '<span class="text-xs">' + rule.description + '</span></div>';
             }
             if (rule) {
                 return head + '<div class="bg-rose-500/10 border border-rose-500/30 rounded-lg p-2.5">' +
-                    '<strong class="text-rose-400 text-[11px] block mb-1">' + rule.title + '</strong>' +
-                    '<span class="text-[11px]">' + rule.description + '</span></div>';
+                    '<strong class="text-rose-400 text-xs block mb-1">' + rule.title + '</strong>' +
+                    '<span class="text-xs">' + rule.description + '</span></div>';
             }
 
             const high = list.filter(p => p[6] === 'high').map(p => p[2]);
             let warn = '';
             if (high.length) {
-                warn = '<div class="mt-2 bg-rose-500/10 border border-rose-500/30 rounded-lg p-2 text-[11px] text-rose-200">Beachte: ' + high.join(' und ') + ' ' + (high.length > 1 ? 'sind' : 'ist') + ' in der Datenbank als Hochrisiko gef&uuml;hrt.</div>';
+                warn = '<div class="mt-2 bg-rose-500/10 border border-rose-500/30 rounded-lg p-2 text-xs text-rose-200">Beachte: ' + high.join(' und ') + ' ' + (high.length > 1 ? 'sind' : 'ist') + ' in der Datenbank als Hochrisiko gef&uuml;hrt.</div>';
             }
-            return head + '<div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-2.5 text-[11px]">' +
+            return head + '<div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-2.5 text-xs">' +
                 'F&uuml;r diese Kombination liegt mir keine hinterlegte Bewertung vor. Mit jeder zus&auml;tzlichen Substanz steigen die Wechselwirkungen, die niemand vorhergesagt hat.</div>' + warn +
-                '<button onclick="toggleAIChat(); router(\'stack\');" class="mt-2 w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[11px] font-bold transition-all">Im Stack-Check pr&uuml;fen</button>';
+                '<button onclick="toggleAIChat(); router(\'stack\');" class="mt-2 w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-xs font-bold transition-all">Im Stack-Check pr&uuml;fen</button>';
         }
 
         // ---------------------------------------------- Antwort: Blutwerte
@@ -8229,11 +8229,11 @@ function renderInventory() {
             const spec = bio.spec.map(b => '<li class="flex gap-1.5"><span class="text-brand-400">&rarr;</span><span>' + b + '</span></li>').join('');
 
             return '<div class="space-y-2.5">' +
-                '<div class="text-[11px]">Empfohlene Laborwerte f&uuml;r <strong class="text-white">' + p[2] + '</strong>:</div>' +
-                '<div><span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Basis</span><ul class="space-y-1 text-[11px]">' + base + '</ul></div>' +
-                '<div><span class="text-[11px] text-brand-400 font-bold uppercase tracking-wider block mb-1">Spezifisch</span><ul class="space-y-1 text-[11px]">' + spec + '</ul></div>' +
-                '<div class="text-[11px] text-amber-200/80 bg-amber-500/10 border border-amber-500/20 rounded p-2">Ein Ausgangsblutbild vor Beginn ist n&ouml;tig, sonst fehlt die Vergleichsbasis.</div>' +
-                '<button onclick="toggleAIChat(); router(\'blood\'); setTimeout(() => { document.getElementById(\'blood-select\').value = \'' + p[0] + '\'; renderBloodPanel(); }, 100);" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[11px] font-bold transition-all">Im Blutbild-Modul &ouml;ffnen</button>' +
+                '<div class="text-xs">Empfohlene Laborwerte f&uuml;r <strong class="text-white">' + p[2] + '</strong>:</div>' +
+                '<div><span class="text-xs text-slate-400 font-bold uppercase tracking-wider block mb-1">Basis</span><ul class="space-y-1 text-xs">' + base + '</ul></div>' +
+                '<div><span class="text-xs text-brand-400 font-bold uppercase tracking-wider block mb-1">Spezifisch</span><ul class="space-y-1 text-xs">' + spec + '</ul></div>' +
+                '<div class="text-xs text-amber-200/80 bg-amber-500/10 border border-amber-500/20 rounded p-2">Ein Ausgangsblutbild vor Beginn ist n&ouml;tig, sonst fehlt die Vergleichsbasis.</div>' +
+                '<button onclick="toggleAIChat(); router(\'blood\'); setTimeout(() => { document.getElementById(\'blood-select\').value = \'' + p[0] + '\'; renderBloodPanel(); }, 100);" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-xs font-bold transition-all">Im Blutbild-Modul &ouml;ffnen</button>' +
                 '</div>';
         }
 
@@ -8311,38 +8311,38 @@ function renderInventory() {
 
             if (treffer.zu) {
                 html += '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2.5">' +
-                    '<span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block mb-1">Ungeöffnet</span>' +
-                    '<span class="text-[11px]">' + treffer.zu + '</span></div>';
+                    '<span class="text-xs text-emerald-400 font-bold uppercase tracking-wider block mb-1">Ungeöffnet</span>' +
+                    '<span class="text-xs">' + treffer.zu + '</span></div>';
             }
             if (treffer.auf) {
                 html += '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2.5">' +
-                    '<span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block mb-1">Nach dem Anbruch</span>' +
-                    '<span class="text-[11px]">' + treffer.auf + '</span></div>';
+                    '<span class="text-xs text-amber-400 font-bold uppercase tracking-wider block mb-1">Nach dem Anbruch</span>' +
+                    '<span class="text-xs">' + treffer.auf + '</span></div>';
             }
             if (treffer.nie) {
-                html += '<div class="bg-rose-500/10 border border-rose-500/30 rounded-lg p-2.5 text-[11px] text-rose-200">' +
+                html += '<div class="bg-rose-500/10 border border-rose-500/30 rounded-lg p-2.5 text-xs text-rose-200">' +
                     treffer.nie + '</div>';
             }
             if (treffer.hinweis) {
-                html += '<div class="text-[11px] text-slate-400 border-l-2 border-slate-600 pl-2.5 leading-relaxed">' +
+                html += '<div class="text-xs text-slate-400 border-l-2 border-slate-600 pl-2.5 leading-relaxed">' +
                     treffer.hinweis + '</div>';
             }
 
-            html += '<button onclick="toggleAIChat(); router(\'storage\');" class="w-full py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-bold transition-all">Stabilitäts-Simulator öffnen</button></div>';
+            html += '<button onclick="toggleAIChat(); router(\'storage\');" class="w-full py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-bold transition-all">Stabilitäts-Simulator öffnen</button></div>';
             return html;
         }
 
         // ---------------------------------------------- Antwort: Lagerung
         function aiAnswerStorage(p) {
             return '<div class="space-y-2">' +
-                '<div class="text-[11px]">Lagerung von <strong class="text-white">' + p[2] + '</strong>:</div>' +
-                '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2 text-[11px] space-y-1">' +
+                '<div class="text-xs">Lagerung von <strong class="text-white">' + p[2] + '</strong>:</div>' +
+                '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2 text-xs space-y-1">' +
                 '<div><span class="text-slate-400">Pulver, K&uuml;hlschrank:</span> <strong class="text-emerald-400">12&ndash;18 Monate</strong></div>' +
                 '<div><span class="text-slate-400">Angemischt, K&uuml;hlschrank:</span> <strong class="text-emerald-400">30&ndash;40 Tage</strong></div>' +
                 '<div><span class="text-slate-400">Angemischt, Zimmertemperatur:</span> <strong class="text-rose-400">1&ndash;3 Tage</strong></div>' +
                 '</div>' +
-                '<div class="text-[11px] text-rose-200 bg-rose-500/10 border border-rose-500/20 rounded p-2">Angemischte L&ouml;sung nie einfrieren &mdash; Eiskristalle zerrei&szlig;en die Peptidketten. Und niemals sch&uuml;tteln, nur rollen.</div>' +
-                '<button onclick="toggleAIChat(); router(\'storage\');" class="w-full py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[11px] font-bold transition-all">Stabilit&auml;ts-Simulator &ouml;ffnen</button>' +
+                '<div class="text-xs text-rose-200 bg-rose-500/10 border border-rose-500/20 rounded p-2">Angemischte L&ouml;sung nie einfrieren &mdash; Eiskristalle zerrei&szlig;en die Peptidketten. Und niemals sch&uuml;tteln, nur rollen.</div>' +
+                '<button onclick="toggleAIChat(); router(\'storage\');" class="w-full py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-bold transition-all">Stabilit&auml;ts-Simulator &ouml;ffnen</button>' +
                 '</div>';
         }
 
@@ -8359,12 +8359,12 @@ function renderInventory() {
                 let mg = 0;
                 if (inv[id].batches) inv[id].batches.forEach(b => mg += b.currentMg);
                 else mg = inv[id].totalMg || 0;
-                rows += '<div class="flex justify-between items-center bg-slate-900/60 border border-white/5 rounded p-1.5 text-[11px]">' +
+                rows += '<div class="flex justify-between items-center bg-slate-900/60 border border-white/5 rounded p-1.5 text-xs">' +
                     '<span class="text-white font-bold">' + pep[2] + '</span>' +
                     '<span class="font-mono text-blue-400">' + mg.toFixed(1) + ' mg</span></div>';
             });
-            return '<div class="space-y-1.5"><div class="text-[11px] mb-1">Aktuell im K&uuml;hlschrank:</div>' + rows +
-                '<button onclick="toggleAIChat(); router(\'inventory\');" class="mt-1 w-full py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[11px] font-bold transition-all">Bestand verwalten</button></div>';
+            return '<div class="space-y-1.5"><div class="text-xs mb-1">Aktuell im K&uuml;hlschrank:</div>' + rows +
+                '<button onclick="toggleAIChat(); router(\'inventory\');" class="mt-1 w-full py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-xs font-bold transition-all">Bestand verwalten</button></div>';
         }
 
         function aiAnswerLastInjection() {
@@ -8373,12 +8373,12 @@ function renderInventory() {
             const l = h[0];
             const d = new Date(l.time);
             const hrs = Math.floor((Date.now() - l.time) / 3600000);
-            return '<div class="space-y-1.5"><div class="text-[11px]">Zuletzt protokolliert:</div>' +
-                '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2 text-[11px]">' +
+            return '<div class="space-y-1.5"><div class="text-xs">Zuletzt protokolliert:</div>' +
+                '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2 text-xs">' +
                 '<strong class="text-white block">' + l.zone + '</strong>' +
                 '<span class="text-brand-400">' + (l.substance || 'Ohne Zuordnung') + (l.dose ? ' &middot; ' + l.dose : '') + '</span><br>' +
-                '<span class="text-[11px] text-slate-400">' + d.toLocaleString('de-DE') + ' &mdash; vor ' + hrs + ' Stunden</span></div>' +
-                (hrs < 72 ? '<div class="text-[11px] text-amber-200 bg-amber-500/10 border border-amber-500/20 rounded p-1.5">Diese Zone ist noch keine 72 Stunden frei. F&uuml;r die n&auml;chste Gabe rotieren.</div>' : '') +
+                '<span class="text-xs text-slate-400">' + d.toLocaleString('de-DE') + ' &mdash; vor ' + hrs + ' Stunden</span></div>' +
+                (hrs < 72 ? '<div class="text-xs text-amber-200 bg-amber-500/10 border border-amber-500/20 rounded p-1.5">Diese Zone ist noch keine 72 Stunden frei. F&uuml;r die n&auml;chste Gabe rotieren.</div>' : '') +
                 '</div>';
         }
 
@@ -8389,45 +8389,45 @@ function renderInventory() {
             let s = 0, p = 0, m = 0;
             fb.forEach(f => { s += +(f.sleep || 5); p += +(f.pain || 5); m += +(f.mood || 5); });
             const n = fb.length;
-            return '<div class="space-y-1.5"><div class="text-[11px]">Durchschnitt aus ' + n + ' Eintr&auml;gen:</div>' +
+            return '<div class="space-y-1.5"><div class="text-xs">Durchschnitt aus ' + n + ' Eintr&auml;gen:</div>' +
                 '<div class="grid grid-cols-3 gap-1.5 text-center">' +
-                '<div class="bg-slate-900/60 border border-emerald-500/20 rounded p-1.5"><span class="text-[11px] text-emerald-400 block">Schlaf</span><strong class="text-white">' + (s / n).toFixed(1) + '</strong></div>' +
-                '<div class="bg-slate-900/60 border border-rose-500/20 rounded p-1.5"><span class="text-[11px] text-rose-400 block">Schmerz</span><strong class="text-white">' + (p / n).toFixed(1) + '</strong></div>' +
-                '<div class="bg-slate-900/60 border border-brand-500/20 rounded p-1.5"><span class="text-[11px] text-brand-400 block">Energie</span><strong class="text-white">' + (m / n).toFixed(1) + '</strong></div>' +
+                '<div class="bg-slate-900/60 border border-emerald-500/20 rounded p-1.5"><span class="text-xs text-emerald-400 block">Schlaf</span><strong class="text-white">' + (s / n).toFixed(1) + '</strong></div>' +
+                '<div class="bg-slate-900/60 border border-rose-500/20 rounded p-1.5"><span class="text-xs text-rose-400 block">Schmerz</span><strong class="text-white">' + (p / n).toFixed(1) + '</strong></div>' +
+                '<div class="bg-slate-900/60 border border-brand-500/20 rounded p-1.5"><span class="text-xs text-brand-400 block">Energie</span><strong class="text-white">' + (m / n).toFixed(1) + '</strong></div>' +
                 '</div>' +
-                '<button onclick="toggleAIChat(); router(\'tracker\'); setTimeout(() => toggleTrackerView(\'analytics\'), 150);" class="mt-1 w-full py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[11px] font-bold transition-all">Analytics &ouml;ffnen</button></div>';
+                '<button onclick="toggleAIChat(); router(\'tracker\'); setTimeout(() => toggleTrackerView(\'analytics\'), 150);" class="mt-1 w-full py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-bold transition-all">Analytics &ouml;ffnen</button></div>';
         }
 
         function aiLagerUebersicht() {
-            return '<div class="space-y-2 text-[11px]">' +
+            return '<div class="space-y-2 text-xs">' +
                 '<div>Wozu genau? Ich habe etwas zu:</div>' +
                 '<div class="flex flex-wrap gap-1.5">' +
                 LAGERUNG.map(m => '<button onclick="askAI(\'Wie lagere ich ' + m.schluessel[0] + '\')" ' +
-                    'class="px-2 py-1 rounded-full bg-slate-900 border border-slate-700 text-[10px] text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">' +
+                    'class="px-2 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs text-slate-300 hover:text-white hover:border-brand-500/50 transition-colors">' +
                     m.titel.split(' (')[0] + '</button>').join('') +
                 '</div>' +
                 '<div class="text-slate-400">Oder nenn mir eine Substanz, dann sage ich dir die Haltbarkeit dazu.</div></div>';
         }
 
         function aiAnswerHelp() {
-            return '<div class="space-y-2 text-[11px]">' +
+            return '<div class="space-y-2 text-xs">' +
                 '<div>Ich lese aus der Datenbank dieser App und aus deinen eigenen Eintr\u00e4gen. Alles offline.</div>' +
 
-                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-[10px] font-mono text-slate-300">' +
+                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-xs font-mono text-slate-300">' +
                 '<div class="text-brand-400 font-bold mb-1">Nachschlagen</div>' +
                 '<div>was ist reta</div><div>und die blutwerte?</div>' +
                 '<div>kann ich bpc und tb500 zusammen</div>' +
                 '<div>wo lagere ich bac wasser</div>' +
                 '</div>' +
 
-                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-[10px] font-mono text-slate-300">' +
+                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-xs font-mono text-slate-300">' +
                 '<div class="text-emerald-400 font-bold mb-1">Dein Tag</div>' +
                 '<div>was steht heute an</div><div>bpc erledigt</div>' +
                 '<div>wo soll ich heute spritzen</div>' +
                 '<div>wo intramuskul\u00e4r spritzen</div>' +
                 '</div>' +
 
-                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-[10px] font-mono text-slate-300">' +
+                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-xs font-mono text-slate-300">' +
                 '<div class="text-amber-400 font-bold mb-1">Eintragen</div>' +
                 '<div>1mg reta bauch</div>' +
                 '<div>gym r\u00fccken 12 s\u00e4tze rpe 8</div>' +
@@ -8436,7 +8436,7 @@ function renderInventory() {
                 '<div>erinnere mich um 8 an bpc</div>' +
                 '</div>' +
 
-                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-[10px] font-mono text-slate-300">' +
+                '<div class="bg-slate-900/60 border border-white/5 rounded p-2 space-y-0.5 text-xs font-mono text-slate-300">' +
                 '<div class="text-accent font-bold mb-1">Rechnen und Vorrat</div>' +
                 '<div>wie viele h\u00fcbe f\u00fcr 300 mcg</div>' +
                 '<div>wie viel mcg sind 0,25 mg</div>' +
@@ -8547,7 +8547,7 @@ function renderInventory() {
 
                 return 'Bio-Feedback gespeichert &mdash; Schlaf ' + entry.sleep + ', Schmerz ' + entry.pain +
                     ', Energie ' + entry.mood + '.' +
-                    (skipped.length ? ' <span class="text-[11px] text-slate-400">(' + skipped.join(' und ') +
+                    (skipped.length ? ' <span class="text-xs text-slate-400">(' + skipped.join(' und ') +
                         ' nicht genannt, daher auf 5 gesetzt)</span>' : '');
             }
 
@@ -8663,25 +8663,25 @@ function renderInventory() {
                 const rest = z.std === null ? 'nie benutzt'
                            : z.std < 72 ? 'gesperrt, noch ' + (72 - z.std) + ' h'
                            : 'frei, vor ' + z.std + ' h';
-                return '<div class="flex justify-between gap-2 text-[11px] py-0.5">' +
+                return '<div class="flex justify-between gap-2 text-xs py-0.5">' +
                     '<span>' + z.name + ' <span class="text-slate-500">' + z.art + '</span></span>' +
                     '<span class="' + farbe + '">' + rest + '</span></div>';
             };
 
             return '<div class="space-y-2.5">' +
                 '<div class="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-3">' +
-                '<span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block mb-1">Vorschlag</span>' +
+                '<span class="text-xs text-emerald-400 font-bold uppercase tracking-wider block mb-1">Vorschlag</span>' +
                 '<span class="text-sm font-bold text-white">' + empf.name + '</span> ' +
-                '<span class="text-[11px] text-slate-400">(' + empf.art + ')</span>' +
+                '<span class="text-xs text-slate-400">(' + empf.art + ')</span>' +
                 (empf.std !== null && empf.std < 72
-                    ? '<div class="text-[11px] text-amber-200 mt-1">Alle Zonen sind noch gesperrt. Diese ist am längsten her.</div>'
+                    ? '<div class="text-xs text-amber-200 mt-1">Alle Zonen sind noch gesperrt. Diese ist am längsten her.</div>'
                     : '') +
                 '</div>' +
                 '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-2.5">' +
-                '<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Alle Zonen</span>' +
+                '<span class="text-xs text-slate-400 font-bold uppercase tracking-wider block mb-1">Alle Zonen</span>' +
                 zonen.map(zeile).join('') + '</div>' +
-                '<div class="text-[11px] text-slate-400 border-l-2 border-slate-600 pl-2.5">Gewebe braucht etwa 72 Stunden, sonst drohen Verhärtungen. Innerhalb einer Zone zusätzlich den Einstichpunkt verschieben.</div>' +
-                '<button onclick="toggleAIChat(); router(\'map\');" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[10px] font-bold transition-all">Zur Body-Map</button></div>';
+                '<div class="text-xs text-slate-400 border-l-2 border-slate-600 pl-2.5">Gewebe braucht etwa 72 Stunden, sonst drohen Verhärtungen. Innerhalb einer Zone zusätzlich den Einstichpunkt verschieben.</div>' +
+                '<button onclick="toggleAIChat(); router(\'map\');" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-xs font-bold transition-all">Zur Body-Map</button></div>';
         }
 
         // ============================================================
@@ -8690,29 +8690,29 @@ function renderInventory() {
         function aiAnswerHeute() {
             const s = readStore('daily_schedule');
             if (s.date !== localDateISO() || !s.items || !s.items.length) {
-                return '<div class="space-y-2 text-[11px]"><div>Für heute steht nichts im Tagesplan.</div>' +
-                    '<button onclick="toggleAIChat(); router(\'dashboard\');" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-[10px] font-bold transition-all">Plan in der Übersicht erzeugen</button></div>';
+                return '<div class="space-y-2 text-xs"><div>Für heute steht nichts im Tagesplan.</div>' +
+                    '<button onclick="toggleAIChat(); router(\'dashboard\');" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-xs font-bold transition-all">Plan in der Übersicht erzeugen</button></div>';
             }
             const offen = s.items.filter(i => !i.completed);
             const fertig = s.items.filter(i => i.completed);
 
             let html = '<div class="space-y-2.5">';
             if (offen.length) {
-                html += '<div><span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block mb-1">Offen</span>' +
-                    offen.map(i => '<div class="flex justify-between gap-2 text-[11px] py-0.5">' +
+                html += '<div><span class="text-xs text-amber-400 font-bold uppercase tracking-wider block mb-1">Offen</span>' +
+                    offen.map(i => '<div class="flex justify-between gap-2 text-xs py-0.5">' +
                         '<span class="text-white font-bold">' + i.name + '</span>' +
                         '<span class="font-mono text-slate-400">' + i.doseMg + ' mg</span></div>').join('') +
                     '</div>';
             }
             if (fertig.length) {
-                html += '<div><span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block mb-1">Erledigt</span>' +
-                    fertig.map(i => '<div class="text-[11px] text-slate-500 line-through py-0.5">' + i.name + '</div>').join('') +
+                html += '<div><span class="text-xs text-emerald-400 font-bold uppercase tracking-wider block mb-1">Erledigt</span>' +
+                    fertig.map(i => '<div class="text-xs text-slate-500 line-through py-0.5">' + i.name + '</div>').join('') +
                     '</div>';
             }
             if (!offen.length) {
-                html += '<div class="text-[11px] text-emerald-400">Alles abgehakt für heute.</div>';
+                html += '<div class="text-xs text-emerald-400">Alles abgehakt für heute.</div>';
             } else {
-                html += '<div class="text-[11px] text-slate-400">Zum Abhaken einfach schreiben: &bdquo;' +
+                html += '<div class="text-xs text-slate-400">Zum Abhaken einfach schreiben: &bdquo;' +
                     offen[0].name.toLowerCase() + ' erledigt&ldquo;</div>';
             }
             return html + '</div>';
@@ -8772,7 +8772,7 @@ function renderInventory() {
                 '<span class="text-slate-500 mx-2">=</span>' +
                 '<span class="font-mono text-lg text-brand-400">' +
                 (zielEin === 'mcg' ? Math.round(um) : um) + ' ' + zielEin + '</span></div>' +
-                '<div class="text-[11px] text-slate-400 text-center">1 mg sind 1000 mcg.</div>';
+                '<div class="text-xs text-slate-400 text-center">1 mg sind 1000 mcg.</div>';
         }
 
         // Huebe oder Units aus einem angesetzten Vial
@@ -8800,16 +8800,16 @@ function renderInventory() {
             const real = ganz * proDosis;
 
             return '<div class="space-y-2">' +
-                '<div class="text-[11px]">' + ziel[2] + ', angesetzt als ' + f.name +
+                '<div class="text-xs">' + ziel[2] + ', angesetzt als ' + f.name +
                 ' mit <span class="font-mono">' + konz.toFixed(2) + '</span> mg/ml:</div>' +
                 '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-3 text-center">' +
                 '<span class="font-mono text-2xl font-bold text-brand-400">' + ganz + '</span> ' +
                 '<span class="text-sm text-slate-300">' + (ganz === 1 ? f.einheitEz : f.einheit) + '</span>' +
-                '<div class="text-[11px] text-slate-400 mt-1">ergibt ' + Math.round(real) + ' mcg' +
+                '<div class="text-xs text-slate-400 mt-1">ergibt ' + Math.round(real) + ' mcg' +
                 (Math.abs(real - menge) > menge * 0.05
                     ? ' statt der gewünschten ' + Math.round(menge) + ' mcg' : '') + '</div></div>' +
                 (Math.abs(real - menge) > menge * 0.05
-                    ? '<div class="text-[11px] text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded p-2">Ganze ' +
+                    ? '<div class="text-xs text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded p-2">Ganze ' +
                       f.einheit + ' treffen die Menge nicht genau. Mit einer anderen Lösungsmenge geht es auf — der Nasenspray-Rechner zeigt welche.</div>'
                     : '') + '</div>';
         }
@@ -8850,21 +8850,21 @@ function renderInventory() {
             const proTag = aiVerbrauchProTag(pep[2]);
 
             if (proTag <= 0) {
-                return '<div class="space-y-1.5"><div class="text-[11px]">Von <strong class="text-white">' +
+                return '<div class="space-y-1.5"><div class="text-xs">Von <strong class="text-white">' +
                     pep[2] + '</strong> sind noch <span class="font-mono text-blue-400">' + mg.toFixed(1) +
-                    ' mg</span> da.</div><div class="text-[11px] text-slate-400">Für eine Reichweite brauche ich Verbrauch aus dem Journal — protokollier ein paar Gaben, dann rechne ich.</div></div>';
+                    ' mg</span> da.</div><div class="text-xs text-slate-400">Für eine Reichweite brauche ich Verbrauch aus dem Journal — protokollier ein paar Gaben, dann rechne ich.</div></div>';
             }
 
             const tage = Math.floor(mg / proTag);
             const farbe = tage < 14 ? 'text-rose-400' : tage < 30 ? 'text-amber-400' : 'text-emerald-400';
             return '<div class="space-y-2">' +
-                '<div class="text-[11px]"><strong class="text-white">' + pep[2] + '</strong></div>' +
+                '<div class="text-xs"><strong class="text-white">' + pep[2] + '</strong></div>' +
                 '<div class="bg-slate-900/60 border border-white/5 rounded-lg p-3 text-center">' +
                 '<span class="font-mono text-2xl font-bold ' + farbe + '">' + tage + '</span>' +
                 '<span class="text-sm text-slate-300"> Tage</span>' +
-                '<div class="text-[11px] text-slate-400 mt-1"><span class="font-mono">' + mg.toFixed(1) +
+                '<div class="text-xs text-slate-400 mt-1"><span class="font-mono">' + mg.toFixed(1) +
                 '</span> mg im Bestand, Verbrauch <span class="font-mono">' + proTag.toFixed(2) + '</span> mg/Tag</div></div>' +
-                (tage < 14 ? '<div class="text-[11px] text-rose-200 bg-rose-500/10 border border-rose-500/30 rounded p-2">Unter zwei Wochen — Zeit zum Nachbestellen.</div>' : '') +
+                (tage < 14 ? '<div class="text-xs text-rose-200 bg-rose-500/10 border border-rose-500/30 rounded p-2">Unter zwei Wochen — Zeit zum Nachbestellen.</div>' : '') +
                 '</div>';
         }
 
@@ -8883,8 +8883,8 @@ function renderInventory() {
             });
             if (!zeilen.length) return 'Nichts geht in den nächsten 30 Tagen zur Neige.';
             zeilen.sort((a, b) => a.tage - b.tage);
-            return '<div class="space-y-1.5"><div class="text-[11px]">Wird knapp:</div>' +
-                zeilen.map(z => '<div class="flex justify-between gap-2 text-[11px]">' +
+            return '<div class="space-y-1.5"><div class="text-xs">Wird knapp:</div>' +
+                zeilen.map(z => '<div class="flex justify-between gap-2 text-xs">' +
                     '<span class="text-white font-bold">' + z.name + '</span>' +
                     '<span class="' + (z.tage < 14 ? 'text-rose-400' : 'text-amber-400') + '">' +
                     z.tage + ' Tage</span></div>').join('') + '</div>';
@@ -8905,7 +8905,7 @@ function renderInventory() {
                 const f = FORMEN[b.form];
                 const kritisch = tage > 30;
                 return '<div class="bg-slate-900/60 border ' +
-                    (kritisch ? 'border-rose-500/30' : 'border-white/5') + ' rounded-lg p-2.5 text-[11px]">' +
+                    (kritisch ? 'border-rose-500/30' : 'border-white/5') + ' rounded-lg p-2.5 text-xs">' +
                     '<div class="flex justify-between"><span class="text-white font-bold">' +
                     (f ? f.symbol + ' ' + f.name : 'Angesetzt') + '</span>' +
                     '<span class="font-mono ' + (kritisch ? 'text-rose-400' : 'text-slate-300') + '">vor ' +
@@ -8955,7 +8955,7 @@ function renderInventory() {
 
             return 'Alarm gestellt für <span class="font-mono text-white">' + std + ':' + min +
                 '</span> — &bdquo;' + esc(was) + '&ldquo;.' +
-                '<div class="text-[11px] text-slate-400 mt-1.5">Die Meldung kommt nur, solange die App geöffnet ist und Benachrichtigungen in der Übersicht erlaubt sind. Für mehr Verlässlichkeit: in den Kalender übernehmen.</div>';
+                '<div class="text-xs text-slate-400 mt-1.5">Die Meldung kommt nur, solange die App geöffnet ist und Benachrichtigungen in der Übersicht erlaubt sind. Für mehr Verlässlichkeit: in den Kalender übernehmen.</div>';
         }
 
         // ---------------------------------------------- Router
