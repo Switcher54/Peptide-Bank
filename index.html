@@ -1058,6 +1058,7 @@
                     <button onclick="setRiskFilter('low', this)" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all">Gering</button>
                     <button onclick="setRiskFilter('med', this)" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all">Moderat</button>
                     <button onclick="setRiskFilter('high', this)" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all">Hoch</button>
+                    <button onclick="setRiskFilter('unknown', this)" title="Keine kontrollierten Studien am Menschen" class="risk-f-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-700 text-slate-400 hover:bg-slate-800 transition-all">Unbekannt</button>
                 </div>
             </div>
 
@@ -3170,6 +3171,15 @@
                    String(x.getDate()).padStart(2, '0');
         }
 
+        // Risiko fuer die Anzeige. "Gering" setzt kontrollierte Daten
+        // am Menschen voraus. Gibt es nur Zell-, Tier- oder Pilotdaten,
+        // ist das Risiko nicht gering, sondern unbekannt. Moderat und
+        // hoch bleiben stehen - die Warnung gilt auch ohne Humandaten.
+        function anzeigeRisiko(risk, level) {
+            if (risk === 'low' && level !== 'human') return 'unknown';
+            return risk;
+        }
+
         let confirmCallback = null;
 
         function customConfirm(message, callback) {
@@ -3654,7 +3664,7 @@
                 const dynamicNr = `${type}-${String(counters[type]++).padStart(3, '0')}`;
 
                 const p = {
-                    id: item[0], nr: dynamicNr, name: item[2], aka: item[3], cat: item[4], catText: item[5], risk: item[6],
+                    id: item[0], nr: dynamicNr, name: item[2], aka: item[3], cat: item[4], catText: item[5], risk: anzeigeRisiko(item[6], item[10]),
                     effects: item[7], risks: item[8], dosage: item[9], study: { level: item[10], text: item[11] }, prices: item[12]
                 };
 
@@ -3668,9 +3678,11 @@
                 if(p.cat === 'libido') badgeColor = "bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20";
 
                 let riskClass = "text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
-                let riskText = "Niedrig";
-                if(p.risk === 'med') { riskClass = "text-amber-400 border-amber-500/30 bg-amber-500/10"; riskText = "Mittel"; }
+                let riskText = "Gering";
+                if(p.risk === 'med') { riskClass = "text-amber-400 border-amber-500/30 bg-amber-500/10"; riskText = "Moderat"; }
                 if(p.risk === 'high') { riskClass = "text-danger border-danger/30 bg-danger/10"; riskText = "Hoch"; }
+                if(p.risk === 'unknown') { riskClass = "text-slate-200 border-dashed border-slate-400/70 bg-slate-500/10"; riskText = "Unbekannt"; }
+                const riskTitle = p.risk === 'unknown' ? 'Keine kontrollierten Studien am Menschen' : '';
 
                 let studyLevel = p.study.level.toLowerCase();
                 let studyBadgeClass = "bg-slate-800/80 text-slate-400 border-slate-700";
@@ -3832,7 +3844,7 @@
                             </div>
                             <div class="flex items-center gap-2 lg:w-[200px] flex-shrink-0">
                                 <span class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
-                                <span class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider ${riskClass}">${riskText}</span>
+                                <span class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider ${riskClass}" title="${riskTitle}">${riskText}</span>
                             </div>
                             <div class="flex items-center gap-3 flex-grow justify-start lg:justify-end">
                                 <div class="text-left lg:text-right mr-auto lg:mr-2">
@@ -3871,7 +3883,7 @@
                                 <div class="flex flex-col gap-1 items-end">
                                     <span class="px-2.5 py-1 rounded-full text-[11px] font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
                                     <span class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider flex items-center gap-1 ${studyBadgeClass}"><span class="w-1.5 h-1.5 rounded-full ${studyDot}"></span> ${studyText}</span>
-                                    <span class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider ${riskClass}">Risiko: ${riskText}</span>
+                                    <span class="px-2 py-0.5 rounded text-[11px] font-bold border uppercase tracking-wider ${riskClass}" title="${riskTitle}">Risiko: ${riskText}</span>
                                 </div>
                             </div>
                         </div>
@@ -6539,10 +6551,29 @@ function renderInventory() {
                 return;
             }
 
+            // Das Profil richtet sich nach der riskantesten Substanz.
+            // "Unbekannt" steht ueber "Moderat": ohne Humandaten laesst
+            // sich nichts Genaueres sagen.
+            const RANG = { low: 0, med: 1, unknown: 2, high: 3 };
+            const STUFE = {
+                low:     "<span class='text-emerald-400'>Gering</span>",
+                med:     "<span class='text-amber-400'>Moderat</span>",
+                unknown: "<span class='text-slate-200'>Unbekannt</span>",
+                high:    "<span class='text-rose-400'>Hoch</span>"
+            };
+            let stufe = 'low';
+            selected.forEach(name => {
+                const item = RAW_DATA.find(i => i[2] === name);
+                if (!item) return;
+                const r = anzeigeRisiko(item[6], item[10]);
+                if (RANG[r] > RANG[stufe]) stufe = r;
+            });
+            const zusatz = t => " <span class='text-slate-400 font-normal'>(" + t + ")</span>";
+
             if(selected.length === 1) {
-                riskDisplay.innerHTML = "<span class='text-emerald-400'>Niedrig (Monotherapie)</span>";
+                riskDisplay.innerHTML = STUFE[stufe] + zusatz("Einzelsubstanz");
                 synDisplay.innerText = "Keine (Einzelsubstanz)";
-                analysisText.innerHTML = "Monotherapien sind der sicherste Weg, um Nebenwirkungen zu evaluieren. Du kannst nun eine weitere Substanz hinzufügen, um die Wechselwirkungen zu prüfen.";
+                analysisText.innerHTML = "Eine einzelne Substanz. Füge eine weitere hinzu, um bekannte Wechselwirkungen zu prüfen.";
                 analysisText.parentElement.className = "p-4 bg-slate-800/50 rounded-xl mt-4 border border-transparent transition-all";
                 return;
             }
@@ -6558,7 +6589,7 @@ function renderInventory() {
 
             if(activeRule) {
                 if(activeRule.type === 'success') {
-                    riskDisplay.innerHTML = "<span class='text-emerald-400'>Moderat (Bekannte Synergie)</span>";
+                    riskDisplay.innerHTML = STUFE[stufe] + zusatz("bekannte Kombination");
                     synDisplay.innerHTML = "<span class='text-emerald-400 font-bold'>Hervorragend</span>";
                     analysisText.innerHTML = `<strong class='text-emerald-400 block mb-1'>${activeRule.title}</strong>${activeRule.description}`;
                     analysisText.parentElement.className = "p-4 bg-emerald-500/10 rounded-xl mt-4 border border-emerald-500/30 transition-all shadow-[0_0_15px_rgba(16,185,129,0.1)]";
@@ -6569,7 +6600,7 @@ function renderInventory() {
                     analysisText.parentElement.className = "p-4 bg-rose-500/10 rounded-xl mt-4 border border-rose-500/30 transition-all shadow-[0_0_15px_rgba(244,63,94,0.1)]";
                 }
             } else {
-                riskDisplay.innerHTML = "<span class='text-amber-400'>Unbekannt (Polypharmazie)</span>";
+                riskDisplay.innerHTML = STUFE[stufe] + zusatz("keine Daten zur Kombination");
                 synDisplay.innerHTML = "<span class='text-amber-400 font-bold'>Theoretisch</span>";
                 analysisText.innerHTML = "Für diese exakte Kombination liegen keine spezifischen Warnungen vor. Beachte jedoch, dass mit jeder weiteren Substanz das Risiko für unvorhersehbare Nebenwirkungen ansteigt.";
                 analysisText.parentElement.className = "p-4 bg-amber-500/10 rounded-xl mt-4 border border-amber-500/30 transition-all shadow-[0_0_15px_rgba(245,158,11,0.1)]";
@@ -8076,6 +8107,7 @@ function renderInventory() {
 
         // ---------------------------------------------- Darstellungshilfen
         function aiRisk(r) {
+            if (r === 'unknown') return { t: 'Unbekannt', c: 'text-slate-200', b: 'bg-slate-500/10 border-dashed border-slate-400/70' };
             if (r === 'low')  return { t: 'Gering',   c: 'text-emerald-400', b: 'bg-emerald-500/10 border-emerald-500/30' };
             if (r === 'med')  return { t: 'Moderat',  c: 'text-amber-400',   b: 'bg-amber-500/10 border-amber-500/30' };
             return              { t: 'Hoch',     c: 'text-rose-400',    b: 'bg-rose-500/10 border-rose-500/30' };
@@ -8098,7 +8130,7 @@ function renderInventory() {
 
         // ---------------------------------------------- Antwort: Substanz
         function aiAnswerSubstance(p) {
-            const risk = aiRisk(p[6]);
+            const risk = aiRisk(anzeigeRisiko(p[6], p[10]));
             const d = p[9];
             const effects = p[7].slice(0, 3).map(e => '<li class="flex gap-1.5"><span class="text-emerald-400">&bull;</span><span>' + e + '</span></li>').join('');
             const risks = p[8].slice(0, 3).map(e => '<li class="flex gap-1.5"><span class="text-rose-400">&times;</span><span>' + e + '</span></li>').join('');
