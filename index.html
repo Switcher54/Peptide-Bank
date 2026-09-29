@@ -885,6 +885,14 @@
                 <h2 class="text-4xl font-extrabold text-white tracking-tight">Dein <span class="text-gradient">Cockpit</span></h2>
                 <p class="text-slate-400 text-sm max-w-2xl mx-auto">Willkommen zurück. Hier ist deine persönliche Übersicht über Bestand, Journal und anstehende Aufgaben.</p>
             </div>
+
+            <div id="backup-erinnerung" role="status" class="hidden bg-amber-500/10 border border-amber-500/30 p-4 rounded-2xl flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h4 class="font-bold text-amber-300 text-sm mb-0.5">Zeit für ein Backup</h4>
+                    <p class="text-xs text-amber-100/80" id="backup-erinnerung-text">Journal und Bestand liegen nur auf diesem Gerät.</p>
+                </div>
+                <button onclick="exportData()" class="px-4 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 rounded-xl text-xs font-bold transition-all whitespace-nowrap">Backup speichern</button>
+            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 <!-- Quick Actions -->
@@ -1012,6 +1020,7 @@
                     <div>
                         <h3 class="text-lg font-bold text-white mb-1">Rettungsboot (Backup)</h3>
                         <p class="text-xs text-slate-400 max-w-md">Sichere dein Journal, deinen Bestand und deine Body-Map lokal auf deinem Gerät. Lade die Datei hier hoch, um alles wiederherzustellen.</p>
+                        <p id="backup-stand" class="text-xs text-slate-300 max-w-md mt-2"></p>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -3064,7 +3073,8 @@
             peptide_alarms: [],
             ai_chat_history: [],
             nasal_log: [],
-            briefing_stand: {}
+            briefing_stand: {},
+            backup_stand: {}
         };
 
         let storeWarnings = [];
@@ -7392,6 +7402,8 @@ function renderInventory() {
             if(typeof initTracker === "function") initTracker();
             
             if(typeof renderDashboard === "function") renderDashboard();
+            if(typeof renderBackupStand === "function") renderBackupStand();
+            if(typeof speicherSichern === "function") speicherSichern();
             if(typeof startAlarmEngine === "function") startAlarmEngine();
             if(typeof initOffline === "function") initOffline();
             if(typeof briefingBeimStart === "function") briefingBeimStart();
@@ -7450,6 +7462,9 @@ function renderInventory() {
         }
 
         function renderDashboard() {
+            // 0. Backup-Erinnerung, falls inzwischen Daten dazukamen
+            renderBackupStand();
+
             // 1. Trend
             const dashTrend = document.getElementById('dash-trend-content');
             if (dashTrend) {
@@ -9193,6 +9208,68 @@ function renderInventory() {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+
+            writeStore('backup_stand', { zuletzt: new Date().toISOString() });
+            renderBackupStand();
+        }
+
+        // Wann zuletzt gesichert wurde. Steht bewusst nicht in
+        // BACKUP_KEYS: ein eingespieltes altes Backup soll den Stand
+        // nicht zuruecksetzen.
+        const BACKUP_ERINNERN_TAGE = 14;
+        let speicherDauerhaft = null; // null = nicht bekannt
+
+        function hatEigeneDaten() {
+            return readStore('tracker_data').length > 0 ||
+                   readStore('injection_history').length > 0 ||
+                   readStore('nasal_log').length > 0 ||
+                   Object.keys(readStore('peptide_inventory')).length > 0;
+        }
+
+        function tageSeitBackup() {
+            const t = Date.parse(readStore('backup_stand').zuletzt || '');
+            if (isNaN(t)) return null;
+            return Math.max(0, Math.floor((Date.now() - t) / 86400000));
+        }
+
+        function renderBackupStand() {
+            const tage = tageSeitBackup();
+
+            const stand = document.getElementById('backup-stand');
+            if (stand) {
+                let text = tage === null ? 'Noch kein Backup gespeichert.'
+                         : tage === 0    ? 'Letztes Backup: heute.'
+                         : tage === 1    ? 'Letztes Backup: gestern.'
+                         : 'Letztes Backup: vor ' + tage + ' Tagen.';
+                if (speicherDauerhaft === true) text += ' Der Browser hält die Daten dauerhaft vor.';
+                if (speicherDauerhaft === false) text += ' Der Browser darf die Daten bei Platzmangel oder längerer Nichtnutzung löschen.';
+                stand.textContent = text;
+            }
+
+            const box = document.getElementById('backup-erinnerung');
+            if (box) {
+                const faellig = hatEigeneDaten() && (tage === null || tage >= BACKUP_ERINNERN_TAGE);
+                box.classList.toggle('hidden', !faellig);
+                box.classList.toggle('flex', faellig);
+                const t = document.getElementById('backup-erinnerung-text');
+                if (t) t.textContent = (tage === null
+                    ? 'Du hast noch kein Backup gespeichert.'
+                    : 'Dein letztes Backup ist ' + tage + ' Tage alt.') +
+                    ' Journal und Bestand liegen nur auf diesem Gerät.';
+            }
+        }
+
+        // Bittet den Browser, die Daten nicht von sich aus zu loeschen.
+        // Safari raeumt Skript-Speicher sonst nach sieben Tagen ohne
+        // Besuch ab (als Homescreen-App nicht). Gefragt wird erst, wenn
+        // es etwas zu schuetzen gibt - Firefox zeigt dafuer eine
+        // Rueckfrage.
+        function speicherSichern() {
+            if (!navigator.storage || !navigator.storage.persisted) return;
+            navigator.storage.persisted()
+                .then(ist => (ist || !hatEigeneDaten() || !navigator.storage.persist) ? ist : navigator.storage.persist())
+                .then(ok => { speicherDauerhaft = !!ok; renderBackupStand(); })
+                .catch(() => {});
         }
 
         function importData(event) {
@@ -9236,6 +9313,8 @@ function renderInventory() {
                         if(typeof renderAlarms === 'function') renderAlarms();
                         if(typeof renderDailySchedule === 'function') renderDailySchedule();
                         if(typeof loadChatHistory === 'function') loadChatHistory();
+                        renderBackupStand();
+                        speicherSichern();
                         
                         if (!failed.length) customConfirm("Wiederhergestellt: " + restored.length + " Datensaetze. Alle Ansichten wurden aktualisiert.", () => {});
                     } else {
