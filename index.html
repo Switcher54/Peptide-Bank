@@ -399,6 +399,13 @@
         .view-panel.hidden { display: none; }
         .view-panel.block { display: block; }
         
+        /* Unter md liegt unten die Navigationsleiste. Inhalt und schwebende
+           Knoepfe halten Abstand dazu - auf iPhones samt Home-Leiste. */
+        @media (max-width: 767px) {
+            #hauptinhalt { margin-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)); }
+            .ueber-leiste { bottom: calc(6rem + env(safe-area-inset-bottom, 0px)) !important; }
+        }
+
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
             .pb-safe { padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
         }
@@ -761,7 +768,7 @@
     <!-- Hinweis, solange keine Verbindung besteht. Die App laeuft
          weiter, nur Shop-Links und Studien-Links gehen ins Leere. -->
     <div id="offline-pille" role="status" aria-live="polite"
-         class="hidden fixed bottom-24 left-4 z-[80] items-center gap-2 px-3 py-2 rounded-xl
+         class="ueber-leiste hidden fixed bottom-24 left-4 z-[80] items-center gap-2 px-3 py-2 rounded-xl
                 bg-slate-900/95 border border-amber-500/40 backdrop-blur-md shadow-lift
                 text-xs font-bold text-amber-400">
         <span class="w-2 h-2 rounded-full bg-amber-400"></span>
@@ -855,7 +862,7 @@
         </div>
     </header>
 
-    <main id="hauptinhalt" tabindex="-1" class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-8 py-10 relative z-10 mb-20 md:mb-0">
+    <main id="hauptinhalt" tabindex="-1" class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-8 py-10 relative z-10">
 
         <div class="mb-8 bg-indigo-500/10 border border-indigo-500/30 p-4 sm:p-5 rounded-2xl flex items-start gap-4 shadow-[0_0_20px_rgba(99,102,241,0.15)] backdrop-blur-sm">
             <svg class="w-6 h-6 shrink-0 text-indigo-300 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -893,9 +900,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 <!-- Quick Actions -->
                 <div class="md:col-span-2 xl:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    <button onclick="router('tracker'); setTimeout(() => document.getElementById('trk-date').focus(), 100);" class="glass-panel p-4 rounded-2xl border border-white/5 hover:border-brand-500/50 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-2 group">
+                    <button onclick="router('tracker'); setTimeout(() => einnahmeEintragen(), 100);" class="glass-panel p-4 rounded-2xl border border-white/5 hover:border-brand-500/50 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-2 group">
                         <svg class="w-7 h-7 text-brand-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="text-xs font-bold text-slate-300">Injektion loggen</span>
+                        <span class="text-xs font-bold text-slate-300">Einnahme eintragen</span>
                     </button>
                     <button onclick="router('tracker'); setTimeout(() => setTrackerType('feedback', document.querySelector('.tracker-type-btn:nth-child(2)')), 100);" class="glass-panel p-4 rounded-2xl border border-white/5 hover:border-emerald-500/50 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-2 group">
                         <svg class="w-7 h-7 text-emerald-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -919,24 +926,24 @@
                             <h3 class="text-lg font-bold text-white flex items-center gap-2">
                                 <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg> Heutiger Tagesplan
                             </h3>
-                            <p class="text-xs text-slate-400 mt-1">Hake deine Dosen ab. Die Menge wird sofort vom Bestand abgezogen und ins Journal eingetragen.</p>
+                            <p class="text-xs text-slate-400 mt-1">Entsteht jeden Tag aus deinem Wochenplan. Abhaken trägt die Einnahme ins Journal ein und zieht mg-Mengen vom Bestand ab.</p>
                         </div>
-                        <div class="flex gap-2">
-                             <button onclick="addCustomScheduleItem()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1">
-                                + Manuell
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="addCustomScheduleItem()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-xs font-bold transition-all shadow-sm">
+                                + Für heute
                             </button>
-                            <button onclick="openBriefing()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1">
+                            <button onclick="openWeeklyPlanModal()" class="px-3 py-2 bg-brand-500/20 hover:bg-brand-500 text-brand-400 hover:text-white border border-brand-500/50 rounded-lg text-xs font-bold transition-all shadow-sm">
+                                Wochenplan
+                            </button>
+                            <button onclick="openBriefing()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-xs font-bold transition-all shadow-sm">
                                 Tagesbriefing
-                            </button>
-                            <button onclick="generateDailySchedule()" class="px-3 py-1.5 bg-brand-500/20 hover:bg-brand-500 text-brand-400 hover:text-white border border-brand-500/50 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1">
-                                Plan generieren
                             </button>
                         </div>
                     </div>
                     
                     <div id="daily-schedule-list" class="space-y-3 max-h-[350px] overflow-y-auto pr-2 scrollbar-hide">
                     <!-- Items will be generated here -->
-                    <p class="text-sm text-slate-500 italic text-center py-6">Klicke auf "Plan generieren", um deine heutigen Tasks basierend auf deinem Bestand zu laden.</p>
+                    <p class="text-sm text-slate-500 italic text-center py-6">Wird geladen …</p>
                 </div>
             </div>
 
@@ -1088,7 +1095,7 @@
         </div>
 
         <div id="view-calc" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                     <div class="lg:col-span-5 space-y-8">
                         <div>
@@ -1164,7 +1171,7 @@
                 </div>
             </div>
 
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="mb-8">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -1219,7 +1226,7 @@
                 </div>
             </div>
 
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="mb-8">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold mb-4">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
@@ -1549,7 +1556,7 @@
                 <p class="text-slate-400 text-sm max-w-2xl mx-auto">Rechne aus, wie viel Wirkstoff ein einzelner Hub enthält &mdash; und protokolliere die Gabe mitsamt Nasenloch, damit der Seitenwechsel nachvollziehbar bleibt.</p>
             </div>
 
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
                     <!-- Eingaben -->
@@ -1675,7 +1682,7 @@
             </div>
 
             <!-- Protokoll -->
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="mb-8">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
                         <span class="text-base">👃</span> Protokoll
@@ -1743,7 +1750,7 @@
                 <p class="text-slate-400 text-sm max-w-2xl mx-auto">Sicherheit geht vor. Generiere präzise Labor-Checklisten (vor und nach dem Zyklus) basierend auf der gewählten Substanz.</p>
             </div>
             
-            <div class="glass-card rounded-3xl p-6 sm:p-10 max-w-4xl mx-auto">
+            <div class="glass-card rounded-3xl p-4 sm:p-10 max-w-4xl mx-auto">
                 <div class="space-y-6">
                     <div class="bg-slate-900/50 p-4 rounded-2xl border border-brand-500/30">
                         <label class="text-xs font-semibold text-brand-400 uppercase tracking-wider block mb-2">Substanz auswählen</label>
@@ -1787,7 +1794,7 @@
         </div>
 
         <div id="view-storage" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                     <div class="lg:col-span-5 space-y-8">
                         <div>
@@ -1850,7 +1857,7 @@
         </div>
 
         <div id="view-inventory" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="mb-8">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4">
                         <span class="text-base">📦</span> Smart Inventory
@@ -1910,7 +1917,7 @@
         </div>
 
         <div id="view-tracker" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="mb-8">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
                         <span class="text-base">📊</span> Quantified Self
@@ -1922,31 +1929,49 @@
                 <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
                     <!-- Tracker Form -->
                     <div class="xl:col-span-4 space-y-8">
-                        <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 space-y-5">
+                        <div class="bg-slate-900/50 p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-5">
                             <div class="flex justify-between items-center border-b border-white/5 pb-3">
                                 <h3 class="text-lg font-bold text-white">Neuer Eintrag</h3>
-                                <input type="date" id="trk-date" aria-label="Datum des Eintrags" class="bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-3 text-xs text-white focus:border-brand-500 outline-none w-36 cursor-pointer font-mono">
+                                <input type="date" id="trk-date" aria-label="Datum des Eintrags" onchange="trkDatumGeaendert()" class="bg-slate-800 border border-slate-600 rounded-lg py-1.5 px-3 text-xs text-white focus:border-brand-500 outline-none w-36 cursor-pointer font-mono">
                             </div>
                             
-                            <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
-                                <button onclick="setTrackerType('injection', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-700 text-white shadow-sm transition-all flex items-center justify-center gap-1.5 hidden"><span class="text-sm">💉</span> Dosis</button>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+                                <button onclick="setTrackerType('injection', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span class="text-sm">💊</span> Einnahme</button>
                                 <button onclick="setTrackerType('feedback', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-700 text-white shadow-sm transition-all flex items-center justify-center gap-1.5"><span class="text-sm">📊</span> Bio</button>
                                 <button onclick="setTrackerType('note', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span class="text-sm">📝</span> Notiz</button>
                                 <button onclick="setTrackerType('workout', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span class="text-sm">🏋️</span> Gym</button>
                             </div>
 
-                            <!-- Injektion wurde zur Body-Map verschoben -->
-                            <div id="trk-form-injection" class="trk-form-section hidden space-y-4">
-                                <div class="bg-brand-500/10 border border-brand-500/20 p-4 rounded-xl text-center space-y-3">
-                                    <span class="text-2xl">📍</span>
-                                    <div>
-                                        <h4 class="text-sm font-bold text-brand-400">Neuer Workflow</h4>
-                                        <p class="text-xs text-brand-200/80 mt-1">Um Gewebeverhärtungen zu vermeiden, werden Injektionen ab sofort ausschließlich über die Body-Map protokolliert (Inklusive Angabe der Einstichstelle).</p>
-                                    </div>
-                                    <button onclick="router('map')" class="w-full py-2 bg-brand-500 text-white hover:bg-brand-400 rounded-lg text-xs font-bold transition-all shadow-glow-brand mt-2">
-                                        Zur Body-Map wechseln
-                                    </button>
+                            <!-- Einnahme: oral, Injektion ohne Zone, nasal, topisch. Auch nachtraeglich. -->
+                            <div id="trk-form-injection" class="trk-form-section hidden space-y-4 animate-fade-in-up">
+                                <div>
+                                    <label for="trk-pep" class="text-xs font-semibold text-slate-300 block mb-1">Substanz</label>
+                                    <select id="trk-pep" onchange="trkEinnahmeAnpassen({ neu: true })" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none"></select>
+                                    <input type="text" id="trk-pep-eigen" placeholder="Eigene Bezeichnung, z. B. Vitamin D3" aria-label="Eigene Bezeichnung" class="hidden mt-2 w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none">
                                 </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="trk-menge" class="text-xs font-semibold text-slate-300 block mb-1">Menge</label>
+                                        <input type="number" id="trk-menge" step="any" min="0" inputmode="decimal" placeholder="250" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                                    </div>
+                                    <div>
+                                        <label for="trk-einheit" class="text-xs font-semibold text-slate-300 block mb-1">Einheit</label>
+                                        <select id="trk-einheit" onchange="trkEinnahmeAnpassen()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none"></select>
+                                    </div>
+                                    <div>
+                                        <label for="trk-form-art" class="text-xs font-semibold text-slate-300 block mb-1">Form</label>
+                                        <select id="trk-form-art" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none"></select>
+                                    </div>
+                                    <div>
+                                        <label for="trk-zeit" class="text-xs font-semibold text-slate-300 block mb-1">Uhrzeit <span class="text-slate-500 font-normal">(optional)</span></label>
+                                        <input type="time" id="trk-zeit" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                                    </div>
+                                </div>
+                                <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-800/40 border border-white/5 cursor-pointer">
+                                    <input type="checkbox" id="trk-abziehen" class="mt-0.5 w-5 h-5 shrink-0 accent-brand-500">
+                                    <span class="text-xs text-slate-300">Vom Bestand abziehen<span id="trk-abziehen-hinweis" class="block text-slate-500 mt-0.5"></span></span>
+                                </label>
+                                <p class="text-xs text-slate-500">Injektionen mit Einstichstelle trägst du über die <button type="button" onclick="router('map')" class="text-brand-400 underline underline-offset-2 hover:text-brand-300">Body-Map</button> ein, dann merkt sich die App die Zone.</p>
                             </div>
 
                             <div id="trk-form-feedback" class="trk-form-section block space-y-4 animate-fade-in-up">
@@ -2000,7 +2025,7 @@
                                 Eintrag speichern
                             </button>
                         </div>
-                        <div class="bg-slate-900/30 p-6 rounded-2xl border border-white/5">
+                        <div class="bg-slate-900/30 p-4 sm:p-6 rounded-2xl border border-white/5">
                             <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
                                 <h3 class="text-sm font-bold text-white">Letzte Einträge</h3>
                                 <button onclick="customConfirm('Möchtest du den gesamten Quantified Self Verlauf wirklich löschen?', clearTrackerData)" class="text-xs text-rose-400 hover:text-rose-300 transition-colors">Verlauf löschen</button>
@@ -2018,7 +2043,7 @@
                         </div>
 
                         <!-- MAIN VIEW -->
-                        <div id="tracker-main-view" class="bg-slate-900/50 border border-white/5 rounded-2xl p-6 flex flex-col flex-grow">
+                        <div id="tracker-main-view" class="bg-slate-900/50 border border-white/5 rounded-2xl p-3 sm:p-6 flex flex-col flex-grow">
                             <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
                                 <h3 class="text-xl font-bold text-white" id="cal-month-title">Monat Jahr</h3>
                                 <div class="flex gap-2">
@@ -2039,12 +2064,15 @@
                             
                             <div class="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-400 justify-center">
                                 <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-500/80"></span> Injektion</div>
+                                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-pink-400/80"></span> Oral &amp; sonstige</div>
                                 <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></span> Bio-Feedback</div>
                                 <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400/80"></span> Notiz</div>
                                 <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-purple-500/80"></span> Workout</div>
                                 <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-accent/80"></span> Nasenspray</div>
                                 <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border border-emerald-500"></span> Heute</div>
                             </div>
+
+                            <div id="cal-tag-details" class="mt-4" aria-live="polite"></div>
                         </div>
 
                         <!-- ANALYTICS VIEW -->
@@ -2089,7 +2117,7 @@
         </div>
 
         <div id="view-sport" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="mb-8">
                     <h2 class="text-3xl font-bold text-white mb-2">Sportmedizin & Protokolle</h2>
                     <p class="text-slate-400 text-sm">Wähle ein Ziel, um die physiologischen Mechanismen zu verstehen.</p>
@@ -2139,7 +2167,7 @@
         </div>
 
         <div id="view-stack" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="mb-8">
                     <h2 class="text-3xl font-bold text-white mb-2">Stack-Check</h2>
                     <p class="text-slate-400 text-sm">Wähle Moleküle aus, um ihre biochemische Überlagerung zu prüfen.</p>
@@ -2175,7 +2203,7 @@
         </div>
 
         <div id="view-tutorial" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="mb-8">
                     <h2 class="text-3xl font-bold text-white mb-2">Rekonstitutions-Guide</h2>
                     <p class="text-slate-400 text-sm">Schritt-für-Schritt Anleitung zum sterilen Anmischen von Peptiden.</p>
@@ -2212,7 +2240,7 @@
         </div>
 
         <div id="view-coupons" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="text-center max-w-2xl mx-auto mb-10 space-y-4">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -2336,7 +2364,7 @@
         </div>
 
         <div id="view-wiki" class="view-panel hidden space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-10">
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
                 <div class="mb-8">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold mb-4">
                         <span class="text-base">📚</span> Knowledge Base
@@ -2499,7 +2527,7 @@
     </main>
 
     <!-- Assistent: regelbasiert, liest nur App-Daten, kein Netz -->
-    <div id="ai-chat-window" role="dialog" aria-label="Assistent" aria-hidden="true" class="fixed bottom-24 right-4 sm:right-8 w-[350px] max-w-[calc(100vw-2rem)] bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] z-[100] flex flex-col opacity-0 pointer-events-none translate-y-10 transition-all duration-300 overflow-hidden" style="height: 500px; max-height: 70vh;">
+    <div id="ai-chat-window" role="dialog" aria-label="Assistent" aria-hidden="true" class="ueber-leiste fixed bottom-24 right-4 sm:right-8 w-[350px] max-w-[calc(100vw-2rem)] bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] z-[100] flex flex-col opacity-0 pointer-events-none translate-y-10 transition-all duration-300 overflow-hidden" style="height: 500px; max-height: 70vh; max-height: 70dvh;">
         <!-- Header -->
         <div class="bg-gradient-to-r from-brand-600 to-brand-500 p-4 flex justify-between items-center shadow-md relative z-10">
             <div class="flex items-center gap-3">
@@ -2562,7 +2590,7 @@
     </div>
 
     <!-- Floating Action Button -->
-    <button onclick="toggleAIChat()" aria-label="Assistent öffnen" aria-controls="ai-chat-window" class="fixed bottom-24 right-4 sm:right-8 w-14 h-14 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-white flex items-center justify-center shadow-glow-brand hover:scale-110 hover:rotate-12 transition-all duration-300 z-[90]">
+    <button onclick="toggleAIChat()" aria-label="Assistent öffnen" aria-controls="ai-chat-window" class="ueber-leiste fixed bottom-24 right-4 sm:right-8 w-14 h-14 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-white flex items-center justify-center shadow-glow-brand hover:scale-110 hover:rotate-12 transition-all duration-300 z-[90]">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
     </button>
 
@@ -3180,6 +3208,89 @@
         function anzeigeRisiko(risk, level) {
             if (risk === 'low' && level !== 'human') return 'unknown';
             return risk;
+        }
+
+        // --- Einnahmen ------------------------------------------------
+        // Gemeinsame Bausteine fuer Journal, Wochenplan und Tagesplan.
+        const EINHEITEN = ['mg', 'mcg', 'IE', 'ml', 'Stück', 'Tropfen'];
+        const EINNAHMEFORMEN = ['Oral', 'Subkutan', 'Intramuskulär', 'Nasal', 'Topisch'];
+        const TAGESZEITEN = ['', 'Morgens', 'Mittags', 'Abends', 'Vor dem Schlafen'];
+
+        // Zahl ohne Rundungsrauschen, mit deutschem Komma: 0.25 -> "0,25"
+        function zahlText(n) {
+            return String(Math.round(n * 1000) / 1000).replace('.', ',');
+        }
+
+        // Menge in mg, soweit sich das sagen laesst. "Stück" nur, wenn im
+        // Bestand eine Tablettenpackung mit bekanntem Gehalt liegt.
+        function mengeInMg(menge, einheit, pepId) {
+            if (!(menge > 0)) return null;
+            if (einheit === 'mg') return menge;
+            if (einheit === 'mcg') return menge / 1000;
+            if (einheit === 'Stück' && pepId) {
+                const eintrag = readStore('peptide_inventory')[pepId];
+                const packung = eintrag && (eintrag.batches || []).find(b => b.form === 'tablette' && b.mgProStk > 0);
+                if (packung) return menge * packung.mgProStk;
+            }
+            return null;
+        }
+
+        // mg aus der Dosisangabe eines Journaleintrags ("0.25mg", "250mcg").
+        // Steht eine andere Einheit dabei ("2 IE", "1 Stück"), gibt es null -
+        // sonst zaehlten zwei Kapseln als zwei mg. Aeltere Eintraege ohne
+        // Einheit gelten wie bisher als mg.
+        function dosisInMg(str) {
+            const m = String(str || '').toLowerCase().replace(',', '.').match(/(\d+(?:\.\d+)?)\s*([a-zäöüµ]*)/);
+            if (!m) return null;
+            const wert = parseFloat(m[1]);
+            if (m[2] === '' || m[2] === 'mg') return wert;
+            if (m[2] === 'mcg' || m[2] === 'µg') return wert / 1000;
+            return null;
+        }
+
+        // Dosis fuer das Journal: mg und mcg wie bisher ohne Leerzeichen
+        // ("0.25mg"), damit Reichweite und Assistent sie lesen koennen.
+        function journalDosis(menge, einheit, mg) {
+            const rund = n => String(Math.round(n * 1000) / 1000);
+            if (einheit === 'mg' || einheit === 'mcg') return rund(menge) + einheit;
+            if (mg) return rund(mg) + 'mg';
+            return rund(menge) + ' ' + einheit;
+        }
+
+        // Journal-Typ: Injektionen bleiben "injection", nasal "nasal",
+        // oral und topisch bekommen eigene Typen.
+        function einnahmeTyp(form) {
+            if (form === 'Oral') return 'oral';
+            if (form === 'Nasal') return 'nasal';
+            if (form === 'Topisch') return 'einnahme';
+            return 'injection';
+        }
+
+        // Zaehlt der Eintrag als Einnahme einer Substanz?
+        function istEinnahme(e) {
+            return e.type === 'injection' || e.type === 'oral' || e.type === 'nasal' ||
+                   e.type === 'einnahme' || (!e.type && !!e.peptide);
+        }
+
+        // Form aus der Datenbank vorschlagen ("Subkutan", "Oral/Nasal" ...)
+        function formVorschlag(pepId) {
+            const p = RAW_DATA.find(x => x[0] === pepId);
+            const f = String(p && p[9] && p[9].form || '').toLowerCase().split('/')[0].trim();
+            if (f.startsWith('oral')) return 'Oral';
+            if (f.startsWith('nasal')) return 'Nasal';
+            if (f.startsWith('topisch') || f.startsWith('lokal')) return 'Topisch';
+            if (f.startsWith('im')) return 'Intramuskulär';
+            return 'Subkutan';
+        }
+
+        function optionenSubstanzen(gewaehlt) {
+            return '<option value="">-- Substanz wählen --</option>' +
+                nachNamen(RAW_DATA).map(p => '<option value="' + p[0] + '"' + (p[0] === gewaehlt ? ' selected' : '') + '>' + esc(p[2]) + '</option>').join('') +
+                '<option value="__eigen"' + (gewaehlt === '__eigen' ? ' selected' : '') + '>Eigene Angabe …</option>';
+        }
+
+        function optionenListe(liste, gewaehlt, leerText) {
+            return liste.map(x => '<option value="' + x + '"' + (x === gewaehlt ? ' selected' : '') + '>' + (x || leerText || '–') + '</option>').join('');
         }
 
         let confirmCallback = null;
@@ -3923,7 +4034,7 @@
                         </div>
 
                         <!-- Tabs Header -->
-                        <div class="flex border-b border-white/10 mb-4 overflow-x-auto pb-2 max-w-full scroll-smooth">
+                        <div class="flex flex-wrap gap-y-1 border-b border-white/10 mb-4 pb-2">
                             <button onclick="toggleCardTab(this, '${p.id}-eff')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-brand-400 border-b-2 border-brand-500 transition-colors whitespace-nowrap shrink-0">Wirkung</button>
                             <button onclick="toggleCardTab(this, '${p.id}-side')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Risiken</button>
                             <button onclick="toggleCardTab(this, '${p.id}-dose')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Dosierung</button>
@@ -5317,14 +5428,19 @@
         }
 
         function initTracker() {
-            // Set today's date in input (Lokale Zeit)
+            // Heutiges Datum (Ortszeit); in die Zukunft laesst sich nichts eintragen
             const dateInput = document.getElementById('trk-date');
             if(dateInput) {
-                const today = new Date();
-                const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, '0');
-                const day = String(today.getDate()).padStart(2, '0');
-                dateInput.value = `${year}-${month}-${day}`;
+                dateInput.value = localDateISO();
+                dateInput.max = localDateISO();
+            }
+
+            const pep = document.getElementById('trk-pep');
+            if (pep) {
+                pep.innerHTML = optionenSubstanzen('');
+                document.getElementById('trk-einheit').innerHTML = optionenListe(EINHEITEN, 'mg');
+                document.getElementById('trk-form-art').innerHTML = optionenListe(EINNAHMEFORMEN, 'Oral');
+                trkEinnahmeAnpassen({ neu: true });
             }
 
                         // Setze UI initial auf Feedback
@@ -5336,6 +5452,95 @@
             if(typeof renderAnalytics === 'function') renderAnalytics();
         }
 
+        // Haelt das Einnahme-Formular stimmig: eigene Bezeichnung ein- oder
+        // ausblenden, Form vorschlagen und klaeren, ob sich die Menge vom
+        // Bestand abziehen laesst. "neu" heisst: andere Substanz oder
+        // anderer Tag - dann wird auch der Haken neu gesetzt.
+        function trkEinnahmeAnpassen(opt) {
+            const sel = document.getElementById('trk-pep');
+            if (!sel) return;
+            const neu = opt && opt.neu;
+            const eigen = sel.value === '__eigen';
+            document.getElementById('trk-pep-eigen').classList.toggle('hidden', !eigen);
+            if (neu && sel.value) document.getElementById('trk-form-art').value = eigen ? 'Oral' : formVorschlag(sel.value);
+
+            const box = document.getElementById('trk-abziehen');
+            const hinweis = document.getElementById('trk-abziehen-hinweis');
+            const pepId = eigen ? '' : sel.value;
+            const imBestand = pepId && readStore('peptide_inventory')[pepId];
+            const umrechenbar = pepId && mengeInMg(1, document.getElementById('trk-einheit').value, pepId) !== null;
+            const heute = document.getElementById('trk-date').value === localDateISO();
+
+            if (!imBestand) {
+                box.checked = false; box.disabled = true;
+                hinweis.textContent = pepId ? 'Diese Substanz ist nicht im Bestand.' : 'Nur für Substanzen aus dem Bestand.';
+            } else if (!umrechenbar) {
+                box.checked = false; box.disabled = true;
+                hinweis.textContent = 'Geht nur mit mg, mcg oder Stück (bei Tabletten im Bestand).';
+            } else {
+                box.disabled = false;
+                if (neu) box.checked = heute;
+                hinweis.textContent = heute
+                    ? 'Die Menge wird vom angebrochenen Vial bzw. der Packung abgezogen.'
+                    : 'Beim Nachtragen meist schon erledigt. Nur anhaken, wenn die Menge noch im Bestand steht.';
+            }
+        }
+
+        // Kalender und Formular zeigen denselben Tag
+        let calAuswahl = null;
+
+        function trkDatumGeaendert() {
+            const input = document.getElementById('trk-date');
+            if (!input || !input.value) return;
+            calAuswahl = input.value;
+            const d = new Date(input.value + 'T12:00:00');
+            if (!isNaN(d)) calCurrentDate = new Date(d.getFullYear(), d.getMonth(), 1);
+            trkEinnahmeAnpassen({ neu: true });
+            renderTrackerCalendar();
+        }
+
+        function waehleKalenderTag(datum) {
+            if (datum > localDateISO()) return;
+            calAuswahl = datum;
+            const input = document.getElementById('trk-date');
+            if (input) input.value = datum;
+            trkEinnahmeAnpassen({ neu: true });
+            renderTrackerCalendar();
+        }
+
+        // Oeffnet das Einnahme-Formular fuer das eingestellte Datum
+        function einnahmeEintragen() {
+            const b = document.querySelector('.tracker-type-btn:nth-child(1)');
+            if (b) setTrackerType('injection', b);
+            trkEinnahmeAnpassen({ neu: true });
+            const f = document.getElementById('trk-pep');
+            if (f) {
+                f.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => f.focus({ preventScroll: true }), 300);
+            }
+        }
+
+        function renderKalenderTag() {
+            const box = document.getElementById('cal-tag-details');
+            if (!box) return;
+            if (!calAuswahl) {
+                box.innerHTML = '<p class="text-xs text-slate-500 text-center">Tipp auf einen Tag, um seine Einträge zu sehen oder etwas nachzutragen.</p>';
+                return;
+            }
+            const titel = new Date(calAuswahl + 'T12:00:00').toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+            const eintraege = readStore('tracker_data').filter(e => e.date === calAuswahl);
+            box.innerHTML =
+                '<div class="bg-slate-900/50 border border-white/5 rounded-xl p-4 space-y-3">' +
+                    '<div class="flex flex-wrap items-center justify-between gap-2">' +
+                        '<h4 class="text-sm font-bold text-white">' + esc(titel) + '</h4>' +
+                        '<button type="button" onclick="einnahmeEintragen()" class="px-3 py-2 rounded-lg text-xs font-bold bg-brand-500/20 text-brand-300 border border-brand-500/40 hover:bg-brand-500 hover:text-white transition-colors">+ Einnahme ' + (calAuswahl === localDateISO() ? 'eintragen' : 'nachtragen') + '</button>' +
+                    '</div>' +
+                    (eintraege.length
+                        ? '<div class="space-y-2">' + eintraege.map(e => eintragZeile(e, false)).join('') + '</div>'
+                        : '<p class="text-xs text-slate-500">Keine Einträge an diesem Tag.</p>') +
+                '</div>';
+        }
+
         function changeCalMonth(dir) {
             calCurrentDate.setMonth(calCurrentDate.getMonth() + dir);
             renderTrackerCalendar();
@@ -5344,6 +5549,10 @@
         function saveTrackerEntry() {
             const dateVal = document.getElementById('trk-date').value;
             if(!dateVal) return;
+            if (dateVal > localDateISO()) {
+                customConfirm('Das Datum liegt in der Zukunft. Einträge gehen nur für heute oder vergangene Tage.', () => {});
+                return;
+            }
 
             let entry = {
                 id: Date.now().toString(),
@@ -5353,7 +5562,34 @@
 
             // Daten je nach ausgewähltem Tab speichern
             if(activeTrackerType === 'injection') {
-                return; // Injektionen werden jetzt nur noch über die Map eingetragen
+                const sel = document.getElementById('trk-pep');
+                const eigen = sel.value === '__eigen';
+                const pepId = eigen ? '' : sel.value;
+                const pep = RAW_DATA.find(p => p[0] === pepId);
+                const name = eigen ? document.getElementById('trk-pep-eigen').value.trim() : (pep ? pep[2] : '');
+                const menge = parseFloat(String(document.getElementById('trk-menge').value).replace(',', '.'));
+                const einheit = document.getElementById('trk-einheit').value;
+                const form = document.getElementById('trk-form-art').value;
+                const zeit = document.getElementById('trk-zeit').value;
+
+                if (!name || !(menge > 0)) {
+                    customConfirm('Bitte wähle eine Substanz (oder gib eine eigene Bezeichnung ein) und trag eine Menge größer als null ein.', () => {});
+                    return;
+                }
+
+                const mg = pepId ? mengeInMg(menge, einheit, pepId) : null;
+                entry.type = einnahmeTyp(form);
+                entry.peptide = name;
+                entry.dose = journalDosis(menge, einheit, mg);
+                entry.form = form;
+                if (mg && einheit !== 'mg' && einheit !== 'mcg') entry.menge = zahlText(menge) + ' ' + einheit;
+                if (zeit) entry.zeit = zeit;
+
+                const box = document.getElementById('trk-abziehen');
+                if (box.checked && !box.disabled && mg) deductFromInventory(pepId, mg);
+
+                document.getElementById('trk-menge').value = '';
+                document.getElementById('trk-zeit').value = '';
             } 
             else if(activeTrackerType === 'feedback') {
                 entry.sleep = document.getElementById('trk-sleep').value;
@@ -5578,75 +5814,76 @@
             }
         }
 
+        // Eine Journalzeile. Auch die Tagesansicht im Kalender nutzt sie.
+        function eintragZeile(item, mitDatum) {
+            let icon = '';
+            let contentHtml = '';
+
+            if (item.type === 'injection' || item.type === 'oral' || item.type === 'einnahme' || (item.type === undefined && item.peptide)) {
+                const oral = item.type === 'oral' || item.type === 'einnahme';
+                icon = oral ? '<span class="text-pink-400 text-lg">💊</span>' : '<span class="text-brand-400 text-lg">💉</span>';
+                const menge = item.menge ? esc(item.menge) + ', ' : '';
+                const doseText = item.dose ? ` <span class="text-xs text-slate-400">(${menge}${esc(item.dose)})</span>` : '';
+                const details = [item.form, item.zeit ? item.zeit + ' Uhr' : ''].filter(Boolean).join(' · ');
+                contentHtml = `<span class="text-sm font-bold text-white">${esc(item.peptide || 'Unbekannt')}</span>${doseText}` +
+                    (details ? `<span class="block text-xs text-slate-500">${esc(details)}</span>` : '');
+            }
+            else if (item.type === 'feedback' || (item.type === undefined && item.sleep)) {
+                icon = '<span class="text-emerald-400 text-lg">📊</span>';
+                contentHtml = `
+                    <div class="flex flex-wrap gap-x-3 gap-y-1 text-xs font-mono mt-1">
+                        <span class="text-emerald-400" title="Schlaf">SLP: ${esc(item.sleep)}</span>
+                        <span class="text-rose-400" title="Schmerz">PAIN: ${esc(item.pain)}</span>
+                        <span class="text-brand-400" title="Wohlbefinden">ENG: ${esc(item.mood)}</span>
+                    </div>
+                `;
+            }
+            else if (item.type === 'nasal') {
+                icon = '<span class="text-accent text-lg">👃</span>';
+                const extra = item.huebe ? `, ${esc(item.huebe)} Hub ${esc(item.seite || '')}` : (item.zeit ? `, ${esc(item.zeit)} Uhr` : '');
+                contentHtml = `<span class="text-sm font-bold text-white">${esc(item.peptide)}</span>` +
+                    `<span class="text-xs text-slate-400 ml-1">(${esc(item.dose)}${extra})</span>`;
+            }
+            else if (item.type === 'note' || (item.type === undefined && item.note)) {
+                icon = '<span class="text-amber-400 text-lg">📝</span>';
+                contentHtml = `<p class="text-xs text-slate-300 italic">"${esc(item.note)}"</p>`;
+            }
+            else if (item.type === 'workout' || (item.type === undefined && item.focus)) {
+                icon = '<span class="text-purple-400 text-lg">🏋️</span>';
+                contentHtml = `
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-sm font-bold text-white">${esc(item.focus || 'Training')}</span>
+                        <div class="flex flex-wrap gap-x-3 text-xs font-mono text-purple-300">
+                            <span title="Arbeitssätze">VOL: ${esc(item.sets || 0)} Sätze</span>
+                            <span title="Intensität">RPE: ${esc(item.rpe || '-')}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const datum = mitDatum
+                ? `<span class="text-xs font-bold text-slate-500 font-mono shrink-0">${new Date(item.date + 'T12:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: 'short' })}</span>`
+                : '';
+            return `
+                <div class="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl border border-white/5">
+                    <div class="w-10 h-10 rounded-full bg-slate-900/80 flex items-center justify-center shrink-0 border border-white/5 shadow-inner">${icon}</div>
+                    <div class="flex-1 min-w-0 break-words">${contentHtml}</div>
+                    ${datum}
+                    <button onclick="deleteTrackerEntry('${escAttr(item.id)}')" class="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-slate-500 hover:text-rose-400 hover:bg-white/5 transition-colors" title="Eintrag löschen" aria-label="Eintrag löschen"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                </div>
+            `;
+        }
+
         function renderTrackerRecent() {
             const list = document.getElementById('tracker-recent-list');
             if(!list) return;
 
-            let data = readStore('tracker_data');
-            
+            const data = readStore('tracker_data');
             if(data.length === 0) {
                 list.innerHTML = '<p class="text-sm text-slate-500 text-center py-4">Noch keine Einträge vorhanden.</p>';
                 return;
             }
-
-            let html = '';
-            const showData = data.slice(0, 15);
-            
-            showData.forEach(item => {
-                let dateObj = new Date(item.date);
-                let dateStr = dateObj.toLocaleDateString('de-DE', { day: '2-digit', month: 'short' });
-
-                let icon = '';
-                let contentHtml = '';
-
-                if (item.type === 'injection' || (item.type === undefined && item.peptide)) {
-                    icon = '<span class="text-brand-400 text-lg">💉</span>';
-                    let doseText = item.dose ? ` <span class="text-xs text-slate-400 ml-1">(${item.dose})</span>` : '';
-                    let subName = esc(item.peptide ? item.peptide : 'Unbekannt');
-                    contentHtml = `<span class="text-sm font-bold text-white">${subName}</span>${doseText}`;
-                } 
-                else if (item.type === 'feedback' || (item.type === undefined && item.sleep)) {
-                    icon = '<span class="text-emerald-400 text-lg">📊</span>';
-                    contentHtml = `
-                        <div class="flex gap-3 text-xs font-mono mt-1 w-full justify-between pr-4">
-                            <span class="text-emerald-400" title="Schlaf">SLP: ${item.sleep}</span>
-                            <span class="text-rose-400" title="Schmerz">PAIN: ${item.pain}</span>
-                            <span class="text-brand-400" title="Wohlbefinden">ENG: ${item.mood}</span>
-                        </div>
-                    `;
-                } 
-                else if (item.type === 'nasal') {
-                    icon = '<span class="text-accent text-lg">👃</span>';
-                    contentHtml = `<span class="text-sm font-bold text-white">${item.peptide}</span>` +
-                        `<span class="text-xs text-slate-400 ml-1">(${item.dose}, ${item.huebe} Hub ${item.seite})</span>`;
-                }
-                else if (item.type === 'note' || (item.type === undefined && item.note)) {
-                    icon = '<span class="text-amber-400 text-lg">📝</span>';
-                    contentHtml = `<p class="text-xs text-slate-300 italic">"${esc(item.note)}"</p>`;
-                }
-                else if (item.type === 'workout' || (item.type === undefined && item.focus)) {
-                    icon = '<span class="text-purple-400 text-lg">🏋️</span>';
-                    contentHtml = `
-                        <div class="flex flex-col gap-0.5">
-                            <span class="text-sm font-bold text-white">${esc(item.focus || 'Training')}</span>
-                            <div class="flex gap-3 text-xs font-mono text-purple-300">
-                                <span title="Arbeitssätze">VOL: ${item.sets || 0} Sätze</span>
-                                <span title="Intensität">RPE: ${item.rpe || '-'}</span>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                html += `
-                    <div class="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl border border-white/5">
-                        <div class="w-10 h-10 rounded-full bg-slate-900/80 flex items-center justify-center shrink-0 border border-white/5 shadow-inner">${icon}</div>
-                        <div class="flex-grow">${contentHtml}</div>
-                        <span class="text-xs font-bold text-slate-500 font-mono shrink-0">${dateStr}</span>
-                        <button onclick="deleteTrackerEntry('${item.id}')" class="text-slate-600 hover:text-rose-400 transition-colors px-2">✖</button>
-                    </div>
-                `;
-            });
-            list.innerHTML = html;
+            list.innerHTML = data.slice(0, 15).map(item => eintragZeile(item, true)).join('');
         }
 
         function deleteTrackerEntry(id) {
@@ -5681,6 +5918,7 @@
 
             let data = readStore('tracker_data');
             const today = new Date();
+            const heuteStr = localDateISO(today);
             const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
 
             for(let i=1; i<=daysInMonth; i++) {
@@ -5692,28 +5930,34 @@
                 if(isToday) bgClass = "bg-slate-800/80 border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.2)]";
 
                 let dots = '';
-                let hasInj = entries.some(e => e.type === 'injection' || e.peptide);
+                let hasInj = entries.some(e => e.type === 'injection' || (!e.type && e.peptide));
+                let hasOral = entries.some(e => e.type === 'oral' || e.type === 'einnahme');
                 let hasBio = entries.some(e => e.type === 'feedback' || e.sleep);
                 let hasNote = entries.some(e => e.type === 'note' || e.note);
                 let hasWorkout = entries.some(e => e.type === 'workout' || e.focus);
                 let hasNasal = entries.some(e => e.type === 'nasal');
 
                 if(hasInj) dots += `<span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>`;
+                if(hasOral) dots += `<span class="w-1.5 h-1.5 rounded-full bg-pink-400"></span>`;
                 if(hasBio) dots += `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>`;
                 if(hasNote) dots += `<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>`;
                 if(hasWorkout) dots += `<span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>`;
                 if(hasNasal) dots += `<span class="w-1.5 h-1.5 rounded-full bg-accent"></span>`;
 
+                const zukunft = dateStr > heuteStr;
+                const gewaehlt = dateStr === calAuswahl;
+                const label = `${i}. ${monthNames[month]}` + (entries.length ? `, ${entries.length} ${entries.length === 1 ? 'Eintrag' : 'Einträge'}` : '');
                 html += `
-                    <div class="aspect-square flex flex-col items-center justify-between p-1 rounded-lg border ${bgClass} transition-colors hover:border-slate-500 cursor-pointer group">
-                        <span class="text-xs font-bold ${isToday ? 'text-white' : 'text-slate-400'} group-hover:text-white transition-colors">${i}</span>
-                        <div class="flex gap-0.5 flex-wrap justify-center mt-auto mb-0.5 w-full px-0.5 h-3">
+                    <button type="button" onclick="waehleKalenderTag('${dateStr}')" ${zukunft ? 'disabled' : ''} aria-pressed="${gewaehlt}" aria-label="${label}" class="aspect-square min-w-0 flex flex-col items-center justify-between p-1 rounded-lg border ${bgClass} ${gewaehlt ? 'ring-2 ring-brand-400' : ''} ${zukunft ? 'opacity-40 cursor-not-allowed' : 'hover:border-slate-500 cursor-pointer'} transition-colors group">
+                        <span class="text-xs font-bold ${isToday || gewaehlt ? 'text-white' : 'text-slate-400'} group-hover:text-white transition-colors">${i}</span>
+                        <span class="flex gap-0.5 flex-wrap justify-center mt-auto mb-0.5 w-full px-0.5 h-3">
                             ${dots}
-                        </div>
-                    </div>
+                        </span>
+                    </button>
                 `;
             }
             grid.innerHTML = html;
+            renderKalenderTag();
         }
 
         function initInventoryPresets() {
@@ -6221,7 +6465,7 @@ function renderInventory() {
 
                 doseLog.forEach(entry => {
                     if (entry.peptide !== pep[2]) return;
-                    if (entry.type && entry.type !== 'injection' && entry.type !== 'nasal') return;
+                    if (!istEinnahme(entry)) return;
                     // Journaleintraege haben ein Datum, keine Uhrzeit - Mittag
                     // als Bezugspunkt vermeidet Zeitzonen-Verschiebungen.
                     const t = new Date(entry.date + 'T12:00:00').getTime();
@@ -6230,10 +6474,7 @@ function renderInventory() {
                     hasHistory = true;
                     if (t < firstUseTime) firstUseTime = t;
                     if (t > oneWeekAgo) {
-                        let doseStr = String(entry.dose || "");
-                        let val = parseFloat(doseStr.replace(/[^0-9.]/g, '')) || 0;
-                        if (doseStr.toLowerCase().includes('mcg')) val = val / 1000;
-                        consumedInLast7Days += val;
+                        consumedInLast7Days += dosisInMg(entry.dose) || 0;
                     }
                 });
 
@@ -7218,41 +7459,26 @@ function renderInventory() {
         }
 
         function briefTagesplan() {
-            let s = readStore('daily_schedule');
+            // Derselbe Abgleich wie im Tagesplan der Uebersicht
+            const s = readStore('weekly_routine').length ? planFuerHeute() : readStore('daily_schedule');
+            if (s.date !== localDateISO()) s.items = [];
 
-            // Plan fuer heute noch nicht erzeugt? Aus dem Wochenplan
-            // fuellen, damit das Briefing nicht leer bleibt.
-            if (s.date !== localDateISO()) {
-                const routine = readStore('weekly_routine', []);
-                const dow = new Date().getDay();
-                s = { date: localDateISO(), items: [] };
-                routine.forEach(rule => {
-                    if (!rule.days || rule.days.indexOf(dow) === -1) return;
-                    const p = RAW_DATA.find(x => x[0] === rule.pepId);
-                    s.items.push({
-                        id: 'sched_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                        pepId: rule.pepId, name: p ? p[2] : rule.pepId,
-                        doseMg: rule.dose, completed: false
-                    });
-                });
-                if (s.items.length) writeStore('daily_schedule', s);
-            }
+            const punkte = sichtbarePunkte(s);
+            const offen = punkte.filter(i => !i.completed);
+            const fertig = punkte.filter(i => i.completed);
 
-            const offen = (s.items || []).filter(i => !i.completed);
-            const fertig = (s.items || []).filter(i => i.completed);
-
-            if (!s.items || !s.items.length) {
+            if (!punkte.length) {
                 return briefBlock('📋', 'Heute', '<p class="text-xs text-slate-400">Nichts eingeplant. Über den Wochenplan in der Übersicht lässt sich das automatisieren.</p>');
             }
             if (!offen.length) {
                 return briefBlock('📋', 'Heute',
                     '<p class="text-xs text-emerald-400">Alles erledigt — ' + fertig.length +
-                    ' von ' + s.items.length + ' abgehakt.</p>', 'border-emerald-500/20');
+                    ' von ' + punkte.length + ' abgehakt.</p>', 'border-emerald-500/20');
             }
             return briefBlock('📋', 'Heute',
                 offen.map(i => '<div class="flex justify-between gap-2 py-1 border-b border-white/5 last:border-0">' +
                     '<span class="text-sm text-white">' + esc(i.name) + '</span>' +
-                    '<span class="text-xs font-mono text-slate-400">' + i.doseMg + ' mg</span></div>').join('') +
+                    '<span class="text-xs font-mono text-slate-400 shrink-0">' + punktMengeText(i) + '</span></div>').join('') +
                 (fertig.length ? '<p class="text-xs text-slate-500 mt-2">' + fertig.length + ' bereits erledigt</p>' : ''),
                 'border-brand-500/25');
         }
@@ -7453,6 +7679,7 @@ function renderInventory() {
             if(typeof initTracker === "function") initTracker();
             
             if(typeof renderDashboard === "function") renderDashboard();
+            if(typeof renderDailySchedule === "function") renderDailySchedule();
             if(typeof renderBackupStand === "function") renderBackupStand();
             if(typeof speicherSichern === "function") speicherSichern();
             if(typeof startAlarmEngine === "function") startAlarmEngine();
@@ -7628,7 +7855,7 @@ function renderInventory() {
                 let activePeptides = {};
                 history.forEach(h => {
                     // Nasengaben zaehlen mit - es ist derselbe Wirkstoff
-                    if ((h.type === 'injection' || h.type === 'nasal') && h.peptide) {
+                    if (istEinnahme(h) && h.peptide) {
                         let hDate = new Date(h.date).getTime();
                         if (hDate > twoWeeksAgo) {
                             activePeptides[h.peptide] = (activePeptides[h.peptide] || 0) + 1;
@@ -7654,7 +7881,7 @@ function renderInventory() {
                     if(stackKeys.length > 3) html += `<div class="text-xs text-slate-500 text-center mt-2">+ ${stackKeys.length - 3} weitere aktiv</div>`;
                     dashStack.innerHTML = html + `<button onclick="router('stack')" class="w-full text-xs text-purple-400 hover:text-purple-300 transition-colors text-center mt-3 block">Zum Stack-Check →</button>`;
                 } else {
-                    dashStack.innerHTML = `<p class="text-xs text-slate-500 italic mb-3">Kein aktiver Zyklus erkannt.</p><button onclick="router('tracker')" class="w-full py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-lg text-xs font-bold transition-all hover:bg-purple-500/30">Injektion loggen</button>`;
+                    dashStack.innerHTML = `<p class="text-xs text-slate-500 italic mb-3">Kein aktiver Zyklus erkannt.</p><button onclick="router('tracker'); setTimeout(() => einnahmeEintragen(), 100);" class="w-full py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-lg text-xs font-bold transition-all hover:bg-purple-500/30">Einnahme eintragen</button>`;
                 }
             }
             
@@ -7662,34 +7889,119 @@ function renderInventory() {
             renderDailySchedule();
         }
 
-        // --- NEW: DAILY SCHEDULE ENGINE ---
-        
+        // --- TAGESPLAN UND WOCHENPLAN ---
+
+        // --- Wochenplan ------------------------------------------------
+        // Regeln: Substanz aus der Datenbank oder eigene Bezeichnung, Menge
+        // mit Einheit, Form, Tageszeit und Wochentage. Aeltere Regeln
+        // kennen nur pepId, dose (in mg) und days - sie werden beim Lesen
+        // ergaenzt und behalten ihr Verhalten.
+        function regelNormalisieren(r) {
+            return {
+                id: r.id || ('regel_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)),
+                pepId: r.pepId || '',
+                name: r.name || '',
+                dose: parseFloat(r.dose) || 0,
+                einheit: r.einheit || 'mg',
+                form: r.form || '',
+                zeit: r.zeit || '',
+                days: Array.isArray(r.days) ? r.days : []
+            };
+        }
+
+        function regelName(r) {
+            const p = r.pepId && RAW_DATA.find(x => x[0] === r.pepId);
+            return p ? p[2] : (r.name || r.pepId || 'Ohne Namen');
+        }
+
+        function wochenplanLesen() {
+            const roh = readStore('weekly_routine');
+            const regeln = roh.map(regelNormalisieren);
+            // Neue IDs einmal festschreiben, damit der Tagesplan sie wiedererkennt
+            if (roh.some((r, i) => r.id !== regeln[i].id)) writeStore('weekly_routine', regeln);
+            return regeln;
+        }
+
+        function punktAusRegel(r) {
+            return {
+                id: 'sched_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                ruleKey: r.id,
+                pepId: r.pepId,
+                name: regelName(r),
+                menge: r.dose,
+                einheit: r.einheit,
+                form: r.form,
+                zeit: r.zeit,
+                doseMg: mengeInMg(r.dose, r.einheit, r.pepId) || 0,
+                completed: false,
+                isCustom: false
+            };
+        }
+
+        function punktMenge(i) {
+            return parseFloat(i.menge !== undefined ? i.menge : i.doseMg) || 0;
+        }
+
+        function punktMengeText(i) {
+            return zahlText(punktMenge(i)) + ' ' + (i.einheit || 'mg');
+        }
+
+        // Punkte, die heute angezeigt werden - fuer heute entfernte nicht
+        function sichtbarePunkte(s) {
+            return (s.items || []).filter(i => !i.entfernt);
+        }
+
+        // Tagesplan fuer heute aus dem Wochenplan. Erledigte, fuer heute
+        // entfernte und selbst hinzugefuegte Punkte bleiben, wie sie sind.
+        // Offene Punkte verschwinden, wenn ihre Regel weg ist; fehlende
+        // kommen dazu. Mit "uebernehmen" bekommen offene Punkte ausserdem
+        // die aktuelle Menge, Form und Tageszeit ihrer Regel.
+        function planFuerHeute(uebernehmen) {
+            const heute = localDateISO();
+            const tag = new Date().getDay();
+            let s = readStore('daily_schedule');
+            if (s.date !== heute || !Array.isArray(s.items)) s = { date: heute, items: [] };
+
+            const regeln = wochenplanLesen().filter(r => (r.pepId || r.name) && r.days.includes(tag));
+            const gehoertZu = (i, r) => i.ruleKey ? i.ruleKey === r.id : (!i.isCustom && !!i.pepId && i.pepId === r.pepId);
+
+            s.items = s.items.filter(i => i.isCustom || i.completed || i.entfernt || regeln.some(r => gehoertZu(i, r)));
+            regeln.forEach(r => {
+                const punkt = s.items.find(i => !i.isCustom && gehoertZu(i, r));
+                if (!punkt) { s.items.push(punktAusRegel(r)); return; }
+                if (uebernehmen && !punkt.completed && !punkt.entfernt) {
+                    Object.assign(punkt, punktAusRegel(r), { id: punkt.id });
+                }
+            });
+            writeStore('daily_schedule', s);
+            return s;
+        }
+
         let tempWeeklyRoutine = [];
 
         function openWeeklyPlanModal() {
-            tempWeeklyRoutine = readStore('weekly_routine');
-            
+            tempWeeklyRoutine = JSON.parse(JSON.stringify(wochenplanLesen()));
+            tempWeeklyRoutine.forEach(r => { r._eigen = !r.pepId; });
+
             const modalHtml = `
-                <div class="fixed inset-0 z-[120] flex items-center justify-center bg-base/90 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="weekly-plan-modal">
-                    <div class="bg-surface border border-white/10 p-4 sm:p-6 rounded-2xl max-w-2xl w-full mx-4 shadow-2xl max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300" id="weekly-plan-modal-box">
-                        <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
-                            <div>
-                                <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"><span>⚙️</span> Dein Protokoll (Wochenplan)</h3>
-                                <p class="text-xs text-slate-400 mt-1">Lege fest, an welchen Tagen du welche Substanz nimmst.</p>
+                <div class="fixed inset-0 z-[120] flex items-center justify-center bg-base/90 backdrop-blur-sm p-3 sm:p-4 opacity-0 transition-opacity duration-300" id="weekly-plan-modal" role="dialog" aria-modal="true" aria-labelledby="weekly-plan-titel">
+                    <div class="bg-surface border border-white/10 p-4 sm:p-6 rounded-2xl max-w-2xl w-full shadow-2xl flex flex-col transform scale-95 transition-transform duration-300" style="max-height: 92vh; max-height: 92dvh;" id="weekly-plan-modal-box">
+                        <div class="flex justify-between items-start gap-3 mb-4 border-b border-white/10 pb-4">
+                            <div class="min-w-0">
+                                <h3 id="weekly-plan-titel" class="text-xl sm:text-2xl font-bold text-white">Wochenplan</h3>
+                                <p class="text-xs text-slate-400 mt-1">Was an welchen Tagen ansteht. Daraus entsteht jeden Tag dein Tagesplan. Einzelne Punkte kannst du dort für einen Tag entfernen oder ergänzen.</p>
                             </div>
-                            <button onclick="closeWeeklyPlanModal()" class="text-slate-500 hover:text-rose-400 transition-colors text-xl">✖</button>
+                            <button onclick="closeWeeklyPlanModal()" aria-label="Wochenplan schließen" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-400 hover:bg-white/5 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                         </div>
-                        
-                        <div id="weekly-plan-list" class="flex-grow overflow-y-auto pr-2 space-y-4 scrollbar-hide mb-4 min-h-[200px]">
-                            <!-- Items werden hier gerendert -->
-                        </div>
-                        
-                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-white/10 mt-auto">
-                            <button onclick="addWeeklyPlanItem()" class="w-full sm:w-auto px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-brand-400 border border-slate-600 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2">
-                                + Neue Regel hinzufügen
+
+                        <div id="weekly-plan-list" class="flex-grow overflow-y-auto pr-1 space-y-4 mb-4 min-h-[160px]"></div>
+
+                        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-4 border-t border-white/10 mt-auto">
+                            <button onclick="addWeeklyPlanItem()" class="w-full sm:w-auto px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-brand-400 border border-slate-600 rounded-xl text-xs font-bold transition-all shadow-sm">
+                                + Punkt hinzufügen
                             </button>
                             <div class="flex gap-2 w-full sm:w-auto">
-                                <button onclick="closeWeeklyPlanModal()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/5 transition-colors border border-transparent">Abbrechen</button>
+                                <button onclick="closeWeeklyPlanModal()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/5 transition-colors">Abbrechen</button>
                                 <button onclick="saveWeeklyPlan()" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs font-bold bg-brand-500 text-white hover:bg-brand-400 transition-colors shadow-glow-brand">Plan speichern</button>
                             </div>
                         </div>
@@ -7697,7 +8009,7 @@ function renderInventory() {
                 </div>
             `;
             document.body.insertAdjacentHTML('beforeend', modalHtml);
-            
+
             const modal = document.getElementById('weekly-plan-modal');
             const box = document.getElementById('weekly-plan-modal-box');
             setTimeout(() => {
@@ -7725,72 +8037,72 @@ function renderInventory() {
 
             if (tempWeeklyRoutine.length === 0) {
                 list.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full text-center space-y-3 mt-10">
-                        <span class="text-4xl">📅</span>
-                        <h4 class="text-slate-300 font-bold">Noch kein Plan erstellt</h4>
-                        <p class="text-xs text-slate-500 max-w-sm">Füge Regeln hinzu, um zu automatisieren, was an welchen Wochentagen in deiner Daily-Checkliste landen soll.</p>
+                    <div class="flex flex-col items-center justify-center text-center space-y-2 py-10">
+                        <h4 class="text-slate-300 font-bold">Noch nichts geplant</h4>
+                        <p class="text-xs text-slate-500 max-w-sm">Füge Punkte hinzu, zum Beispiel eine Substanz aus der Datenbank oder etwas Eigenes wie Vitamin D, und wähle die Wochentage.</p>
                     </div>
                 `;
                 return;
             }
 
-            let selectOptions = '<option value="">-- Substanz wählen --</option>';
-            RAW_DATA.forEach(p => { selectOptions += `<option value="${p[0]}">${p[2]}</option>`; });
-
-            const daysConfig = [
-                { d: 1, l: 'Mo' }, { d: 2, l: 'Di' }, { d: 3, l: 'Mi' }, 
-                { d: 4, l: 'Do' }, { d: 5, l: 'Fr' }, { d: 6, l: 'Sa' }, { d: 0, l: 'So' }
+            const tage = [
+                { d: 1, l: 'Mo', n: 'Montag' }, { d: 2, l: 'Di', n: 'Dienstag' }, { d: 3, l: 'Mi', n: 'Mittwoch' },
+                { d: 4, l: 'Do', n: 'Donnerstag' }, { d: 5, l: 'Fr', n: 'Freitag' }, { d: 6, l: 'Sa', n: 'Samstag' }, { d: 0, l: 'So', n: 'Sonntag' }
             ];
+            const feld = 'w-full bg-slate-900 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white focus:border-brand-500 outline-none';
+            const lab = 'text-xs font-bold text-slate-400 block mb-1';
 
-            let html = '';
-            tempWeeklyRoutine.forEach((item, index) => {
-                let dayButtons = '';
-                daysConfig.forEach(day => {
-                    const isActive = item.days.includes(day.d);
-                    const btnClass = isActive 
-                        ? 'bg-brand-500 text-white border-brand-500 shadow-glow-brand' 
-                        : 'bg-slate-900 text-slate-500 border-slate-700 hover:border-brand-500/50 hover:text-slate-300';
-                    dayButtons += `<button onclick="toggleWeeklyPlanDay(${index}, ${day.d})" class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg border text-xs sm:text-xs font-bold transition-all ${btnClass}">${day.l}</button>`;
-                });
-
-                html += `
-                    <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 relative group transition-colors hover:border-slate-600">
-                        <button onclick="removeWeeklyPlanItem(${index})" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white rounded-full text-xs transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100" title="Regel löschen">✖</button>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4 pr-6 sm:pr-0">
-                            <div class="md:col-span-8">
-                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Substanz</label>
-                                <select onchange="updateWeeklyPlanPep(${index}, this.value)" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white focus:border-brand-500 outline-none">
-                                    ${selectOptions.replace(`value="${item.pepId}"`, `value="${item.pepId}" selected`)}
-                                </select>
+            list.innerHTML = tempWeeklyRoutine.map((r, i) => {
+                const auswahl = r._eigen ? '__eigen' : r.pepId;
+                const tagKnoepfe = tage.map(t => {
+                    const an = r.days.includes(t.d);
+                    return `<button type="button" onclick="toggleWeeklyPlanDay(${i}, ${t.d})" aria-pressed="${an}" aria-label="${t.n}" class="h-10 rounded-lg border text-xs font-bold transition-all ${an ? 'bg-brand-500 text-white border-brand-500' : 'bg-slate-900 text-slate-400 border-slate-700 hover:border-brand-500/50 hover:text-slate-200'}">${t.l}</button>`;
+                }).join('');
+                return `
+                    <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 space-y-3">
+                        <div class="flex items-end gap-2">
+                            <div class="flex-1 min-w-0">
+                                <label for="wp-pep-${i}" class="${lab}">Substanz</label>
+                                <select id="wp-pep-${i}" onchange="updateWeeklyPlanPep(${i}, this.value)" class="${feld}">${optionenSubstanzen(auswahl)}</select>
                             </div>
-                            <div class="md:col-span-4">
-                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Dosis (mg)</label>
-                                <div class="relative">
-                                    <input type="number" step="0.05" min="0" value="${item.dose}" onchange="updateWeeklyPlanDose(${index}, this.value)" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-2 pl-3 pr-8 text-sm text-white font-mono outline-none focus:border-brand-500">
-                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">mg</span>
-                                </div>
+                            <button type="button" onclick="removeWeeklyPlanItem(${i})" aria-label="Punkt ${i + 1} entfernen" title="Punkt entfernen" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                        </div>
+                        ${r._eigen ? `<input type="text" value="${esc(r.name)}" oninput="updateWeeklyPlanFeld(${i}, 'name', this.value)" placeholder="Eigene Bezeichnung, z. B. Vitamin D3" aria-label="Eigene Bezeichnung" class="${feld}">` : ''}
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div>
+                                <label for="wp-menge-${i}" class="${lab}">Menge</label>
+                                <input type="number" id="wp-menge-${i}" step="any" min="0" inputmode="decimal" value="${r.dose || ''}" onchange="updateWeeklyPlanFeld(${i}, 'dose', parseFloat(this.value) || 0)" class="${feld} font-mono">
+                            </div>
+                            <div>
+                                <label for="wp-einheit-${i}" class="${lab}">Einheit</label>
+                                <select id="wp-einheit-${i}" onchange="updateWeeklyPlanFeld(${i}, 'einheit', this.value)" class="${feld}">${optionenListe(EINHEITEN, r.einheit)}</select>
+                            </div>
+                            <div>
+                                <label for="wp-form-${i}" class="${lab}">Form</label>
+                                <select id="wp-form-${i}" onchange="updateWeeklyPlanFeld(${i}, 'form', this.value)" class="${feld}">${optionenListe(r.form ? EINNAHMEFORMEN : [''].concat(EINNAHMEFORMEN), r.form, 'Nicht angegeben')}</select>
+                            </div>
+                            <div>
+                                <label for="wp-zeit-${i}" class="${lab}">Tageszeit</label>
+                                <select id="wp-zeit-${i}" onchange="updateWeeklyPlanFeld(${i}, 'zeit', this.value)" class="${feld}">${optionenListe(TAGESZEITEN, r.zeit, 'Egal')}</select>
                             </div>
                         </div>
-                        
                         <div>
-                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Tage</label>
-                            <div class="flex gap-1.5 sm:gap-2">
-                                ${dayButtons}
-                            </div>
+                            <span class="${lab}">Tage</span>
+                            <div class="grid grid-cols-7 gap-1.5">${tagKnoepfe}</div>
                         </div>
                     </div>
                 `;
-            });
-            list.innerHTML = html;
+            }).join('');
         }
 
         function addWeeklyPlanItem() {
-            tempWeeklyRoutine.push({ pepId: '', dose: 1.0, days: [1,2,3,4,5,6,0] });
+            tempWeeklyRoutine.push(Object.assign(regelNormalisieren({ dose: 0, days: [1,2,3,4,5,6,0] }), { form: 'Oral', _eigen: false }));
             renderWeeklyPlanModalList();
             setTimeout(() => {
                 const list = document.getElementById('weekly-plan-list');
                 list.scrollTop = list.scrollHeight;
+                const sel = document.getElementById('wp-pep-' + (tempWeeklyRoutine.length - 1));
+                if (sel) sel.focus();
             }, 50);
         }
 
@@ -7799,12 +8111,16 @@ function renderInventory() {
             renderWeeklyPlanModalList();
         }
 
-        function updateWeeklyPlanPep(index, pepId) {
-            tempWeeklyRoutine[index].pepId = pepId;
+        function updateWeeklyPlanPep(index, wert) {
+            const r = tempWeeklyRoutine[index];
+            r._eigen = wert === '__eigen';
+            r.pepId = r._eigen ? '' : wert;
+            if (!r._eigen && wert) r.form = formVorschlag(wert);
+            renderWeeklyPlanModalList();
         }
 
-        function updateWeeklyPlanDose(index, dose) {
-            tempWeeklyRoutine[index].dose = parseFloat(dose) || 0;
+        function updateWeeklyPlanFeld(index, feld, wert) {
+            tempWeeklyRoutine[index][feld] = wert;
         }
 
         function toggleWeeklyPlanDay(index, day) {
@@ -7818,121 +8134,107 @@ function renderInventory() {
         }
 
         function saveWeeklyPlan() {
-            // Filtern: Nur Regeln speichern, bei denen eine Substanz ausgewählt wurde
-            const validRoutine = tempWeeklyRoutine.filter(i => i.pepId !== '');
-            writeStore('weekly_routine', validRoutine);
+            // Nur Punkte mit Substanz oder eigener Bezeichnung behalten
+            const gueltig = tempWeeklyRoutine
+                .map(r => { const k = Object.assign({}, r); delete k._eigen; k.name = (k.name || '').trim(); if (k.pepId) k.name = ''; return k; })
+                .filter(r => r.pepId || r.name);
+            writeStore('weekly_routine', gueltig);
             closeWeeklyPlanModal();
-            
-            // Wenn man den Plan anpasst, lädt die App zur Sicherheit einmal den neuen Tagesplan
-            generateDailySchedule();
+            planFuerHeute(true);
+            renderDailySchedule();
+            if (typeof renderDashboard === 'function') renderDashboard();
         }
 
+        // Fruehere Schaltflaeche "Plan generieren"; der Plan entsteht jetzt
+        // von selbst. Bleibt fuer Aufrufe aus aelteren Stellen erhalten.
         function generateDailySchedule() {
-            const today = new Date();
-            const todayStr = localDateISO(today);
-            const currentDay = today.getDay(); // 0 = Sonntag, 1 = Montag ...
-
-            let schedule = readStore('daily_schedule');
-            let routine = readStore('weekly_routine');
-
-            // Wenn das Datum nicht übereinstimmt, leeren wir die alte Liste
-            if (!schedule.date || schedule.date !== todayStr) {
-                schedule = { date: todayStr, items: [] };
-            }
-
-            if (routine.length === 0) {
-                customConfirm("Du hast noch keinen Wochenplan erstellt. Möchtest du jetzt festlegen, was du an welchen Tagen einnimmst?", openWeeklyPlanModal);
+            if (!readStore('weekly_routine').length) {
+                customConfirm("Du hast noch keinen Wochenplan. Möchtest du jetzt festlegen, was an welchen Tagen ansteht?", openWeeklyPlanModal);
                 return;
             }
-
-            let addedCount = 0;
-
-            routine.forEach(rule => {
-                // Prüfen, ob die Regel für den heutigen Wochentag gilt
-                if (rule.days.includes(currentDay)) {
-                    // Prüfen, ob der Task nicht ohnehin schon in der Liste für heute ist
-                    const exists = schedule.items.find(i => i.pepId === rule.pepId && !i.isCustom);
-                    if (!exists) {
-                        const pep = RAW_DATA.find(p => p[0] === rule.pepId);
-                        schedule.items.push({
-                            id: 'sched_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                            pepId: rule.pepId,
-                            name: pep ? pep[2] : "Unbekannt",
-                            doseMg: rule.dose,
-                            completed: false,
-                            isCustom: false
-                        });
-                        addedCount++;
-                    }
-                }
-            });
-
-            writeStore('daily_schedule', schedule);
+            planFuerHeute();
             renderDailySchedule();
+        }
 
-            // Visuelles Feedback
-            if(addedCount > 0) {
-                const list = document.getElementById('daily-schedule-list');
-                if(list) {
-                    list.classList.add('animate-pulse');
-                    setTimeout(() => list.classList.remove('animate-pulse'), 500);
-                }
-            } else if (addedCount === 0 && routine.length > 0) {
-                // Nur zur Info, falls heute Pausetag ist
-                const isAllCompleted = schedule.items.length > 0 && schedule.items.every(i => i.completed);
-                if(isAllCompleted) {
-                    // Mache nichts, User hat schon alles abgehakt
-                } else if(schedule.items.length === 0) {
-                    const list = document.getElementById('daily-schedule-list');
-                    if(list) list.innerHTML = '<p class="text-sm text-slate-500 italic text-center py-6">Heute ist Pausetag! Laut deinem Wochenplan steht heute nichts an. 🌴</p>';
-                }
-            }
+        // Eigene Bezeichnung zeigen, wenn "Eigene Angabe" gewaehlt ist,
+        // und die Form aus der Datenbank vorschlagen
+        function eigeneAngabeUmschalten(praefix) {
+            const sel = document.getElementById(praefix + '-pep');
+            const eigen = sel.value === '__eigen';
+            document.getElementById(praefix + '-eigen').classList.toggle('hidden', !eigen);
+            const form = document.getElementById(praefix + '-form');
+            if (form && sel.value) form.value = eigen ? 'Oral' : formVorschlag(sel.value);
+            if (eigen) document.getElementById(praefix + '-eigen').focus();
         }
 
         function addCustomScheduleItem() {
-            let selectHtml = '<select id="custom-sched-pep" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white mb-3 outline-none"><option value="">-- Substanz wählen --</option>';
-            RAW_DATA.forEach(p => { selectHtml += `<option value="${p[0]}">${p[2]}</option>`; });
-            selectHtml += '</select>';
-
+            const feld = 'w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none';
+            const lab = 'text-xs font-semibold text-slate-300 block mb-1';
             const modalHtml = `
-                <div class="fixed inset-0 z-[110] flex items-center justify-center bg-base/80 backdrop-blur-sm" id="custom-sched-modal">
-                    <div class="bg-surface border border-white/10 p-6 rounded-2xl max-w-sm w-full mx-4 shadow-2xl">
-                        <h3 class="text-lg font-bold text-white mb-4">Manueller Eintrag</h3>
-                        ${selectHtml}
-                        <label class="text-xs font-semibold text-slate-300 block mb-1">Dosis in mg</label>
-                        <input type="number" id="custom-sched-dose" step="0.05" min="0.01" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white mb-4 outline-none font-mono">
-                        <div class="flex justify-end gap-2">
-                            <button onclick="document.getElementById('custom-sched-modal').remove()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/5 transition-colors">Abbrechen</button>
-                            <button onclick="saveCustomScheduleItem()" class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-500 text-white hover:bg-brand-400 transition-colors shadow-glow-brand">Hinzufügen</button>
+                <div class="fixed inset-0 z-[110] flex items-center justify-center bg-base/80 backdrop-blur-sm p-4" id="custom-sched-modal" role="dialog" aria-modal="true" aria-labelledby="custom-sched-titel">
+                    <div class="bg-surface border border-white/10 p-5 sm:p-6 rounded-2xl max-w-sm w-full shadow-2xl overflow-y-auto space-y-3" style="max-height: 90vh; max-height: 90dvh;">
+                        <div>
+                            <h3 id="custom-sched-titel" class="text-lg font-bold text-white">Für heute hinzufügen</h3>
+                            <p class="text-xs text-slate-400 mt-1">Gilt nur für heute. Was regelmäßig ansteht, gehört in den Wochenplan.</p>
+                        </div>
+                        <div>
+                            <label for="custom-sched-pep" class="${lab}">Substanz</label>
+                            <select id="custom-sched-pep" onchange="eigeneAngabeUmschalten('custom-sched')" class="${feld}">${optionenSubstanzen('')}</select>
+                            <input type="text" id="custom-sched-eigen" placeholder="Eigene Bezeichnung, z. B. Vitamin D3" aria-label="Eigene Bezeichnung" class="hidden mt-2 ${feld}">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="custom-sched-dose" class="${lab}">Menge</label>
+                                <input type="number" id="custom-sched-dose" step="any" min="0" inputmode="decimal" class="${feld} font-mono">
+                            </div>
+                            <div>
+                                <label for="custom-sched-einheit" class="${lab}">Einheit</label>
+                                <select id="custom-sched-einheit" class="${feld}">${optionenListe(EINHEITEN, 'mg')}</select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="custom-sched-form" class="${lab}">Form</label>
+                            <select id="custom-sched-form" class="${feld}">${optionenListe(EINNAHMEFORMEN, 'Oral')}</select>
+                        </div>
+                        <div class="flex justify-end gap-2 pt-1">
+                            <button onclick="document.getElementById('custom-sched-modal').remove()" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/5 transition-colors">Abbrechen</button>
+                            <button onclick="saveCustomScheduleItem()" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-brand-500 text-white hover:bg-brand-400 transition-colors shadow-glow-brand">Hinzufügen</button>
                         </div>
                     </div>
                 </div>
             `;
             document.body.insertAdjacentHTML('beforeend', modalHtml);
+            document.getElementById('custom-sched-pep').focus();
         }
 
         function saveCustomScheduleItem() {
-            const pepId = document.getElementById('custom-sched-pep').value;
-            const dose = parseFloat(document.getElementById('custom-sched-dose').value);
-            
-            if(!pepId || isNaN(dose) || dose <= 0) {
-                customConfirm("Bitte w\u00e4hle eine Substanz und gib eine Dosis gr\u00f6\u00dfer als null an.", () => {});
+            const wahl = document.getElementById('custom-sched-pep').value;
+            const eigen = wahl === '__eigen';
+            const pep = !eigen && RAW_DATA.find(p => p[0] === wahl);
+            const name = eigen ? document.getElementById('custom-sched-eigen').value.trim() : (pep ? pep[2] : '');
+            const menge = parseFloat(String(document.getElementById('custom-sched-dose').value).replace(',', '.'));
+            const einheit = document.getElementById('custom-sched-einheit').value;
+            const form = document.getElementById('custom-sched-form').value;
+
+            if (!name || !(menge > 0)) {
+                customConfirm("Bitte w\u00e4hle eine Substanz (oder gib eine eigene Bezeichnung ein) und trag eine Menge gr\u00f6\u00dfer als null ein.", () => {});
                 return;
             }
 
-            const pep = RAW_DATA.find(p => p[0] === pepId);
-            const todayStr = localDateISO();
-            let schedule = readStore('daily_schedule');
-            
-            if (!schedule.date || schedule.date !== todayStr) {
-                schedule = { date: todayStr, items: [] };
-            }
+            const pepId = pep ? pep[0] : '';
+            const schedule = (() => {
+                const s = readStore('daily_schedule');
+                return s.date === localDateISO() && Array.isArray(s.items) ? s : { date: localDateISO(), items: [] };
+            })();
 
             schedule.items.push({
                 id: 'sched_' + Date.now(),
                 pepId: pepId,
-                name: pep[2],
-                doseMg: dose,
+                name: name,
+                menge: menge,
+                einheit: einheit,
+                form: form,
+                doseMg: mengeInMg(menge, einheit, pepId) || 0,
                 completed: false,
                 isCustom: true
             });
@@ -7943,72 +8245,77 @@ function renderInventory() {
         }
 
         function removeScheduleItem(id) {
-            let schedule = readStore('daily_schedule');
-            if (schedule.items) {
-                schedule.items = schedule.items.filter(i => i.id !== id);
-                writeStore('daily_schedule', schedule);
-                renderDailySchedule();
-            }
+            const schedule = readStore('daily_schedule');
+            if (!schedule.items) return;
+            const item = schedule.items.find(i => i.id === id);
+            if (!item || item.completed) return;
+            // Punkte aus dem Wochenplan nur fuer heute ausblenden, sonst
+            // kaemen sie beim naechsten Abgleich zurueck
+            if (item.isCustom) schedule.items = schedule.items.filter(i => i.id !== id);
+            else item.entfernt = true;
+            writeStore('daily_schedule', schedule);
+            renderDailySchedule();
         }
 
         function updateScheduleDose(id, value) {
-            let schedule = readStore('daily_schedule');
-            if (schedule.items) {
-                let item = schedule.items.find(i => i.id === id);
-                if (item && !item.completed) {
-                    item.doseMg = parseFloat(value) || 0;
-                    writeStore('daily_schedule', schedule);
-                }
+            const schedule = readStore('daily_schedule');
+            if (!schedule.items) return;
+            const item = schedule.items.find(i => i.id === id);
+            if (item && !item.completed) {
+                item.menge = parseFloat(String(value).replace(',', '.')) || 0;
+                item.doseMg = mengeInMg(item.menge, item.einheit || 'mg', item.pepId) || 0;
+                writeStore('daily_schedule', schedule);
             }
         }
 
         function toggleScheduleItem(id) {
-            let schedule = readStore('daily_schedule');
+            const schedule = readStore('daily_schedule');
             if (!schedule.items) return;
-            
-            let item = schedule.items.find(i => i.id === id);
+
+            const item = schedule.items.find(i => i.id === id);
             if (!item) return;
 
             if (item.completed) {
-                // Rückgängig machen nicht erlaubt wegen Bestand-Sync
-                customConfirm("Dieser Eintrag ist bereits abgehakt. Die Menge wurde vom Bestand abgezogen und steht im Journal \u2014 zum Korrigieren dort den Eintrag l\u00f6schen und den Bestand anpassen.", () => {});
+                // Rückgängig nicht erlaubt wegen Bestand-Sync
+                customConfirm("Dieser Eintrag ist bereits abgehakt. Er steht im Journal, und mg-Mengen wurden vom Bestand abgezogen \u2014 zum Korrigieren dort den Eintrag l\u00f6schen und den Bestand anpassen.", () => {});
                 renderDailySchedule(); // UI Refresh um Checkbox wieder auf checked zu setzen
                 return;
             }
 
-            // Task abhaken
             item.completed = true;
             writeStore('daily_schedule', schedule);
 
-            // 1. Vom Bestand abziehen
-            deductFromInventory(item.pepId, item.doseMg);
+            const menge = punktMenge(item);
+            const einheit = item.einheit || 'mg';
+            const mg = item.pepId ? mengeInMg(menge, einheit, item.pepId) : null;
 
-            // 2. Ins Journal eintragen
-            const today = localDateISO();
-            let tEntry = { 
-                id: Date.now().toString(), 
-                date: today, 
-                type: 'injection', 
-                peptide: item.name, 
-                dose: item.doseMg + 'mg' 
+            // 1. Vom Bestand abziehen - nur mit einer Menge in mg
+            if (item.pepId && mg) deductFromInventory(item.pepId, mg);
+
+            // 2. Ins Journal eintragen. Aeltere Punkte ohne Form gelten wie
+            // bisher als Injektion.
+            const tEntry = {
+                id: Date.now().toString(),
+                date: localDateISO(),
+                type: einnahmeTyp(item.form),
+                peptide: item.name,
+                dose: journalDosis(menge, einheit, mg)
             };
-            let tData = readStore('tracker_data');
+            if (item.form) tEntry.form = item.form;
+            if (mg && einheit !== 'mg' && einheit !== 'mcg') tEntry.menge = zahlText(menge) + ' ' + einheit;
+            const tData = readStore('tracker_data');
             tData.unshift(tEntry);
             writeStore('tracker_data', tData);
 
-            // UI Updates
             renderDailySchedule();
             if(typeof renderTrackerCalendar === 'function') renderTrackerCalendar();
             if(typeof renderTrackerRecent === 'function') renderTrackerRecent();
-            if(typeof renderDashboard === 'function') renderDashboard(); // Für Last Log / Stack
-            
-            // Kleiner visueller Effekt
+            if(typeof renderDashboard === 'function') renderDashboard();
+
             const row = document.getElementById('sched-row-' + id);
             if(row) {
                 row.classList.add('bg-emerald-500/10', 'border-emerald-500/30');
-                setTimeout(() => {
-                    row.classList.remove('bg-emerald-500/10', 'border-emerald-500/30');
-                }, 1000);
+                setTimeout(() => row.classList.remove('bg-emerald-500/10', 'border-emerald-500/30'), 1000);
             }
         }
 
@@ -8016,44 +8323,45 @@ function renderInventory() {
             const list = document.getElementById('daily-schedule-list');
             if(!list) return;
 
-            const todayStr = localDateISO();
-            let schedule = readStore('daily_schedule');
+            const hatPlan = readStore('weekly_routine').length > 0;
+            const s = hatPlan ? planFuerHeute() : readStore('daily_schedule');
+            const punkte = s.date === localDateISO() ? sichtbarePunkte(s) : [];
 
-            if (!schedule.date || schedule.date !== todayStr || !schedule.items || schedule.items.length === 0) {
-                list.innerHTML = '<p class="text-sm text-slate-500 italic text-center py-6">Keine Tasks für heute. Generiere den Plan aus deinem Bestand oder füge manuell Einträge hinzu.</p>';
+            if (!punkte.length) {
+                list.innerHTML = '<p class="text-sm text-slate-500 italic text-center py-6">' + (hatPlan
+                    ? 'Laut Wochenplan steht heute nichts an. Mit „+ Für heute“ kannst du trotzdem etwas eintragen.'
+                    : 'Noch kein Wochenplan. Leg unter „Wochenplan“ fest, was an welchen Tagen ansteht, oder füge mit „+ Für heute“ einzelne Punkte hinzu.') + '</p>';
                 return;
             }
 
-            let html = '';
-            schedule.items.forEach(item => {
-                const isChecked = item.completed ? 'checked' : '';
-                const opacityClass = item.completed ? 'opacity-50 grayscale' : '';
-                const disabledInput = item.completed ? 'disabled' : '';
-
-                html += `
-                    <div id="sched-row-${item.id}" class="flex items-center justify-between p-3 bg-slate-800/20 border border-transparent hover:bg-slate-800/40 rounded-xl transition-all ${opacityClass}">
-                        <div class="flex items-center gap-3">
-                            <label class="relative flex items-center cursor-pointer">
-                                <input type="checkbox" ${isChecked} onchange="toggleScheduleItem('${item.id}')" class="peer sr-only">
-                                <div class="w-6 h-6 border-2 border-slate-500 rounded-md peer-checked:bg-emerald-500 peer-checked:border-emerald-500 transition-colors flex items-center justify-center [&>svg]:opacity-0 peer-checked:[&>svg]:opacity-100">
-                                    <svg class="w-4 h-4 text-white transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                            </label>
-                            <span class="text-sm font-bold text-white ${item.completed ? 'line-through text-slate-500' : ''}">${esc(item.name)}</span>
-                        </div>
-                        
-                        <div class="flex items-center gap-3">
-                            <div class="relative w-24">
-                                <input type="number" value="${item.doseMg.toFixed(2)}" step="0.05" min="0" onchange="updateScheduleDose('${item.id}', this.value)" ${disabledInput} class="w-full bg-slate-900 border border-slate-600 rounded-lg py-1.5 pl-2 pr-8 text-xs text-white font-mono outline-none focus:border-brand-500">
-                                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-slate-400">mg</span>
+            list.innerHTML = punkte.map(item => {
+                const fertig = !!item.completed;
+                const details = [item.form, item.zeit].filter(Boolean).join(' · ');
+                const wert = Math.round(punktMenge(item) * 1000) / 1000;
+                return `
+                    <div id="sched-row-${item.id}" class="flex flex-wrap items-center gap-x-3 gap-y-2 p-3 bg-slate-800/20 border border-transparent hover:bg-slate-800/40 rounded-xl transition-all ${fertig ? 'opacity-50 grayscale' : ''}">
+                        <label class="relative flex items-center cursor-pointer shrink-0 p-1 -m-1">
+                            <input type="checkbox" ${fertig ? 'checked' : ''} onchange="toggleScheduleItem('${item.id}')" aria-label="${esc(item.name)} abhaken" class="peer sr-only">
+                            <div class="w-6 h-6 border-2 border-slate-500 rounded-md peer-checked:bg-emerald-500 peer-checked:border-emerald-500 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-400 transition-colors flex items-center justify-center [&>svg]:opacity-0 peer-checked:[&>svg]:opacity-100">
+                                <svg class="w-4 h-4 text-white transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
-                            ${!item.completed ? `<button onclick="removeScheduleItem('${item.id}')" class="text-slate-500 hover:text-rose-400 transition-colors px-1" title="Entfernen">✖</button>` : `<span class="w-6 text-center text-emerald-500 text-sm">✓</span>`}
+                        </label>
+                        <div class="flex-1 min-w-[8rem]">
+                            <span class="block text-sm font-bold break-words ${fertig ? 'line-through text-slate-500' : 'text-white'}">${esc(item.name)}</span>
+                            ${details ? `<span class="block text-xs text-slate-400">${esc(details)}</span>` : ''}
+                        </div>
+                        <div class="flex items-center gap-2 ml-auto">
+                            <div class="relative w-28">
+                                <input type="number" inputmode="decimal" value="${wert}" step="any" min="0" onchange="updateScheduleDose('${item.id}', this.value)" ${fertig ? 'disabled' : ''} aria-label="Menge für ${esc(item.name)}" class="w-full bg-slate-900 border border-slate-600 rounded-lg py-1.5 pl-2 pr-12 text-xs text-white font-mono outline-none focus:border-brand-500">
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none">${esc(item.einheit || 'mg')}</span>
+                            </div>
+                            ${!fertig
+                                ? `<button onclick="removeScheduleItem('${item.id}')" class="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-slate-500 hover:text-rose-400 hover:bg-white/5 transition-colors" title="Für heute entfernen" aria-label="${esc(item.name)} für heute entfernen"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>`
+                                : `<span class="w-8 shrink-0 text-center text-emerald-500 text-sm" title="Erledigt">✓</span>`}
                         </div>
                     </div>
                 `;
-            });
-
-            list.innerHTML = html;
+            }).join('');
         }
 
         // --- ASSISTENT (regelbasiert, ohne Sprachmodell) ---
@@ -8718,20 +9026,20 @@ function renderInventory() {
         // TAGESPLAN
         // ============================================================
         function aiAnswerHeute() {
-            const s = readStore('daily_schedule');
-            if (s.date !== localDateISO() || !s.items || !s.items.length) {
+            const s = readStore('weekly_routine').length ? planFuerHeute() : readStore('daily_schedule');
+            if (s.date !== localDateISO() || !sichtbarePunkte(s).length) {
                 return '<div class="space-y-2 text-xs"><div>Für heute steht nichts im Tagesplan.</div>' +
-                    '<button onclick="toggleAIChat(); router(\'dashboard\');" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-xs font-bold transition-all">Plan in der Übersicht erzeugen</button></div>';
+                    '<button onclick="toggleAIChat(); router(\'dashboard\');" class="w-full py-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-lg text-xs font-bold transition-all">Zum Tagesplan</button></div>';
             }
-            const offen = s.items.filter(i => !i.completed);
-            const fertig = s.items.filter(i => i.completed);
+            const offen = sichtbarePunkte(s).filter(i => !i.completed);
+            const fertig = sichtbarePunkte(s).filter(i => i.completed);
 
             let html = '<div class="space-y-2.5">';
             if (offen.length) {
                 html += '<div><span class="text-xs text-amber-400 font-bold uppercase tracking-wider block mb-1">Offen</span>' +
                     offen.map(i => '<div class="flex justify-between gap-2 text-xs py-0.5">' +
-                        '<span class="text-white font-bold">' + i.name + '</span>' +
-                        '<span class="font-mono text-slate-400">' + i.doseMg + ' mg</span></div>').join('') +
+                        '<span class="text-white font-bold">' + esc(i.name) + '</span>' +
+                        '<span class="font-mono text-slate-400">' + punktMengeText(i) + '</span></div>').join('') +
                     '</div>';
             }
             if (fertig.length) {
@@ -8755,7 +9063,7 @@ function renderInventory() {
             const s = readStore('daily_schedule');
             if (s.date !== localDateISO() || !s.items) return null;
 
-            const offen = s.items.filter(i => !i.completed);
+            const offen = sichtbarePunkte(s).filter(i => !i.completed);
             if (!offen.length) return 'Für heute ist schon alles abgehakt.';
 
             const subs = aiFindSubstances(text);
@@ -8771,10 +9079,10 @@ function renderInventory() {
             }
 
             toggleScheduleItem(ziel.id);
-            const rest = readStore('daily_schedule').items.filter(i => !i.completed);
-            return '<strong class="text-white">' + ziel.name + '</strong> abgehakt, ' +
-                ziel.doseMg + ' mg vom Bestand abgezogen und im Journal vermerkt.' +
-                (rest.length ? ' Offen bleibt: ' + rest.map(i => i.name).join(', ') + '.'
+            const rest = sichtbarePunkte(readStore('daily_schedule')).filter(i => !i.completed);
+            return '<strong class="text-white">' + esc(ziel.name) + '</strong> abgehakt, ' +
+                punktMengeText(ziel) + ' im Journal vermerkt' + (ziel.doseMg > 0 && ziel.pepId ? ' und vom Bestand abgezogen.' : '.') +
+                (rest.length ? ' Offen bleibt: ' + rest.map(i => esc(i.name)).join(', ') + '.'
                              : ' Damit ist der Tag durch.');
         }
 
@@ -8853,7 +9161,7 @@ function renderInventory() {
             let mg = 0, erste = Date.now();
             log.forEach(e => {
                 if (e.peptide !== name) return;
-                if (e.type && e.type !== 'injection' && e.type !== 'nasal') return;
+                if (!istEinnahme(e)) return;
                 const t = new Date(e.date + 'T12:00:00').getTime();
                 if (isNaN(t)) return;
                 if (t < erste) erste = t;
@@ -8864,10 +9172,7 @@ function renderInventory() {
         }
 
         function doseToMgAI(str) {
-            const s = String(str || '');
-            let v = parseFloat(s.replace(',', '.').replace(/[^0-9.]/g, '')) || 0;
-            if (s.toLowerCase().indexOf('mcg') !== -1) v /= 1000;
-            return v;
+            return dosisInMg(str) || 0;
         }
 
         function aiAnswerReichweite(pep) {
