@@ -4017,13 +4017,13 @@
                 let typeIcon = "";
                 if (type === 'MIX') {
                     cardBorderClass = "border-amber-500/30 hover:border-amber-400 shadow-[inset_0_0_20px_rgba(245,158,11,0.05)]";
-                    typeIcon = `<span class="text-amber-400 ml-1 text-sm" title="Vorgefertigte Mischung / Stack">✨</span>`;
+                    typeIcon = `<span class="px-2 py-0.5 rounded text-xs font-bold border border-amber-500/30 text-amber-300 bg-amber-500/10">Mischung</span>`;
                 } else if (type === 'SRM') {
                     cardBorderClass = "border-rose-500/20 hover:border-rose-400 shadow-[inset_0_0_20px_rgba(244,63,94,0.05)]";
-                    typeIcon = `<span class="text-rose-400 ml-1 text-sm" title="SARM / Androgen">💪</span>`;
+                    typeIcon = `<span class="px-2 py-0.5 rounded text-xs font-bold border border-rose-500/30 text-rose-300 bg-rose-500/10">SARM</span>`;
                 } else if (type === 'MSC') {
                     cardBorderClass = "border-slate-500/30 hover:border-slate-400 shadow-[inset_0_0_20px_rgba(148,163,184,0.05)]";
-                    typeIcon = `<span class="text-slate-400 ml-1 text-sm" title="Zusatz / Zubehör">🛠️</span>`;
+                    typeIcon = `<span class="px-2 py-0.5 rounded text-xs font-bold border border-slate-500/40 text-slate-300 bg-slate-500/10">Zubehör</span>`;
                 }
 
                 let priceHtml = "";
@@ -4133,7 +4133,7 @@
                                     ${isFav ? '★' : '☆'}
                                 </button>
                                 <div>
-                                    <h3 class="text-base font-bold text-white flex items-center gap-1">${p.name} ${typeIcon}</h3>
+                                    <h3 class="text-base font-bold text-white">${p.name}</h3>
                                     <p class="text-xs text-slate-400 truncate max-w-[200px]">${p.aka}</p>
                                 </div>
                             </div>
@@ -4162,25 +4162,21 @@
                 const cardHTML = `
                     <div class="peptide-card glass-panel rounded-3xl p-6 transition-all duration-300 group ${cardBorderClass}" data-cat="${p.cat}" data-risk="${p.risk}" data-search="${p.name.toLowerCase()} ${p.aka.toLowerCase()}">
                         
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <span class="text-xs font-mono text-slate-500 uppercase tracking-widest block mb-1">REF // ${p.nr}</span>
-                                <h3 class="text-xl font-bold text-white flex items-center gap-1">${p.name} ${typeIcon}</h3>
-                                <p class="text-xs text-slate-400">${p.aka}</p>
-                                <div class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/60 border border-white/5 text-xs text-slate-300 shadow-inner">
-                                    <span class="text-brand-400 font-bold uppercase tracking-wider">⚙️ MoA:</span> ${moaText}
+                        <div class="mb-4 space-y-3">
+                            <div class="flex justify-between items-start gap-3">
+                                <div class="min-w-0">
+                                    <h3 class="text-xl font-bold text-white break-words">${p.name}</h3>
+                                    <p class="text-xs text-slate-400">${p.aka}</p>
                                 </div>
+                                <button onclick="toggleFavorite('${p.id}')" class="w-9 h-9 -mr-1 -mt-1 shrink-0 flex items-center justify-center rounded-lg text-xl leading-none transition-transform hover:scale-110 ${isFav ? 'text-amber-400' : 'text-slate-500 hover:text-slate-300'}" title="${isFav ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}" aria-label="${isFav ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}" aria-pressed="${isFav}">${isFav ? '★' : '☆'}</button>
                             </div>
-                            <div class="flex flex-col gap-2 items-end">
-                                <button onclick="toggleFavorite('${p.id}')" class="text-xl leading-none transition-transform hover:scale-125 ${isFav ? 'text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]' : 'text-slate-600 hover:text-slate-400'}" title="${isFav ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}">
-                                    ${isFav ? '★' : '☆'}
-                                </button>
-                                <div class="flex flex-col gap-1 items-end">
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-bold border uppercase tracking-wider ${badgeColor}">${p.catText}</span>
-                                    <span class="px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider flex items-center gap-1 ${studyBadgeClass}"><span class="w-1.5 h-1.5 rounded-full ${studyDot}"></span> ${studyText}</span>
-                                    <span class="px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider ${riskClass}" title="${riskTitle}">Risiko: ${riskText}</span>
-                                </div>
+                            <div class="flex flex-wrap gap-1.5">
+                                ${typeIcon}
+                                <span class="px-2 py-0.5 rounded text-xs font-bold border ${badgeColor}">${p.catText}</span>
+                                <span class="px-2 py-0.5 rounded text-xs font-bold border flex items-center gap-1 ${studyBadgeClass}"><span class="w-1.5 h-1.5 rounded-full ${studyDot}"></span> ${studyText}</span>
+                                <span class="px-2 py-0.5 rounded text-xs font-bold border ${riskClass}" title="${riskTitle}">Risiko: ${riskText}</span>
                             </div>
+                            <p class="px-2.5 py-1.5 rounded-md bg-slate-900/60 border border-white/5 text-xs text-slate-300"><span class="text-brand-400 font-bold">Wirkprinzip:</span> ${moaText}</p>
                         </div>
 
                         <!-- Tabs Header -->
@@ -4188,7 +4184,7 @@
                             <button onclick="toggleCardTab(this, '${p.id}-eff')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-brand-400 border-b-2 border-brand-500 transition-colors whitespace-nowrap shrink-0">Wirkung</button>
                             <button onclick="toggleCardTab(this, '${p.id}-side')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Risiken</button>
                             <button onclick="toggleCardTab(this, '${p.id}-dose')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Dosierung</button>
-                            <button onclick="toggleCardTab(this, '${p.id}-praxis')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0 flex items-center gap-1"><span class="text-sm">💡</span> Praxis-Guide</button>
+                            <button onclick="toggleCardTab(this, '${p.id}-praxis')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0 flex items-center gap-1">Praxis-Guide</button>
                             <button onclick="toggleCardTab(this, '${p.id}-study')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Studien</button>
                             <button onclick="toggleCardTab(this, '${p.id}-price')" class="card-tab-btn px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors border-b-2 border-transparent whitespace-nowrap shrink-0">Preise</button>
                         </div>
