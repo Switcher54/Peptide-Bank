@@ -1,16 +1,18 @@
 /* Peptide Bank - Service Worker
  *
  * Die App rechnet ausschliesslich mit lokalen Daten, laedt zum Start
- * aber Tailwind, Chart.js, three und zwei Schriftfamilien aus dem
- * Netz. Ohne Verbindung bliebe die Seite sonst leer. Dieser Worker
- * legt alles in den Cache.
+ * aber Tailwind, Chart.js und zwei Schriftfamilien aus dem Netz, three
+ * beim ersten Oeffnen der Koerperkarte. Ohne Verbindung bliebe die
+ * Seite sonst leer. Dieser Worker legt alles in den Cache, three schon
+ * bei der Installation - so klappt die Karte offline auch dann, wenn
+ * sie vorher nie geoeffnet wurde.
  *
  * Einrichtung: neben die index.html legen. Laeuft nur ueber https
  * oder localhost - per Doppelklick aus dem Dateisystem registriert
  * ihn kein Browser.
  */
 
-const CACHE = 'peptide-bank-v9';
+const CACHE = 'peptide-bank-v11';
 
 // Ohne diese Dateien startet gar nichts.
 const KERN = ['./', './index.html'];
@@ -19,7 +21,7 @@ const KERN = ['./', './index.html'];
 // Cache bedienen - sie aendern sich nicht.
 const EXTERN = [
     'https://cdn.tailwindcss.com',
-    'https://cdn.jsdelivr.net/npm/chart.js',
+    'https://cdn.jsdelivr.net/npm/chart.js@4',
     'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
     'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap'
 ];
@@ -56,6 +58,10 @@ self.addEventListener('fetch', event => {
     if (req.method !== 'GET') return;
 
     const url = new URL(req.url);
+
+    // Abgleich mit GitHub immer direkt ueber das Netz, nie aus dem Cache -
+    // sonst saehe die App einen veralteten Stand.
+    if (url.hostname === 'api.github.com' || url.hostname.endsWith('githubusercontent.com')) return;
 
     // Schriftdateien liegen auf fonts.gstatic.com und tauchen erst
     // auf, wenn das Stylesheet geparst ist - deshalb hier statt in
