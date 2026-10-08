@@ -821,6 +821,7 @@
                         <button onclick="router('calc')" id="nav-calc" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Rechner</button>
                         <button onclick="router('map')" id="nav-map" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Body-Map</button>
                         <button onclick="router('nasal')" id="nav-nasal" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Nasenspray</button>
+                        <button onclick="router('pen')" id="nav-pen" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Pen-Rechner</button>
                         <button onclick="router('stack')" id="nav-stack" class="nav-btn drop-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300">Stack-Check</button>
                     </div>
                 </div>
@@ -1510,12 +1511,13 @@
                                             <select id="map-log-substance" aria-label="Substanz für die Protokollierung" onchange="updateMapDoseField()" class="flex-grow bg-slate-800 border border-slate-600 rounded-xl py-2 px-3 text-sm text-white outline-none">
                                                 <option value="">-- Keine Zuordnung --</option>
                                             </select>
-                                            <div class="relative w-full sm:w-24 shrink-0">
-                                                <input type="number" id="map-log-dose" step="0.05" min="0" placeholder="0.5" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2 pl-3 pr-8 text-sm text-white font-mono outline-none focus:border-brand-500">
-                                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-bold">mg</span>
+                                            <div class="flex gap-2 w-full sm:w-auto shrink-0">
+                                                <input type="number" id="map-log-dose" step="any" min="0" inputmode="decimal" placeholder="0.5" aria-label="Menge" oninput="mapUmrechnungZeigen()" class="w-full sm:w-24 min-w-0 bg-slate-800 border border-slate-600 rounded-xl py-2 pl-3 pr-3 text-sm text-white font-mono outline-none focus:border-brand-500">
+                                                <select id="map-log-einheit" aria-label="Einheit" onchange="mapUmrechnungZeigen()" class="bg-slate-800 border border-slate-600 rounded-xl py-2 px-2 text-sm text-white outline-none focus:border-brand-500"><option>mg</option><option>mcg</option><option>Klicks</option></select>
                                             </div>
                                         </div>
-                                        <p class="text-xs text-slate-500">Zieht bei Protokollierung exakt diese Menge (mg) vom Bestand ab.</p>
+                                        <p class="text-xs text-slate-500">Zieht die Menge vom Bestand ab. Klicks rechnet die App über den Pen im Bestand um.</p>
+                                        <p id="map-log-umrechnung" class="hidden text-xs text-slate-400"></p>
                                     </div>
                                 </div>
 
@@ -1744,6 +1746,98 @@
             </div>
         </div>
 
+        <div id="view-pen" class="view-panel hidden space-y-8">
+            <div class="text-center space-y-4 mb-10">
+                <h2 class="text-4xl font-extrabold text-white tracking-tight">Pen-<span class="text-gradient">Rechner</span></h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">Wie viel Wirkstoff steckt in einem Klick, wie viele Klicks ergeben deine Menge, und wie lange reicht der Pen? Für Fertig-Pens und für Mehrweg-Pens mit angesetzter Patrone.</p>
+            </div>
+
+            <div class="glass-card rounded-3xl p-4 sm:p-10">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-white border-b border-white/5 pb-2">Pen</h3>
+                        <div>
+                            <label for="pen-quelle" class="text-xs font-semibold text-slate-300 block mb-1">Aus dem Bestand übernehmen</label>
+                            <select id="pen-quelle" onchange="penQuelle()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none"><option value="">-- Manuelle Eingabe --</option></select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="pen-mg" class="text-xs font-semibold text-slate-300 block mb-1">Wirkstoff im Pen (mg)</label>
+                                <input type="number" id="pen-mg" value="10" min="0" step="any" inputmode="decimal" oninput="calcPen()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label for="pen-ml" class="text-xs font-semibold text-slate-300 block mb-1">Lösung im Pen (ml)</label>
+                                <input type="number" id="pen-ml" value="3" min="0" step="any" inputmode="decimal" oninput="calcPen()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="pen-ul" class="text-xs font-semibold text-slate-300 block mb-1">Volumen pro Klick (µl)</label>
+                            <input type="number" id="pen-ul" value="10" min="1" step="any" inputmode="decimal" oninput="calcPen()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                            <p class="text-xs text-slate-500 mt-1">Steht im Datenblatt des Pens. Viele Mehrweg-Pens geben pro Klick 10 µl ab, das entspricht einer Einheit auf der U100-Skala.</p>
+                        </div>
+                        <div>
+                            <label for="pen-ziel" class="text-xs font-semibold text-slate-300 block mb-1">Gewünschte Menge pro Gabe</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="pen-ziel" value="250" min="0" step="any" inputmode="decimal" oninput="calcPen()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                                <select id="pen-ziel-einheit" onchange="calcPen()" aria-label="Einheit der gewünschten Menge" class="bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none"><option>mcg</option><option>mg</option></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/60 border border-brand-500/30 rounded-2xl p-5 space-y-3" aria-live="polite">
+                            <div class="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1 text-center">
+                                <span><span id="pen-klicks" class="text-4xl font-extrabold text-white font-mono">–</span> <span id="pen-klick-wort" class="text-sm text-slate-400">Klicks</span></span>
+                                <span class="text-slate-500">=</span>
+                                <span><span id="pen-real" class="text-2xl font-bold text-brand-300 font-mono">–</span> <span class="text-sm text-slate-400">mcg pro Gabe</span></span>
+                            </div>
+                            <p id="pen-rundung" class="hidden text-xs text-amber-300 text-center"></p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="bg-slate-800/50 rounded-xl p-3"><span class="block text-xs text-slate-400">Konzentration</span><span id="pen-konz" class="font-mono text-white">–</span></div>
+                            <div class="bg-slate-800/50 rounded-xl p-3"><span class="block text-xs text-slate-400">Pro Klick</span><span id="pen-proklick" class="font-mono text-white">–</span></div>
+                            <div class="bg-slate-800/50 rounded-xl p-3"><span class="block text-xs text-slate-400">Klicks im Pen</span><span id="pen-gesamt" class="font-mono text-white">–</span></div>
+                            <div class="bg-slate-800/50 rounded-xl p-3"><span class="block text-xs text-slate-400">Gaben im Pen</span><span id="pen-gaben" class="font-mono text-white">–</span></div>
+                        </div>
+                        <p class="text-xs text-slate-500">Das Entlüften vor der ersten Gabe kostet ebenfalls Klicks. Wie viele, steht in der Bedienungsanleitung des Pens.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-4 sm:p-10 space-y-5">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Gabe eintragen</h2>
+                    <p class="text-sm text-slate-400 mt-1">Landet im Journal und wird vom Pen im Bestand abgezogen. Mit Einstichstelle geht es über die Body-Map, dort lassen sich ebenfalls Klicks wählen.</p>
+                </div>
+                <div id="pen-log-leer" class="hidden bg-slate-800/40 border border-white/5 rounded-xl p-4 text-sm text-slate-300">
+                    Noch kein Pen im Bestand. Leg einen Fertig-Pen an oder setze ein Vial als Pen an.
+                    <button type="button" onclick="router('inventory')" class="block mt-3 px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500 hover:text-white transition-colors">Zum Bestand</button>
+                </div>
+                <div id="pen-log-form" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="sm:col-span-3">
+                        <label for="pen-log-sub" class="text-xs font-semibold text-slate-300 block mb-1">Pen aus dem Bestand</label>
+                        <select id="pen-log-sub" onchange="penLogVorschau()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none"></select>
+                    </div>
+                    <div>
+                        <label for="pen-log-klicks" class="text-xs font-semibold text-slate-300 block mb-1">Klicks</label>
+                        <input type="number" id="pen-log-klicks" min="1" step="1" inputmode="numeric" oninput="penLogVorschau()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                    </div>
+                    <div>
+                        <label for="pen-log-datum" class="text-xs font-semibold text-slate-300 block mb-1">Datum</label>
+                        <input type="date" id="pen-log-datum" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                    </div>
+                    <div>
+                        <label for="pen-log-zeit" class="text-xs font-semibold text-slate-300 block mb-1">Uhrzeit <span class="text-slate-500 font-normal">(optional)</span></label>
+                        <input type="time" id="pen-log-zeit" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                    </div>
+                    <p id="pen-log-vorschau" class="sm:col-span-3 text-sm text-slate-300" aria-live="polite"></p>
+                    <div class="sm:col-span-3">
+                        <button type="button" onclick="logPen()" class="w-full sm:w-auto px-6 py-3 rounded-xl text-sm font-bold bg-brand-500/20 text-brand-300 border border-brand-500/50 hover:bg-brand-500 hover:text-white transition-all">Gabe eintragen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="view-blood" class="view-panel hidden space-y-8">
             <div class="text-center space-y-4 mb-6">
                 <h2 class="text-4xl font-extrabold text-white tracking-tight">Klinisches <span class="text-gradient">Blutbild</span></h2>
@@ -1879,6 +1973,7 @@
                             <label class="text-xs font-semibold text-slate-300 block">Darreichung</label>
                             <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700">
                                 <button onclick="setInvArt('vial', this)" class="inv-art-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-600 text-white shadow-sm transition-all flex items-center justify-center gap-1.5"><span>🧪</span> Vial</button>
+                                <button onclick="setInvArt('pen', this)" class="inv-art-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5">Fertig-Pen</button>
                                 <button onclick="setInvArt('tablette', this)" class="inv-art-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span>💊</span> Tabletten</button>
                             </div>
                         </div>
@@ -1893,6 +1988,17 @@
                                 <input type="number" id="inv-vial-count" aria-label="Anzahl" value="1" min="1" step="1" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-blue-500 outline-none font-mono">
                             </div>
                         </div>
+                        <div id="inv-pen-felder" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-slate-300 block" for="inv-pen-ml">Lösung je Pen (ml)</label>
+                                <input type="number" id="inv-pen-ml" value="3" min="0.1" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-blue-500 outline-none font-mono">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-slate-300 block" for="inv-pen-ul">Volumen pro Klick (µl)</label>
+                                <input type="number" id="inv-pen-ul" value="10" min="1" step="1" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-blue-500 outline-none font-mono">
+                            </div>
+                            <p class="sm:col-span-2 text-xs text-slate-500">Beides steht im Datenblatt des Pens. Daraus rechnet die App aus, wie viel ein Klick enthält und wie viele Klicks übrig sind.</p>
+                        </div>
                         <button onclick="addInventoryItem()" class="w-full py-3 bg-blue-500/20 text-blue-400 border border-blue-500/50 hover:bg-blue-500 hover:text-white rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(59,130,246,0.2)] mt-2 flex items-center justify-center gap-2">
                             <span class="text-lg">+</span> <span id="inv-add-text">In den Kühlschrank stellen</span>
                         </button>
@@ -1906,7 +2012,7 @@
                         
                         <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 mb-4 flex items-start gap-2">
                             <span class="text-blue-400">💡</span>
-                            <p class="text-xs text-slate-300 leading-relaxed">Dein Bestand wird <strong>vollautomatisch in Echtzeit abgezogen</strong>, sobald du eine Injektion im <strong>Journal</strong> (in mcg/mg) oder über die <strong>Body-Map</strong> protokollierst!</p>
+                            <p class="text-xs text-slate-300 leading-relaxed">Pens zählen in Klicks: Fertig-Pens legst du links unter „Fertig-Pen“ an, ein Vial wird über „Ansetzen“ zum Pen. Dein Bestand wird <strong>vollautomatisch in Echtzeit abgezogen</strong>, sobald du eine Injektion im <strong>Journal</strong> (in mcg/mg) oder über die <strong>Body-Map</strong> protokollierst!</p>
                         </div>
 
                         <div id="inv-list" class="space-y-3 flex-grow overflow-y-auto max-h-[400px] pr-2 scrollbar-hide">
@@ -1952,7 +2058,7 @@
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <label for="trk-menge" class="text-xs font-semibold text-slate-300 block mb-1">Menge</label>
-                                        <input type="number" id="trk-menge" step="any" min="0" inputmode="decimal" placeholder="250" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
+                                        <input type="number" id="trk-menge" step="any" min="0" inputmode="decimal" placeholder="250" oninput="trkEinnahmeAnpassen()" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
                                     </div>
                                     <div>
                                         <label for="trk-einheit" class="text-xs font-semibold text-slate-300 block mb-1">Einheit</label>
@@ -1967,6 +2073,7 @@
                                         <input type="time" id="trk-zeit" class="w-full bg-slate-800 border border-slate-600 rounded-xl py-2.5 px-3 text-sm text-white focus:border-brand-500 outline-none font-mono">
                                     </div>
                                 </div>
+                                <p id="trk-umrechnung" class="hidden text-xs text-slate-400 -mt-1"></p>
                                 <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-800/40 border border-white/5 cursor-pointer">
                                     <input type="checkbox" id="trk-abziehen" class="mt-0.5 w-5 h-5 shrink-0 accent-brand-500">
                                     <span class="text-xs text-slate-300">Vom Bestand abziehen<span id="trk-abziehen-hinweis" class="block text-slate-500 mt-0.5"></span></span>
@@ -2635,6 +2742,7 @@
                     <button onclick="router('storage')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Stabilität</button>
                     <button onclick="router('stack')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Stack-Check</button>
                     <button onclick="router('nasal')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Nasenspray</button>
+                    <button onclick="router('pen')" class="bg-slate-800/50 border border-white/5 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-white">Pen-Rechner</button>
                 </div>
             </div>
             <div>
@@ -3212,27 +3320,67 @@
 
         // --- Einnahmen ------------------------------------------------
         // Gemeinsame Bausteine fuer Journal, Wochenplan und Tagesplan.
-        const EINHEITEN = ['mg', 'mcg', 'IE', 'ml', 'Stück', 'Tropfen'];
-        const EINNAHMEFORMEN = ['Oral', 'Subkutan', 'Intramuskulär', 'Nasal', 'Topisch'];
+        const EINHEITEN = ['mg', 'mcg', 'Klicks', 'IE', 'ml', 'Stück', 'Tropfen'];
+        const EINNAHMEFORMEN = ['Oral', 'Subkutan', 'Pen', 'Intramuskulär', 'Nasal', 'Topisch'];
         const TAGESZEITEN = ['', 'Morgens', 'Mittags', 'Abends', 'Vor dem Schlafen'];
 
         // Zahl ohne Rundungsrauschen, mit deutschem Komma: 0.25 -> "0,25"
-        function zahlText(n) {
-            return String(Math.round(n * 1000) / 1000).replace('.', ',');
+        function zahlText(n, stellen) {
+            const f = Math.pow(10, stellen === undefined ? 3 : stellen);
+            return String(Math.round(n * f) / f).replace('.', ',');
         }
 
-        // Menge in mg, soweit sich das sagen laesst. "Stück" nur, wenn im
-        // Bestand eine Tablettenpackung mit bekanntem Gehalt liegt.
+        // Pen im Bestand: als Pen angesetztes Vial oder Fertig-Pen, beide
+        // mit Loesungsmenge. Ein angebrochener Pen geht vor, sonst der mit
+        // dem wenigsten Rest.
+        function penVon(pepId) {
+            const e = pepId && readStore('peptide_inventory')[pepId];
+            const pens = ((e && e.batches) || []).filter(b => b.form === 'pen' && b.ml > 0 && b.currentMg > 0.0001);
+            if (!pens.length) return null;
+            const offen = b => (b.isOpen || b.currentMg < b.mgPerVial - 0.0001) ? 1 : 0;
+            pens.sort((a, b) => (offen(b) - offen(a)) || (a.currentMg - b.currentMg));
+            return pens[0];
+        }
+
+        // Liegt von der Substanz nur Pen-Ware im Bestand?
+        function nurPen(pepId) {
+            const e = pepId && readStore('peptide_inventory')[pepId];
+            const voll = ((e && e.batches) || []).filter(b => b.currentMg > 0.0001);
+            return voll.length > 0 && voll.every(b => b.form === 'pen' && b.ml > 0);
+        }
+
+        // mg je Klick: Konzentration (mg/ml) mal Volumen pro Klick (µl)
+        function mgProKlick(b) {
+            return (b.mgPerVial / b.ml) * ((b.geraetUl || 10) / 1000);
+        }
+
+        function tablettenVon(pepId) {
+            const e = pepId && readStore('peptide_inventory')[pepId];
+            return ((e && e.batches) || []).find(b => b.form === 'tablette' && b.mgProStk > 0 && b.currentMg > 0.0001) || null;
+        }
+
+        // Menge in mg, soweit sich das sagen laesst. "Stück" nur mit einer
+        // Tablettenpackung im Bestand, "Klicks" nur mit einem Pen.
         function mengeInMg(menge, einheit, pepId) {
             if (!(menge > 0)) return null;
             if (einheit === 'mg') return menge;
             if (einheit === 'mcg') return menge / 1000;
             if (einheit === 'Stück' && pepId) {
-                const eintrag = readStore('peptide_inventory')[pepId];
-                const packung = eintrag && (eintrag.batches || []).find(b => b.form === 'tablette' && b.mgProStk > 0);
+                const packung = tablettenVon(pepId);
                 if (packung) return menge * packung.mgProStk;
             }
+            if (einheit === 'Klicks' && pepId) {
+                const pen = penVon(pepId);
+                if (pen) return menge * mgProKlick(pen);
+            }
             return null;
+        }
+
+        // Aus welcher Charge abgezogen wird: Klicks vom Pen, Stück von der
+        // Tablettenpackung, sonst wie bisher (angebrochenes Vial zuerst)
+        function abzugsBatch(einheit, pepId) {
+            const b = einheit === 'Klicks' ? penVon(pepId) : (einheit === 'Stück' ? tablettenVon(pepId) : null);
+            return b ? b.batchId : undefined;
         }
 
         // mg aus der Dosisangabe eines Journaleintrags ("0.25mg", "250mcg").
@@ -3372,7 +3520,7 @@
         }
 
         // Alle Ansichten, die per Adresse erreichbar sind
-        const VIEWS = ['dashboard','db','calc','map','nasal','tracker','inventory',
+        const VIEWS = ['dashboard','db','calc','map','nasal','pen','tracker','inventory',
                        'blood','storage','stack','wiki','tutorial','sport','coupons'];
 
         function viewAusHash() {
@@ -3412,6 +3560,7 @@
             }
 
             // NEU: Fix für leere Injektions-Map (Erzwingt Neuberechnung der 3D Engine wenn Tab sichtbar wird)
+            if (viewId === 'pen' && typeof penListenAuffrischen === 'function') penListenAuffrischen();
             if(viewId === 'map') {
                 ladeKoerperkarte();
                 setTimeout(() => {
@@ -5032,6 +5181,8 @@
         }
 
         function clickClockSpot(hour) {
+            const md = mapDosis();
+            if (md.fehler) { customConfirm(md.fehler, () => {}); return; }
             let spots = readStore('peptide_clock_spots');
             
             spots[hour] = Date.now();
@@ -5044,11 +5195,11 @@
             
             if(subSelect && subSelect.value) {
                 subName = subSelect.options[subSelect.selectedIndex].text.split(' (')[0];
-                let doseMg = parseFloat(doseInput ? doseInput.value : 0) || 0;
-                
+                let doseMg = md.mg || 0;
+
                 if(doseMg > 0) {
-                    doseStr = doseMg + "mg";
-                    if (typeof deductFromInventory === 'function') deductFromInventory(subSelect.value, doseMg);
+                    doseStr = md.anzeige;
+                    if (typeof deductFromInventory === 'function') deductFromInventory(subSelect.value, doseMg, md.batchId);
                     
                     const today = localDateISO();
                     let tData = readStore('tracker_data');
@@ -5057,7 +5208,9 @@
                         date: today,
                         type: 'injection',
                         peptide: subName,
-                        dose: doseStr
+                        dose: md.dose,
+                        form: md.form,
+                        menge: md.menge
                     });
                     writeStore('tracker_data', tData);
                 }
@@ -5081,6 +5234,8 @@
 
         function logCurrentMapZone() {
             if(!currentMapZoneTitle) return;
+            const md = mapDosis();
+            if (md.fehler) { customConfirm(md.fehler, () => {}); return; }
 
             const subSelect = document.getElementById('map-log-substance');
             const doseInput = document.getElementById('map-log-dose');
@@ -5095,11 +5250,11 @@
             
             if(subSelect && subSelect.value) {
                 subName = subSelect.options[subSelect.selectedIndex].text.split(' (')[0];
-                let doseMg = parseFloat(doseInput ? doseInput.value : 0) || 0;
-                
+                let doseMg = md.mg || 0;
+
                 if(doseMg > 0) {
-                    doseStr = doseMg + "mg";
-                    if (typeof deductFromInventory === 'function') deductFromInventory(subSelect.value, doseMg);
+                    doseStr = md.anzeige;
+                    if (typeof deductFromInventory === 'function') deductFromInventory(subSelect.value, doseMg, md.batchId);
                     
                     const today = localDateISO();
                     let tData = readStore('tracker_data');
@@ -5108,7 +5263,9 @@
                         date: today,
                         type: 'injection',
                         peptide: subName,
-                        dose: doseStr
+                        dose: md.dose,
+                        form: md.form,
+                        menge: md.menge
                     });
                     writeStore('tracker_data', tData);
                 }
@@ -5132,20 +5289,78 @@
         function updateMapDoseField() {
             const select = document.getElementById('map-log-substance');
             const doseInput = document.getElementById('map-log-dose');
+            const einheit = document.getElementById('map-log-einheit');
             if(!select || !doseInput) return;
-            
+
             const pepId = select.value;
             if(!pepId) {
                 doseInput.value = '';
+                mapUmrechnungZeigen();
                 return;
             }
-            
+
+            // Liegt nur ein Pen im Bestand, wird in Klicks eingetragen
+            if (einheit && nurPen(pepId)) {
+                einheit.value = 'Klicks';
+                doseInput.value = '';
+                mapUmrechnungZeigen();
+                return;
+            }
+            if (einheit) einheit.value = 'mg';
+
             let inv = readStore('peptide_inventory');
             if(inv[pepId] && inv[pepId].dailyDose) {
                 doseInput.value = parseFloat(inv[pepId].dailyDose).toFixed(2);
             } else {
                 doseInput.value = '0.50';
             }
+            mapUmrechnungZeigen();
+        }
+
+        // Menge aus dem Body-Map-Formular. Klicks rechnen ueber den Pen im
+        // Bestand um; ohne Pen gibt es eine Meldung statt einer falschen Menge.
+        function mapDosis() {
+            const sel = document.getElementById('map-log-substance');
+            const input = document.getElementById('map-log-dose');
+            const einheitEl = document.getElementById('map-log-einheit');
+            const pepId = sel ? sel.value : '';
+            const menge = parseFloat(String(input ? input.value : '').replace(',', '.')) || 0;
+            const einheit = einheitEl ? einheitEl.value : 'mg';
+            if (!pepId || !(menge > 0)) return { mg: 0 };
+
+            const mg = mengeInMg(menge, einheit, pepId);
+            if (!mg) {
+                const p = RAW_DATA.find(x => x[0] === pepId);
+                return { fehler: 'Für ' + (p ? p[2] : 'diese Substanz') + ' liegt kein Pen im Bestand. Leg im Bestand einen Pen an oder trag die Menge in mg ein.' };
+            }
+            const r = n => String(Math.round(n * 1000) / 1000);
+            const klicks = einheit === 'Klicks';
+            return {
+                mg: mg,
+                batchId: abzugsBatch(einheit, pepId),
+                dose: journalDosis(menge, einheit, mg),
+                anzeige: klicks ? r(menge) + ' Klicks (' + r(mg) + 'mg)' : r(menge) + einheit,
+                menge: klicks ? zahlText(menge) + ' Klicks' : undefined,
+                form: klicks ? 'Pen' : undefined
+            };
+        }
+
+        function mapUmrechnungZeigen() {
+            const el = document.getElementById('map-log-umrechnung');
+            if (!el) return;
+            const sel = document.getElementById('map-log-substance');
+            const einheit = (document.getElementById('map-log-einheit') || {}).value;
+            const pepId = sel ? sel.value : '';
+            let text = '';
+            if (pepId && einheit === 'Klicks') {
+                const pen = penVon(pepId);
+                const menge = parseFloat(document.getElementById('map-log-dose').value) || 0;
+                text = pen
+                    ? '1 Klick = ' + zahlText(mgProKlick(pen) * 1000, 1) + ' mcg' + (menge > 0 ? ' · ' + zahlText(menge) + ' Klicks = ' + zahlText(menge * mgProKlick(pen)) + ' mg' : '')
+                    : 'Kein Pen im Bestand.';
+            }
+            el.textContent = text;
+            el.classList.toggle('hidden', !text);
         }
 
         function selectZone(zoneId, btn) {
@@ -5462,21 +5677,44 @@
             const neu = opt && opt.neu;
             const eigen = sel.value === '__eigen';
             document.getElementById('trk-pep-eigen').classList.toggle('hidden', !eigen);
-            if (neu && sel.value) document.getElementById('trk-form-art').value = eigen ? 'Oral' : formVorschlag(sel.value);
+            if (neu && sel.value) {
+                const pen = !eigen && nurPen(sel.value);
+                document.getElementById('trk-form-art').value = eigen ? 'Oral' : (pen ? 'Pen' : formVorschlag(sel.value));
+                if (pen) document.getElementById('trk-einheit').value = 'Klicks';
+            }
 
             const box = document.getElementById('trk-abziehen');
             const hinweis = document.getElementById('trk-abziehen-hinweis');
             const pepId = eigen ? '' : sel.value;
             const imBestand = pepId && readStore('peptide_inventory')[pepId];
-            const umrechenbar = pepId && mengeInMg(1, document.getElementById('trk-einheit').value, pepId) !== null;
+            const einheit = document.getElementById('trk-einheit').value;
+            const umrechenbar = pepId && mengeInMg(1, einheit, pepId) !== null;
             const heute = document.getElementById('trk-date').value === localDateISO();
+
+            // Umrechnung live zeigen, wo sie nicht offensichtlich ist
+            const umr = document.getElementById('trk-umrechnung');
+            const menge = parseFloat(document.getElementById('trk-menge').value) || 0;
+            if (umr) {
+                let text = '';
+                if (pepId && (einheit === 'Klicks' || einheit === 'Stück')) {
+                    if (!umrechenbar) text = einheit === 'Klicks' ? 'Kein Pen im Bestand: Klicks lassen sich nicht in mg umrechnen.' : 'Keine Tabletten im Bestand: Stück lassen sich nicht in mg umrechnen.';
+                    else if (einheit === 'Klicks') {
+                        const pen = penVon(pepId);
+                        text = '1 Klick = ' + zahlText(mgProKlick(pen) * 1000, 1) + ' mcg' + (menge > 0 ? ' · ' + zahlText(menge) + ' Klicks = ' + zahlText(mengeInMg(menge, einheit, pepId)) + ' mg' : '');
+                    } else if (menge > 0) {
+                        text = zahlText(menge) + ' Stück = ' + zahlText(mengeInMg(menge, einheit, pepId)) + ' mg';
+                    }
+                }
+                umr.textContent = text;
+                umr.classList.toggle('hidden', !text);
+            }
 
             if (!imBestand) {
                 box.checked = false; box.disabled = true;
                 hinweis.textContent = pepId ? 'Diese Substanz ist nicht im Bestand.' : 'Nur für Substanzen aus dem Bestand.';
             } else if (!umrechenbar) {
                 box.checked = false; box.disabled = true;
-                hinweis.textContent = 'Geht nur mit mg, mcg oder Stück (bei Tabletten im Bestand).';
+                hinweis.textContent = 'Geht nur mit mg, mcg, Stück (bei Tabletten) oder Klicks (bei einem Pen im Bestand).';
             } else {
                 box.disabled = false;
                 if (neu) box.checked = heute;
@@ -5586,7 +5824,7 @@
                 if (zeit) entry.zeit = zeit;
 
                 const box = document.getElementById('trk-abziehen');
-                if (box.checked && !box.disabled && mg) deductFromInventory(pepId, mg);
+                if (box.checked && !box.disabled && mg) deductFromInventory(pepId, mg, abzugsBatch(einheit, pepId));
 
                 document.getElementById('trk-menge').value = '';
                 document.getElementById('trk-zeit').value = '';
@@ -5984,7 +6222,15 @@
             const add = document.getElementById('inv-add-text');
             const mgF = document.getElementById('inv-mg-vial');
 
-            if (art === 'tablette') {
+            const penFelder = document.getElementById('inv-pen-felder');
+            if (penFelder) penFelder.classList.toggle('hidden', art !== 'pen');
+
+            if (art === 'pen') {
+                if (mgL) mgL.innerText = 'Wirkstoff je Pen (mg)';
+                if (anzL) anzL.innerText = 'Anzahl Pens (Stück)';
+                if (add) add.innerText = 'Pens zum Bestand hinzufügen';
+                if (mgF) mgF.value = 10;
+            } else if (art === 'tablette') {
                 if (mgL) mgL.innerText = 'Wirkstoff je Tablette (mg)';
                 if (anzL) anzL.innerText = 'Anzahl Tabletten (Stück)';
                 if (add) add.innerText = 'Zum Bestand hinzufügen';
@@ -6058,7 +6304,27 @@
                 delete inv[id].mgPerVial;
             }
 
-            if (invArt === 'tablette') {
+            if (invArt === 'pen') {
+                // Fertig-Pen: wie ein als Pen angesetztes Vial, nur schon
+                // gefuellt. Ein Eintrag je Pen, damit Klicks pro Pen zaehlen.
+                const ml = parseFloat(document.getElementById('inv-pen-ml').value) || 0;
+                const ul = parseFloat(document.getElementById('inv-pen-ul').value) || 0;
+                if (ml <= 0 || ul <= 0) {
+                    customConfirm("Bitte gib die Lösungsmenge je Pen und das Volumen pro Klick an. Beides steht im Datenblatt des Pens.", () => {});
+                    return;
+                }
+                for (let i = 0; i < vialCount; i++) {
+                    inv[id].batches.push({
+                        batchId: Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                        form: 'pen',
+                        fertigPen: true,
+                        mgPerVial: mgPerVial,
+                        currentMg: mgPerVial,
+                        ml: ml,
+                        geraetUl: ul
+                    });
+                }
+            } else if (invArt === 'tablette') {
                 // Eine Packung statt vieler Einzelchargen. Intern bleibt
                 // alles in mg, damit Abzug und Reichweite unveraendert
                 // rechnen - nur die Anzeige zaehlt in Stueck.
@@ -6150,6 +6416,155 @@ function removeBatch(pepId, batchId) {
         };
 
         // Rechnet aus einem angesetzten Vial die Kennzahlen des Geraets
+        // --- PEN-RECHNER ------------------------------------------------
+        // Alle Pens im Bestand, als Pen angesetzte Vials und Fertig-Pens
+        function penListe() {
+            const inv = readStore('peptide_inventory');
+            const out = [];
+            Object.keys(inv).forEach(id => {
+                const p = RAW_DATA.find(x => x[0] === id);
+                (inv[id].batches || []).forEach(b => {
+                    if (b.form === 'pen' && b.ml > 0 && b.currentMg > 0.0001) out.push({ pepId: id, name: p ? p[2] : id, b: b });
+                });
+            });
+            return out.sort((a, b) => a.name.localeCompare(b.name, 'de') || (a.b.currentMg - b.b.currentMg));
+        }
+
+        function penBeschriftung(x) {
+            const rest = Math.floor((x.b.currentMg / mgProKlick(x.b)) + 0.0001);
+            return x.name + ' · ' + zahlText(x.b.mgPerVial) + ' mg / ' + zahlText(x.b.ml) + ' ml · noch ' + rest + ' Klicks';
+        }
+
+        // Auswahllisten neu fuellen, die Auswahl bleibt erhalten
+        function penListenAuffrischen() {
+            const quelle = document.getElementById('pen-quelle');
+            const sub = document.getElementById('pen-log-sub');
+            if (!quelle || !sub) return;
+            const liste = penListe();
+            const opts = liste.map(x => '<option value="' + x.pepId + '|' + x.b.batchId + '">' + esc(penBeschriftung(x)) + '</option>').join('');
+            const q = quelle.value, v = sub.value;
+            quelle.innerHTML = '<option value="">-- Manuelle Eingabe --</option>' + opts;
+            sub.innerHTML = opts;
+            if ([...quelle.options].some(o => o.value === q)) quelle.value = q;
+            if ([...sub.options].some(o => o.value === v)) sub.value = v;
+            document.getElementById('pen-log-leer').classList.toggle('hidden', liste.length > 0);
+            document.getElementById('pen-log-form').classList.toggle('hidden', liste.length === 0);
+            const datum = document.getElementById('pen-log-datum');
+            if (datum && !datum.value) datum.value = localDateISO();
+            if (datum) datum.max = localDateISO();
+            penLogVorschau();
+        }
+
+        function penAusWahl(wert) {
+            const [pepId, batchId] = String(wert || '').split('|');
+            const x = penListe().find(e => e.pepId === pepId && e.b.batchId === batchId);
+            return x || null;
+        }
+
+        function penQuelle() {
+            const x = penAusWahl(document.getElementById('pen-quelle').value);
+            if (x) {
+                document.getElementById('pen-mg').value = Math.round(x.b.mgPerVial * 1000) / 1000;
+                document.getElementById('pen-ml').value = Math.round(x.b.ml * 1000) / 1000;
+                document.getElementById('pen-ul').value = x.b.geraetUl || 10;
+            }
+            calcPen();
+        }
+
+        function calcPen() {
+            const zahl = id => parseFloat(String(document.getElementById(id).value).replace(',', '.')) || 0;
+            const mg = zahl('pen-mg'), ml = zahl('pen-ml'), ul = zahl('pen-ul');
+            const zielMcg = zahl('pen-ziel') * (document.getElementById('pen-ziel-einheit').value === 'mg' ? 1000 : 1);
+            const setze = (id, t) => { document.getElementById(id).textContent = t; };
+            const rundung = document.getElementById('pen-rundung');
+
+            if (!(mg > 0 && ml > 0 && ul > 0)) {
+                ['pen-klicks', 'pen-real', 'pen-konz', 'pen-proklick', 'pen-gesamt', 'pen-gaben'].forEach(id => setze(id, '–'));
+                rundung.classList.add('hidden');
+                return;
+            }
+
+            const konz = mg / ml;                 // mg pro ml
+            const mcgProKlick = konz * ul;        // mg/ml x µl = mcg
+            const gesamt = Math.floor((ml * 1000) / ul + 0.0001);
+            setze('pen-konz', zahlText(konz, 2) + ' mg/ml');
+            setze('pen-proklick', zahlText(mcgProKlick, 1) + ' mcg');
+            setze('pen-gesamt', String(gesamt));
+
+            if (!(zielMcg > 0)) {
+                ['pen-klicks', 'pen-real', 'pen-gaben'].forEach(id => setze(id, '–'));
+                rundung.classList.add('hidden');
+                return;
+            }
+            const klicks = Math.max(1, Math.round(zielMcg / mcgProKlick));
+            const real = klicks * mcgProKlick;
+            setze('pen-klicks', String(klicks));
+            setze('pen-klick-wort', klicks === 1 ? 'Klick' : 'Klicks');
+            setze('pen-real', zahlText(real, 1));
+            setze('pen-gaben', String(Math.floor(gesamt / klicks)));
+
+            const abw = (real - zielMcg) / zielMcg;
+            if (Math.abs(abw) > 0.05) {
+                rundung.textContent = 'Genauer geht es mit diesem Pen nicht: ' + klicks + ' ' + (klicks === 1 ? 'Klick ergibt' : 'Klicks ergeben') + ' ' +
+                    zahlText(real, 1) + ' mcg, ' + Math.round(Math.abs(abw) * 100) + ' % ' + (abw > 0 ? 'mehr' : 'weniger') + ' als gewünscht.';
+                rundung.classList.remove('hidden');
+            } else {
+                rundung.classList.add('hidden');
+            }
+        }
+
+        function penLogVorschau() {
+            const el = document.getElementById('pen-log-vorschau');
+            if (!el) return;
+            const x = penAusWahl(document.getElementById('pen-log-sub').value);
+            const klicks = parseInt(document.getElementById('pen-log-klicks').value, 10) || 0;
+            if (!x) { el.textContent = ''; return; }
+            const proKlick = mgProKlick(x.b);
+            const rest = Math.floor(x.b.currentMg / proKlick + 0.0001);
+            if (!klicks) { el.textContent = '1 Klick = ' + zahlText(proKlick * 1000, 1) + ' mcg · noch ' + rest + ' Klicks im Pen'; return; }
+            el.textContent = klicks + ' ' + (klicks === 1 ? 'Klick' : 'Klicks') + ' = ' + zahlText(klicks * proKlick) + ' mg' +
+                (klicks > rest ? ' · Achtung: Im Pen sind nur noch ' + rest + ' Klicks.' : ' · danach noch ' + (rest - klicks) + ' Klicks im Pen');
+        }
+
+        function logPen() {
+            const x = penAusWahl(document.getElementById('pen-log-sub').value);
+            const klicks = parseInt(document.getElementById('pen-log-klicks').value, 10) || 0;
+            const datum = document.getElementById('pen-log-datum').value || localDateISO();
+            const zeit = document.getElementById('pen-log-zeit').value;
+            if (!x || klicks <= 0) {
+                customConfirm('Bitte wähle einen Pen und gib die Zahl der Klicks an.', () => {});
+                return;
+            }
+            if (datum > localDateISO()) {
+                customConfirm('Das Datum liegt in der Zukunft. Einträge gehen nur für heute oder vergangene Tage.', () => {});
+                return;
+            }
+            const mg = klicks * mgProKlick(x.b);
+            deductFromInventory(x.pepId, mg, x.b.batchId);
+
+            const eintrag = {
+                id: Date.now().toString() + '_pen',
+                date: datum,
+                type: 'injection',
+                form: 'Pen',
+                peptide: x.name,
+                dose: journalDosis(mg, 'mg'),
+                menge: klicks + ' Klicks'
+            };
+            if (zeit) eintrag.zeit = zeit;
+            const t = readStore('tracker_data');
+            t.unshift(eintrag);
+            writeStore('tracker_data', t);
+
+            document.getElementById('pen-log-klicks').value = '';
+            document.getElementById('pen-log-zeit').value = '';
+            penListenAuffrischen();
+            document.getElementById('pen-log-vorschau').textContent = 'Eingetragen: ' + x.name + ', ' + klicks + ' Klicks (' + zahlText(mg) + ' mg).';
+            if (typeof renderTrackerCalendar === 'function') renderTrackerCalendar();
+            if (typeof renderTrackerRecent === 'function') renderTrackerRecent();
+            if (typeof renderDashboard === 'function') renderDashboard();
+        }
+
         function ansatzInfo(b) {
             // Tabletten brauchen kein Ansetzen - sie sind fertig.
             if (b.form === 'tablette') {
@@ -6449,7 +6864,7 @@ function renderInventory() {
         data.batches.forEach(b => {
             totalMgCalc += b.currentMg;
             // Ein Vial ist voll, wenn es keinen Verbrauch hat UND nicht manuell geöffnet wurde
-            if(b.form === 'tablette') {
+            if(b.form === 'tablette' || (b.form === 'pen' && b.ml > 0 && b.currentMg > 0)) {
                 openVialsList.push(b);
             } else if(Math.abs(b.currentMg - b.mgPerVial) < 0.001 && !b.isOpen) {
                 fullVialsMap[b.mgPerVial] = (fullVialsMap[b.mgPerVial] || 0) + 1;
@@ -6521,7 +6936,7 @@ function renderInventory() {
                         <span class="text-base leading-none">${f.symbol}</span>
                         <span class="text-xs font-bold text-amber-300">${f.name}</span>
                         <span class="ml-auto text-xs font-mono text-amber-200">${b.currentMg.toFixed(2)} / ${b.mgPerVial} mg</span>
-                        <button onclick="removeBatch('${id}', '${b.batchId}')" class="text-amber-500/70 hover:text-rose-400 transition-colors text-xs pl-1" title="Vial entsorgen" aria-label="Vial entsorgen">✖</button>
+                        <button onclick="removeBatch('${id}', '${b.batchId}')" class="text-amber-500/70 hover:text-rose-400 transition-colors text-xs pl-1" title="${f.name} entsorgen" aria-label="${f.name} entsorgen">✖</button>
                     </div>
                     <div class="px-3 py-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-amber-100/80">
                         ${f.zeilen.map(z => `<span>${z}</span>`).join('')}
@@ -6579,6 +6994,7 @@ function renderInventory() {
             }
 
             list.innerHTML = html;
+            if (typeof penListenAuffrischen === 'function') penListenAuffrischen();
 
             if(warnGlobal && warnGlobalText && navWarn) {
                 if(hasWarning) {
@@ -6594,7 +7010,7 @@ function renderInventory() {
             }
         }
 
-        function deductFromInventory(pepId, doseMg = null) {
+        function deductFromInventory(pepId, doseMg = null, vorzugBatchId) {
     let inv = readStore('peptide_inventory');
     if(inv[pepId]) {
         let amountToDeduct = doseMg;
@@ -6606,6 +7022,11 @@ function renderInventory() {
         if(inv[pepId].batches && inv[pepId].batches.length > 0) {
             // Angebrochene Vials zuerst verwenden (Berücksichtigt jetzt auch manuell geöffnete)
             inv[pepId].batches.sort((a,b) => {
+                // Klicks gehen vom Pen ab, Stueck von der Tablettenpackung
+                if (vorzugBatchId) {
+                    if (a.batchId === vorzugBatchId) return -1;
+                    if (b.batchId === vorzugBatchId) return 1;
+                }
                 let aOpen = (a.currentMg < a.mgPerVial || a.isOpen) ? -1 : 1;
                 let bOpen = (b.currentMg < b.mgPerVial || b.isOpen) ? -1 : 1;
                 return aOpen - bOpen;
@@ -7680,6 +8101,8 @@ function renderInventory() {
             
             if(typeof renderDashboard === "function") renderDashboard();
             if(typeof renderDailySchedule === "function") renderDailySchedule();
+            if(typeof penListenAuffrischen === "function") penListenAuffrischen();
+            if(typeof calcPen === "function") calcPen();
             if(typeof renderBackupStand === "function") renderBackupStand();
             if(typeof speicherSichern === "function") speicherSichern();
             if(typeof startAlarmEngine === "function") startAlarmEngine();
@@ -8290,7 +8713,7 @@ function renderInventory() {
             const mg = item.pepId ? mengeInMg(menge, einheit, item.pepId) : null;
 
             // 1. Vom Bestand abziehen - nur mit einer Menge in mg
-            if (item.pepId && mg) deductFromInventory(item.pepId, mg);
+            if (item.pepId && mg) deductFromInventory(item.pepId, mg, abzugsBatch(einheit, item.pepId));
 
             // 2. Ins Journal eintragen. Aeltere Punkte ohne Form gelten wie
             // bisher als Injektion.
