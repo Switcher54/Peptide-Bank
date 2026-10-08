@@ -2712,7 +2712,7 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
             <span class="text-xs font-semibold">Datenbank</span>
         </button>
-        <button onclick="router('calc')" id="mob-nav-calc" class="mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-slate-400 hover:text-slate-200 transition-colors relative">
+        <button onclick="toggleRechnerMenu()" id="mob-nav-calc" aria-expanded="false" aria-controls="rechner-sheet" class="mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-slate-400 hover:text-slate-200 transition-colors relative">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
             <span class="text-xs font-semibold">Rechner</span>
         </button>
@@ -2729,6 +2729,31 @@
             <span class="text-xs font-semibold">Mehr</span>
         </button>
     </nav>
+
+    <!-- Rechner-Auswahl (mobil): Tipp auf "Rechner" in der Leiste -->
+    <div id="rechner-overlay" aria-hidden="true" class="fixed inset-0 bg-base/80 backdrop-blur-sm z-[95] opacity-0 pointer-events-none transition-opacity duration-300 md:hidden" onclick="toggleRechnerMenu()"></div>
+    <div id="rechner-sheet" role="dialog" aria-modal="true" aria-labelledby="rechner-sheet-titel" aria-hidden="true" class="fixed bottom-[4.5rem] left-0 right-0 bg-slate-900 border-t border-white/10 rounded-t-3xl z-[96] translate-y-full transition-transform duration-300 md:hidden shadow-[0_-20px_50px_rgba(0,0,0,0.5)] px-5 pb-5">
+        <div class="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mt-3 mb-4"></div>
+        <h4 id="rechner-sheet-titel" class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Rechner wählen</h4>
+        <div class="space-y-2">
+            <button onclick="router('calc')" class="w-full flex items-center gap-4 p-4 min-h-[64px] rounded-2xl bg-slate-800/50 border border-white/5 hover:border-brand-500/50 text-left transition-colors">
+                <span class="w-10 h-10 shrink-0 rounded-xl bg-brand-500/15 text-brand-300 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></span>
+                <span class="min-w-0"><span class="block text-sm font-bold text-white">Spritze</span><span class="block text-xs text-slate-400">Units auf der U100-Spritze, Mischen, Zyklus-Budget</span></span>
+            </button>
+            <button onclick="router('pen')" class="w-full flex items-center gap-4 p-4 min-h-[64px] rounded-2xl bg-slate-800/50 border border-white/5 hover:border-pink-500/50 text-left transition-colors">
+                <span class="w-10 h-10 shrink-0 rounded-xl bg-pink-500/15 text-pink-300 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></span>
+                <span class="min-w-0"><span class="block text-sm font-bold text-white">Pen</span><span class="block text-xs text-slate-400">Klicks pro Gabe, Klicks und Gaben im Pen</span></span>
+            </button>
+            <button onclick="router('nasal')" class="w-full flex items-center gap-4 p-4 min-h-[64px] rounded-2xl bg-slate-800/50 border border-white/5 hover:border-cyan-500/50 text-left transition-colors">
+                <span class="w-10 h-10 shrink-0 rounded-xl bg-cyan-500/15 text-cyan-300 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.7 7.7a2.5 2.5 0 111.8 4.3H2M9.6 4.6A2 2 0 1111 8H2m10.6 11.4A2 2 0 1014 16H2"></path></svg></span>
+                <span class="min-w-0"><span class="block text-sm font-bold text-white">Nasenspray</span><span class="block text-xs text-slate-400">Hübe pro Gabe, Hübe je Flasche</span></span>
+            </button>
+            <button onclick="router('tutorial')" class="w-full flex items-center gap-4 p-4 min-h-[64px] rounded-2xl bg-slate-800/50 border border-white/5 hover:border-amber-500/50 text-left transition-colors">
+                <span class="w-10 h-10 shrink-0 rounded-xl bg-amber-500/15 text-amber-300 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></span>
+                <span class="min-w-0"><span class="block text-sm font-bold text-white">Misch-Guide</span><span class="block text-xs text-slate-400">Schritt für Schritt ansetzen</span></span>
+            </button>
+        </div>
+    </div>
 
     <!-- Mobile Fullscreen Menu (Bottom Sheet) -->
     <div id="mobile-menu-overlay" aria-hidden="true" class="fixed inset-0 bg-base/80 backdrop-blur-sm z-[95] opacity-0 pointer-events-none transition-opacity duration-300 md:hidden" onclick="toggleMobileMenu()"></div>
@@ -3561,6 +3586,7 @@
             if (typeof isMobileMenuOpen !== 'undefined' && isMobileMenuOpen) {
                 toggleMobileMenu();
             }
+            if (typeof isRechnerMenuOpen !== 'undefined' && isRechnerMenuOpen) toggleRechnerMenu(false);
             closeNavMenus();
 
             document.querySelectorAll('.view-panel').forEach(p => { 
@@ -3611,7 +3637,9 @@
             document.querySelectorAll('.mob-nav-btn').forEach(btn => {
                 btn.className = "mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-slate-400 hover:text-slate-200 transition-colors relative";
             });
-            const activeMobBtn = document.getElementById('mob-nav-' + viewId);
+            // Nasenspray, Pen und Misch-Guide gehoeren unten zu "Rechner"
+            const mobZiel = { nasal: 'calc', pen: 'calc', tutorial: 'calc' }[viewId] || viewId;
+            const activeMobBtn = document.getElementById('mob-nav-' + mobZiel);
             if(activeMobBtn) {
                 activeMobBtn.className = "mob-nav-btn flex flex-col items-center justify-center gap-1 min-w-[52px] min-h-[48px] text-brand-400 relative";
                 activeMobBtn.setAttribute('aria-current', 'page');
@@ -5724,17 +5752,20 @@
                 umr.classList.toggle('hidden', !text);
             }
 
+            // Der Haken laesst sich immer setzen und entfernen. Kann die App
+            // nichts abziehen, sagt der Hinweis warum - und nach dem
+            // Speichern noch einmal.
+            box.disabled = false;
+            if (neu) box.checked = !!(heute && imBestand && umrechenbar);
             if (!imBestand) {
-                box.checked = false; box.disabled = true;
-                hinweis.textContent = pepId ? 'Diese Substanz ist nicht im Bestand.' : 'Nur für Substanzen aus dem Bestand.';
+                hinweis.textContent = pepId
+                    ? 'Diese Substanz ist nicht im Bestand. Angehakt wird nichts abgezogen.'
+                    : 'Eigene Angaben stehen nicht im Bestand. Angehakt wird nichts abgezogen.';
             } else if (!umrechenbar) {
-                box.checked = false; box.disabled = true;
-                hinweis.textContent = 'Geht nur mit mg, mcg, Stück (bei Tabletten) oder Klicks (bei einem Pen im Bestand).';
+                hinweis.textContent = 'Für diese Einheit kennt die App keine mg-Menge. Abziehen geht mit mg, mcg, Stück (Tabletten) oder Klicks (Pen).';
             } else {
-                box.disabled = false;
-                if (neu) box.checked = heute;
                 hinweis.textContent = heute
-                    ? 'Die Menge wird vom angebrochenen Vial bzw. der Packung abgezogen.'
+                    ? 'Die Menge wird vom angebrochenen Vial, Pen bzw. der Packung abgezogen.'
                     : 'Beim Nachtragen meist schon erledigt. Nur anhaken, wenn die Menge noch im Bestand steht.';
             }
         }
@@ -5800,6 +5831,7 @@
         }
 
         function saveTrackerEntry() {
+            let nichtAbgezogen = '';
             const dateVal = document.getElementById('trk-date').value;
             if(!dateVal) return;
             if (dateVal > localDateISO()) {
@@ -5839,7 +5871,13 @@
                 if (zeit) entry.zeit = zeit;
 
                 const box = document.getElementById('trk-abziehen');
-                if (box.checked && !box.disabled && mg) deductFromInventory(pepId, mg, abzugsBatch(einheit, pepId));
+                if (box.checked) {
+                    const imBestand = pepId && readStore('peptide_inventory')[pepId];
+                    if (imBestand && mg) deductFromInventory(pepId, mg, abzugsBatch(einheit, pepId));
+                    else nichtAbgezogen = !imBestand
+                        ? (pepId ? name + ' steht nicht im Bestand.' : 'Eigene Angaben stehen nicht im Bestand.')
+                        : 'Für ' + einheit + ' kennt die App keine mg-Menge.';
+                }
 
                 document.getElementById('trk-menge').value = '';
                 document.getElementById('trk-zeit').value = '';
@@ -5878,6 +5916,7 @@
             if(typeof renderAnalytics === 'function') renderAnalytics();
             if(typeof renderInjectionLog === 'function') renderInjectionLog();
             if(typeof renderDashboard === 'function') renderDashboard();
+            if (nichtAbgezogen) customConfirm('Eingetragen. Vom Bestand wurde nichts abgezogen: ' + nichtAbgezogen, () => {});
         }
 
         function clearTrackerData() {
@@ -7583,6 +7622,7 @@ function renderInventory() {
             const sheet   = document.getElementById('mobile-menu-sheet');
             if (!overlay || !sheet) return;
 
+            if (!isMobileMenuOpen && typeof isRechnerMenuOpen !== 'undefined' && isRechnerMenuOpen) toggleRechnerMenu(false);
             isMobileMenuOpen = !isMobileMenuOpen;
 
             const btn = document.getElementById('mob-nav-menu');
@@ -7600,8 +7640,28 @@ function renderInventory() {
             }
         }
 
+        // Rechner-Auswahl in der unteren Leiste
+        let isRechnerMenuOpen = false;
+        function toggleRechnerMenu(zu) {
+            const overlay = document.getElementById('rechner-overlay');
+            const sheet = document.getElementById('rechner-sheet');
+            if (!overlay || !sheet) return;
+            if (zu === false && !isRechnerMenuOpen) return;
+            if (isMobileMenuOpen) toggleMobileMenu();
+            isRechnerMenuOpen = zu === false ? false : !isRechnerMenuOpen;
+            const btn = document.getElementById('mob-nav-calc');
+            if (btn) btn.setAttribute('aria-expanded', isRechnerMenuOpen ? 'true' : 'false');
+            sheet.setAttribute('aria-hidden', isRechnerMenuOpen ? 'false' : 'true');
+            overlay.classList.toggle('opacity-0', !isRechnerMenuOpen);
+            overlay.classList.toggle('pointer-events-none', !isRechnerMenuOpen);
+            sheet.classList.toggle('translate-y-full', !isRechnerMenuOpen);
+            document.body.style.overflow = isRechnerMenuOpen ? 'hidden' : '';
+            if (isRechnerMenuOpen) sheet.querySelector('button').focus();
+        }
+
         document.addEventListener('keydown', (e) => {
             if (e.key !== 'Escape') return;
+            if (isRechnerMenuOpen) { toggleRechnerMenu(false); return; }
             const b = document.getElementById('briefing');
             if (b && !b.classList.contains('hidden')) { closeBriefing(); return; }
             const offenesMenue = document.querySelector('.nav-drop-btn[aria-expanded="true"]');
