@@ -928,7 +928,7 @@
                             <h3 class="text-lg font-bold text-white flex items-center gap-2">
                                 <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg> Heutiger Tagesplan
                             </h3>
-                            <p class="text-xs text-slate-400 mt-1">Entsteht jeden Tag aus deinem Wochenplan. Abhaken trägt die Einnahme ins Journal ein und zieht mg-Mengen vom Bestand ab.</p>
+                            <p class="text-xs text-slate-400 mt-1">Entsteht jeden Tag aus deinem Wochenplan. Abhaken trägt die Einnahme ins Journal ein und zieht sie vom Bestand ab; nochmal antippen nimmt beides zurück.</p>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <button onclick="addCustomScheduleItem()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-xs font-bold transition-all shadow-sm">
@@ -7110,8 +7110,11 @@ function renderInventory() {
             }
         }
 
+        // Zieht vom Bestand ab und gibt zurueck, was von welcher Charge
+        // abging. So laesst sich ein Abhaken spaeter rueckgaengig machen.
         function deductFromInventory(pepId, doseMg = null, vorzugBatchId) {
     let inv = readStore('peptide_inventory');
+    const abzug = [];
     if(inv[pepId]) {
         let amountToDeduct = doseMg;
         if(!amountToDeduct) {
@@ -7135,13 +7138,11 @@ function renderInventory() {
             for(let batch of inv[pepId].batches) {
                         if(amountToDeduct <= 0) break;
                         if(batch.currentMg > 0) {
-                            if(batch.currentMg >= amountToDeduct) {
-                                batch.currentMg -= amountToDeduct;
-                                amountToDeduct = 0;
-                            } else {
-                                amountToDeduct -= batch.currentMg;
-                                batch.currentMg = 0;
-                            }
+                            const vorher = JSON.parse(JSON.stringify(batch));
+                            const weg = Math.min(batch.currentMg, amountToDeduct);
+                            batch.currentMg -= weg;
+                            amountToDeduct -= weg;
+                            abzug.push({ batch: vorher, mg: weg });
                         }
                     }
                     
@@ -7153,6 +7154,23 @@ function renderInventory() {
                 if(typeof renderInventory === "function") renderInventory();
                 if(typeof renderDashboard === "function") renderDashboard();
             }
+            return abzug;
+        }
+
+        // Bucht einen frueheren Abzug zurueck. Leer gewordene und deshalb
+        // entfernte Chargen kommen mit ihrem alten Stand wieder.
+        function abzugZurueckbuchen(pepId, abzug) {
+            if (!pepId || !Array.isArray(abzug) || !abzug.length) return;
+            const inv = readStore('peptide_inventory');
+            if (!inv[pepId]) inv[pepId] = { batches: [] };
+            if (!inv[pepId].batches) inv[pepId].batches = [];
+            abzug.forEach(a => {
+                const b = inv[pepId].batches.find(x => x.batchId === a.batch.batchId);
+                if (b) b.currentMg = Math.min(b.mgPerVial || Infinity, b.currentMg + a.mg);
+                else inv[pepId].batches.push(Object.assign({}, a.batch, { currentMg: a.mg }));
+            });
+            writeStore('peptide_inventory', inv);
+            if (typeof renderInventory === 'function') renderInventory();
         }
 
         function updateMapSubstancePresets() {
@@ -8799,9 +8817,15 @@ function renderInventory() {
             if (!item) return;
 
             if (item.completed) {
-                // Rückgängig nicht erlaubt wegen Bestand-Sync
-                customConfirm("Dieser Eintrag ist bereits abgehakt. Er steht im Journal, und mg-Mengen wurden vom Bestand abgezogen \u2014 zum Korrigieren dort den Eintrag l\u00f6schen und den Bestand anpassen.", () => {});
-                renderDailySchedule(); // UI Refresh um Checkbox wieder auf checked zu setzen
+                renderDailySchedule(); // Haken bleibt sichtbar, bis bestaetigt ist
+                if (!item.journalId) {
+                    // Aeltere Punkte wissen nicht, was sie abgezogen haben
+                    customConfirm("Dieser Punkt wurde vor dem Update abgehakt und l\u00e4sst sich nicht automatisch zur\u00fccknehmen. Zum Korrigieren den Eintrag im Journal l\u00f6schen und den Bestand anpassen.", () => {});
+                    return;
+                }
+                const mg = (item.abzug || []).reduce((n, a) => n + a.mg, 0);
+                customConfirm('Abhaken r\u00fcckg\u00e4ngig machen? Der Journal-Eintrag wird gel\u00f6scht' +
+                    (mg > 0 ? ' und ' + zahlText(mg) + ' mg gehen zur\u00fcck in den Bestand.' : '.'), () => abhakenZuruecknehmen(id));
                 return;
             }
 
@@ -8813,7 +8837,7 @@ function renderInventory() {
             const mg = item.pepId ? mengeInMg(menge, einheit, item.pepId) : null;
 
             // 1. Vom Bestand abziehen - nur mit einer Menge in mg
-            if (item.pepId && mg) deductFromInventory(item.pepId, mg, abzugsBatch(einheit, item.pepId));
+            const abzug = (item.pepId && mg) ? deductFromInventory(item.pepId, mg, abzugsBatch(einheit, item.pepId)) : [];
 
             // 2. Ins Journal eintragen. Aeltere Punkte ohne Form gelten wie
             // bisher als Injektion.
@@ -8830,6 +8854,15 @@ function renderInventory() {
             tData.unshift(tEntry);
             writeStore('tracker_data', tData);
 
+            // Merken, was passiert ist - fuers Rueckgaengigmachen
+            const plan = readStore('daily_schedule');
+            const gemerkt = (plan.items || []).find(i => i.id === id);
+            if (gemerkt) {
+                gemerkt.journalId = tEntry.id;
+                gemerkt.abzug = abzug || [];
+                writeStore('daily_schedule', plan);
+            }
+
             renderDailySchedule();
             if(typeof renderTrackerCalendar === 'function') renderTrackerCalendar();
             if(typeof renderTrackerRecent === 'function') renderTrackerRecent();
@@ -8840,6 +8873,22 @@ function renderInventory() {
                 row.classList.add('bg-emerald-500/10', 'border-emerald-500/30');
                 setTimeout(() => row.classList.remove('bg-emerald-500/10', 'border-emerald-500/30'), 1000);
             }
+        }
+
+        function abhakenZuruecknehmen(id) {
+            const plan = readStore('daily_schedule');
+            const item = (plan.items || []).find(i => i.id === id);
+            if (!item || !item.completed) return;
+            abzugZurueckbuchen(item.pepId, item.abzug);
+            writeStore('tracker_data', readStore('tracker_data').filter(e => e.id !== item.journalId));
+            item.completed = false;
+            delete item.journalId;
+            delete item.abzug;
+            writeStore('daily_schedule', plan);
+            renderDailySchedule();
+            if (typeof renderTrackerCalendar === 'function') renderTrackerCalendar();
+            if (typeof renderTrackerRecent === 'function') renderTrackerRecent();
+            if (typeof renderDashboard === 'function') renderDashboard();
         }
 
         function renderDailySchedule() {
@@ -8880,7 +8929,7 @@ function renderInventory() {
                             </div>
                             ${!fertig
                                 ? `<button onclick="removeScheduleItem('${item.id}')" class="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-slate-500 hover:text-rose-400 hover:bg-white/5 transition-colors" title="Für heute entfernen" aria-label="${esc(item.name)} für heute entfernen"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>`
-                                : `<span class="w-8 shrink-0 text-center text-emerald-500 text-sm" title="Erledigt">✓</span>`}
+                                : `<span class="w-8 shrink-0 text-center text-emerald-500 text-sm" title="Erledigt. Haken antippen zum Rückgängigmachen">✓</span>`}
                         </div>
                     </div>
                 `;
