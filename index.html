@@ -2043,10 +2043,10 @@
                             </div>
                             
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
-                                <button onclick="setTrackerType('injection', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span class="text-sm">💊</span> Einnahme</button>
-                                <button onclick="setTrackerType('feedback', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-700 text-white shadow-sm transition-all flex items-center justify-center gap-1.5"><span class="text-sm">📊</span> Bio</button>
-                                <button onclick="setTrackerType('note', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span class="text-sm">📝</span> Notiz</button>
-                                <button onclick="setTrackerType('workout', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><span class="text-sm">🏋️</span> Gym</button>
+                                <button onclick="setTrackerType('injection', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.5 20.5l10-10a4.95 4.95 0 00-7-7l-10 10a4.95 4.95 0 007 7zM8.5 8.5l7 7"></path></svg> Einnahme</button>
+                                <button onclick="setTrackerType('feedback', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-700 text-white shadow-sm transition-all flex items-center justify-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg> Bio</button>
+                                <button onclick="setTrackerType('note', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Notiz</button>
+                                <button onclick="setTrackerType('workout', this)" class="tracker-type-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Gym</button>
                             </div>
 
                             <!-- Einnahme: oral, Injektion ohne Zone, nasal, topisch. Auch nachtraeglich. -->
@@ -3440,6 +3440,24 @@
 
         function optionenListe(liste, gewaehlt, leerText) {
             return liste.map(x => '<option value="' + x + '"' + (x === gewaehlt ? ' selected' : '') + '>' + (x || leerText || '–') + '</option>').join('');
+        }
+
+        // Linien-Icons fuer Journal, Briefing und Tabs (statt Emoji)
+        const IKONEN = {
+            einnahme: 'M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z',
+            oral: 'M10.5 20.5l10-10a4.95 4.95 0 00-7-7l-10 10a4.95 4.95 0 007 7zM8.5 8.5l7 7',
+            bio: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+            notiz: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z',
+            gym: 'M13 10V3L4 14h7v7l9-11h-7z',
+            nasal: 'M17.7 7.7a2.5 2.5 0 111.8 4.3H2M9.6 4.6A2 2 0 1111 8H2m10.6 11.4A2 2 0 1014 16H2',
+            plan: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01',
+            zone: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z',
+            bestand: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
+            uhr: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+            glocke: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'
+        };
+        function ikon(name, cls) {
+            return '<svg class="' + (cls || 'w-4 h-4') + '" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="' + IKONEN[name] + '"></path></svg>';
         }
 
         let confirmCallback = null;
@@ -6056,7 +6074,7 @@
 
             if (item.type === 'injection' || item.type === 'oral' || item.type === 'einnahme' || (item.type === undefined && item.peptide)) {
                 const oral = item.type === 'oral' || item.type === 'einnahme';
-                icon = oral ? '<span class="text-pink-400 text-lg">💊</span>' : '<span class="text-brand-400 text-lg">💉</span>';
+                icon = oral ? '<span class="text-pink-400">' + ikon('oral', 'w-5 h-5') + '</span>' : '<span class="text-brand-400">' + ikon('einnahme', 'w-5 h-5') + '</span>';
                 const menge = item.menge ? esc(item.menge) + ', ' : '';
                 const doseText = item.dose ? ` <span class="text-xs text-slate-400">(${menge}${esc(item.dose)})</span>` : '';
                 const details = [item.form, item.zeit ? item.zeit + ' Uhr' : ''].filter(Boolean).join(' · ');
@@ -6064,7 +6082,7 @@
                     (details ? `<span class="block text-xs text-slate-500">${esc(details)}</span>` : '');
             }
             else if (item.type === 'feedback' || (item.type === undefined && item.sleep)) {
-                icon = '<span class="text-emerald-400 text-lg">📊</span>';
+                icon = '<span class="text-emerald-400">' + ikon('bio', 'w-5 h-5') + '</span>';
                 contentHtml = `
                     <div class="flex flex-wrap gap-x-3 gap-y-1 text-xs font-mono mt-1">
                         <span class="text-emerald-400" title="Schlaf">SLP: ${esc(item.sleep)}</span>
@@ -6074,17 +6092,17 @@
                 `;
             }
             else if (item.type === 'nasal') {
-                icon = '<span class="text-accent text-lg">👃</span>';
+                icon = '<span class="text-accent">' + ikon('nasal', 'w-5 h-5') + '</span>';
                 const extra = item.huebe ? `, ${esc(item.huebe)} Hub ${esc(item.seite || '')}` : (item.zeit ? `, ${esc(item.zeit)} Uhr` : '');
                 contentHtml = `<span class="text-sm font-bold text-white">${esc(item.peptide)}</span>` +
                     `<span class="text-xs text-slate-400 ml-1">(${esc(item.dose)}${extra})</span>`;
             }
             else if (item.type === 'note' || (item.type === undefined && item.note)) {
-                icon = '<span class="text-amber-400 text-lg">📝</span>';
+                icon = '<span class="text-amber-400">' + ikon('notiz', 'w-5 h-5') + '</span>';
                 contentHtml = `<p class="text-xs text-slate-300 italic">"${esc(item.note)}"</p>`;
             }
             else if (item.type === 'workout' || (item.type === undefined && item.focus)) {
-                icon = '<span class="text-purple-400 text-lg">🏋️</span>';
+                icon = '<span class="text-purple-400">' + ikon('gym', 'w-5 h-5') + '</span>';
                 contentHtml = `
                     <div class="flex flex-col gap-0.5">
                         <span class="text-sm font-bold text-white">${esc(item.focus || 'Training')}</span>
@@ -7985,10 +8003,12 @@ function renderInventory() {
         }
 
         // --- Bausteine ------------------------------------------------
+        const BRIEF_IKON = { '📋': 'plan', '📍': 'zone', '📦': 'bestand', '⏳': 'uhr', '📊': 'bio', '🔔': 'glocke' };
+
         function briefBlock(symbol, titel, inhalt, rand) {
             return '<div class="bg-slate-900/50 border ' + (rand || 'border-white/5') +
                 ' rounded-2xl p-4"><div class="flex items-center gap-2 mb-2.5">' +
-                '<span class="text-base leading-none">' + symbol + '</span>' +
+                '<span class="text-brand-300 leading-none">' + (BRIEF_IKON[symbol] ? ikon(BRIEF_IKON[symbol]) : symbol) + '</span>' +
                 '<span class="text-xs font-bold text-white uppercase tracking-wider">' + titel + '</span>' +
                 '</div>' + inhalt + '</div>';
         }
