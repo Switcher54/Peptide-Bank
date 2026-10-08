@@ -865,13 +865,14 @@
 
     <main id="hauptinhalt" tabindex="-1" class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-8 py-10 relative z-10">
 
-        <div class="mb-8 bg-indigo-500/10 border border-indigo-500/30 p-4 sm:p-5 rounded-2xl flex items-start gap-4 shadow-[0_0_20px_rgba(99,102,241,0.15)] backdrop-blur-sm">
-            <svg class="w-6 h-6 shrink-0 text-indigo-300 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <div>
-                <h4 class="font-bold text-indigo-300 text-sm mb-1">Nachschlagewerk und privates Protokoll</h4>
-                <p class="text-xs text-slate-300 leading-relaxed">Peptide Bank sammelt veröffentlichte Angaben zu Peptiden und verwandten Substanzen und hilft dir, eigene Einträge zu führen. Die App <strong>empfiehlt keine Einnahme und ersetzt keine ärztliche Beratung</strong>. Viele der Substanzen sind nicht als Arzneimittel zugelassen, ihre Sicherheit am Menschen ist oft nicht untersucht. Shop-Preise und Rabattcodes sind Werbung und ohne Gewähr.</p>
-            </div>
-        </div>
+        <details class="mb-8 group bg-indigo-500/10 border border-indigo-500/30 rounded-2xl backdrop-blur-sm">
+            <summary class="flex items-center gap-3 p-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <svg class="w-5 h-5 shrink-0 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="flex-1 min-w-0 text-sm"><strong class="text-indigo-300">Privates Nachschlagewerk und Protokoll</strong> <span class="text-slate-400">· keine ärztliche Beratung</span></span>
+                <svg class="w-4 h-4 shrink-0 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </summary>
+            <p class="px-4 pb-4 -mt-1 text-xs text-slate-300 leading-relaxed sm:pl-12">Die Angaben stammen aus veröffentlichten Quellen und ersetzen keine ärztliche Beratung. Viele der Substanzen sind nicht als Arzneimittel zugelassen, ihre Sicherheit am Menschen ist oft nicht untersucht. Shop-Preise und Rabattcodes sind ohne Gewähr.</p>
+        </details>
 
         <div id="global-inv-warning" class="hidden mb-8 bg-rose-500/10 border border-rose-500/20 p-4 rounded-2xl items-center justify-between shadow-[0_0_15px_rgba(244,63,94,0.1)]">
             <div class="flex items-center gap-4">
@@ -2351,10 +2352,10 @@
                 <div class="text-center max-w-2xl mx-auto mb-10 space-y-4">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Werbung
+                        Rabattcodes
                     </div>
                     <h2 class="text-3xl font-bold text-white">Shops und Rabattcodes</h2>
-                    <p class="text-slate-400 text-sm">Diese Seite ist Werbung. Peptide Bank prüft weder die Shops noch ihre Ware, und die Codes können jederzeit auslaufen. Ein Klick kopiert den Code in die Zwischenablage.</p>
+                    <p class="text-slate-400 text-sm">Deine Codes an einem Ort. Ohne Gewähr: Codes können jederzeit auslaufen. Ein Klick kopiert den Code in die Zwischenablage.</p>
                 </div>
 
                 <div class="max-w-3xl mx-auto mb-10 bg-slate-900/80 border border-emerald-500/30 p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_0_20px_rgba(16,185,129,0.05)]">
@@ -2754,7 +2755,7 @@
                 </div>
             </div>
             <div>
-                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Shops &middot; Werbung</h4>
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Shops</h4>
                 <div class="grid grid-cols-2 gap-3">
                     <button onclick="router('coupons')" class="bg-amber-500/10 border border-amber-500/20 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-amber-400">Rabattcodes</button>
                     <a href="https://janoshik.com/verification/" target="_blank" rel="noopener noreferrer" class="bg-emerald-500/10 border border-emerald-500/20 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-emerald-400 flex items-center">Chargen prüfen (HPLC)</a>
@@ -4056,7 +4057,7 @@
                         else if(pr.shop === "Nova Biolabs") link = "https://www.nova-biolabs.eu/shop/";
 
                         const shopLabel = link 
-                            ? `<a href="${link}" target="_blank" rel="noopener noreferrer sponsored" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen (Werbung)">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
+                            ? `<a href="${link}" target="_blank" rel="noopener noreferrer sponsored" class="hover:text-brand-400 transition-colors flex items-center gap-1.5" title="Shop in neuem Tab öffnen">${pr.shop} <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` 
                             : pr.shop;
                             
                         const displayPrice = pr.price.toString().includes('€') || pr.price.toString().includes('$') ? pr.price : pr.price + ' €';
@@ -4262,7 +4263,7 @@
                         <div id="${p.id}-price" class="card-tab-content hidden space-y-3 min-h-[120px]">
                             <div class="bg-slate-900/50 rounded-xl p-4 border border-white/5">
                                 <div class="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
-                                    <span class="block text-xs text-slate-500 uppercase font-bold">Shop-Preise · Werbung</span>
+                                    <span class="block text-xs text-slate-500 uppercase font-bold">Shop-Preise</span>
                                     <a href="https://janoshik.com/verification/" target="_blank" rel="noopener noreferrer" class="text-xs text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 font-bold">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Batch prüfen
                                     </a>
@@ -4270,7 +4271,7 @@
                                 <div class="space-y-1">
                                     ${priceHtml || '<span class="text-xs text-slate-500">Keine Preise hinterlegt.</span>'}
                                 </div>
-                                <p class="text-xs text-slate-500 leading-relaxed mt-3 pt-3 border-t border-white/5">Ohne Gewähr, zuletzt ergänzt ${PREISSTAND}. Peptide Bank prüft weder Shops noch Ware.</p>
+                                <p class="text-xs text-slate-500 leading-relaxed mt-3 pt-3 border-t border-white/5">Ohne Gewähr, zuletzt ergänzt ${PREISSTAND}.</p>
                             </div>
                         </div>
 
@@ -4960,7 +4961,7 @@
 
             shopCosts.sort((a, b) => a.totalCost - b.totalCost);
 
-            let html = `<p class="text-xs text-slate-500 leading-relaxed pb-1">Shop-Preise sind Werbung und ohne Gewähr, zuletzt ergänzt ${PREISSTAND}.</p>`;
+            let html = `<p class="text-xs text-slate-500 leading-relaxed pb-1">Shop-Preise ohne Gewähr, zuletzt ergänzt ${PREISSTAND}.</p>`;
             shopCosts.forEach((s, index) => {
                 const medal = `<span class="text-sm font-bold ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">${index + 1}.</span>`;
 
