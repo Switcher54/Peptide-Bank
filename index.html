@@ -1023,6 +1023,18 @@
                 </div>
             </div>
 
+            <!-- ABGLEICH ZWISCHEN GERAETEN -->
+            <div id="sync-modul" class="mt-8 glass-card p-6 rounded-3xl border border-sky-500/30 flex flex-col gap-5">
+                <div class="flex items-start gap-4">
+                    <div aria-hidden="true" class="w-12 h-12 shrink-0 rounded-full bg-sky-500/15 flex items-center justify-center border border-sky-500/40 text-sky-300"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg></div>
+                    <div class="min-w-0">
+                        <h3 class="text-lg font-bold text-white mb-1">Abgleich zwischen Geräten</h3>
+                        <p class="text-xs text-slate-400 max-w-xl">Handy und Computer zeigen denselben Stand. Die Daten liegen verschlüsselt in einem geheimen Gist auf deinem GitHub-Konto. Ohne dein Passwort kann sie dort niemand lesen, auch GitHub nicht.</p>
+                    </div>
+                </div>
+                <div id="sync-inhalt"></div>
+            </div>
+
             <!-- BACKUP MODULE (Now at the bottom) -->
             <div class="mt-8 glass-card p-6 rounded-3xl border border-brand-500/30 shadow-[0_0_20px_rgba(99,102,241,0.1)] flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="flex items-center gap-4">
@@ -2784,6 +2796,10 @@
                 </div>
             </div>
             <div>
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Daten</h4>
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <button onclick="router('dashboard'); setTimeout(() => document.getElementById('sync-modul').scrollIntoView({ behavior: 'smooth', block: 'start' }), 350);" class="col-span-2 bg-sky-500/10 border border-sky-500/20 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-sky-300">Abgleich &amp; Backup</button>
+                </div>
                 <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Shops</h4>
                 <div class="grid grid-cols-2 gap-3">
                     <button onclick="router('coupons')" class="bg-amber-500/10 border border-amber-500/20 px-4 min-h-[48px] rounded-xl text-left text-sm font-semibold text-amber-400">Rabattcodes</button>
@@ -3232,7 +3248,8 @@
             ai_chat_history: [],
             nasal_log: [],
             briefing_stand: {},
-            backup_stand: {}
+            backup_stand: {},
+            sync_config: {}
         };
 
         let storeWarnings = [];
@@ -3269,6 +3286,7 @@
         function writeStore(key, value) {
             try {
                 localStorage.setItem(key, JSON.stringify(value));
+                if (typeof syncGeaendert === 'function') syncGeaendert(key);
                 return true;
             } catch (e) {
                 console.error('Speichern fehlgeschlagen:', key, e);
@@ -8329,6 +8347,7 @@ function renderInventory() {
             if(typeof calcPen === "function") calcPen();
             if(typeof renderBackupStand === "function") renderBackupStand();
             if(typeof speicherSichern === "function") speicherSichern();
+            if(typeof initSync === "function") initSync();
             if(typeof startAlarmEngine === "function") startAlarmEngine();
             if(typeof initOffline === "function") initOffline();
             if(typeof briefingBeimStart === "function") briefingBeimStart();
@@ -10282,7 +10301,9 @@ function renderInventory() {
 
             const box = document.getElementById('backup-erinnerung');
             if (box) {
-                const faellig = hatEigeneDaten() && (tage === null || tage >= BACKUP_ERINNERN_TAGE);
+                const sync = readStore('sync_config');
+                const syncFrisch = sync.gistId && sync.zuletzt && (Date.now() - Date.parse(sync.zuletzt)) < BACKUP_ERINNERN_TAGE * 864e5;
+                const faellig = hatEigeneDaten() && (tage === null || tage >= BACKUP_ERINNERN_TAGE) && !syncFrisch;
                 box.classList.toggle('hidden', !faellig);
                 box.classList.toggle('flex', faellig);
                 const t = document.getElementById('backup-erinnerung-text');
@@ -10304,6 +10325,368 @@ function renderInventory() {
                 .then(ist => (ist || !hatEigeneDaten() || !navigator.storage.persist) ? ist : navigator.storage.persist())
                 .then(ok => { speicherDauerhaft = !!ok; renderBackupStand(); })
                 .catch(() => {});
+        }
+
+        // ============================================================
+        // ABGLEICH ZWISCHEN GERAETEN
+        //
+        // Alle Daten aus BACKUP_KEYS wandern verschluesselt in eine Datei
+        // in einem geheimen Gist auf dem GitHub-Konto des Nutzers.
+        // Schluessel: PBKDF2 (250 000 Runden, SHA-256) aus dem Passwort,
+        // dann AES-GCM 256. Auf GitHub liegt nur Salz, IV und Chiffrat.
+        //
+        // Ablauf: Beim Start, beim Zurueckkehren in die App und nach jeder
+        // Aenderung (verzoegert) wird abgeglichen. Hat sich nur der Stand
+        // auf GitHub geaendert, wird er uebernommen; nur der lokale, wird
+        // er hochgeladen; beide, fragt die App nach. Vor dem Ueberschreiben
+        // bleibt eine Kopie des lokalen Stands unter sync_sicherung.
+        // ============================================================
+        const SYNC_DATEI = 'peptide-bank-sync.json';
+        const SYNC_BESCHREIBUNG = 'Peptide Bank – verschlüsselter Abgleich';
+        const SYNC_TOKEN_LINK = 'https://github.com/settings/tokens/new?scopes=gist&description=Peptide%20Bank%20Abgleich';
+        let syncLaeuft = null;
+        let syncTimer = null;
+        let syncStatusText = '';
+
+        function zuB64(buf) {
+            const b = new Uint8Array(buf);
+            let s = '';
+            for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000));
+            return btoa(s);
+        }
+
+        function ausB64(text) {
+            const s = atob(text);
+            const b = new Uint8Array(s.length);
+            for (let i = 0; i < s.length; i++) b[i] = s.charCodeAt(i);
+            return b;
+        }
+
+        async function syncSchluesselAusPasswort(passwort, saltB64) {
+            const basis = await crypto.subtle.importKey('raw', new TextEncoder().encode(passwort), 'PBKDF2', false, ['deriveKey']);
+            return crypto.subtle.deriveKey(
+                { name: 'PBKDF2', salt: ausB64(saltB64), iterations: 250000, hash: 'SHA-256' },
+                basis, { name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);
+        }
+
+        function syncSchluesselLaden(cfg) {
+            return crypto.subtle.importKey('raw', ausB64(cfg.schluessel), 'AES-GCM', false, ['encrypt', 'decrypt']);
+        }
+
+        async function syncVerschluesseln(key, salt, inhalt) {
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const chiffrat = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, new TextEncoder().encode(JSON.stringify(inhalt)));
+            return { app: 'peptide-bank', v: 1, salt: salt, iv: zuB64(iv), daten: zuB64(chiffrat) };
+        }
+
+        async function syncEntschluesseln(key, umschlag) {
+            const klar = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: ausB64(umschlag.iv) }, key, ausB64(umschlag.daten));
+            return JSON.parse(new TextDecoder().decode(klar));
+        }
+
+        async function ghAnfrage(token, pfad, opt) {
+            opt = opt || {};
+            const kopf = { 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + token };
+            if (opt.body) kopf['Content-Type'] = 'application/json';
+            const res = await fetch('https://api.github.com' + pfad, { method: opt.method || 'GET', headers: kopf, body: opt.body, cache: 'no-store' });
+            if (!res.ok) {
+                const fehler = new Error('GitHub antwortet mit ' + res.status);
+                fehler.status = res.status;
+                throw fehler;
+            }
+            return res.json();
+        }
+
+        async function gistUmschlagLesen(token, gistId) {
+            const g = await ghAnfrage(token, '/gists/' + gistId);
+            const f = g.files && g.files[SYNC_DATEI];
+            if (!f) return null;
+            const text = f.truncated ? await (await fetch(f.raw_url, { cache: 'no-store' })).text() : f.content;
+            return JSON.parse(text);
+        }
+
+        function syncInhaltLokal(cfg) {
+            const daten = {};
+            BACKUP_KEYS.forEach(k => { daten[k] = localStorage.getItem(k); });
+            return { v: 1, geaendert: new Date().toISOString() + '#' + cfg.geraet, geraet: cfg.geraet, daten: daten };
+        }
+
+        // Aenderung an synchronisierten Daten: merken und bald hochladen
+        function syncGeaendert(key) {
+            if (window.__syncUebernimmt) return;
+            let schluessel;
+            try { schluessel = BACKUP_KEYS; } catch (e) { return; }
+            if (schluessel.indexOf(key) === -1) return;
+            let cfg;
+            try { cfg = JSON.parse(localStorage.getItem('sync_config') || '{}') || {}; } catch (e) { return; }
+            if (!cfg.gistId) return;
+            cfg.offen = Date.now();
+            localStorage.setItem('sync_config', JSON.stringify(cfg));
+            clearTimeout(syncTimer);
+            syncTimer = setTimeout(() => syncJetzt(), 4000);
+        }
+
+        function syncKonfigSetzen(aenderung) {
+            const cfg = Object.assign(readStore('sync_config'), aenderung);
+            localStorage.setItem('sync_config', JSON.stringify(cfg));
+            return cfg;
+        }
+
+        async function syncHochladen(cfg, key) {
+            const stand = Date.now();
+            const inhalt = syncInhaltLokal(cfg);
+            const umschlag = await syncVerschluesseln(key, cfg.salt, inhalt);
+            await ghAnfrage(cfg.token, '/gists/' + cfg.gistId, {
+                method: 'PATCH',
+                body: JSON.stringify({ files: { [SYNC_DATEI]: { content: JSON.stringify(umschlag) } } })
+            });
+            const jetzt = readStore('sync_config');
+            syncKonfigSetzen({ letzterAbgleich: inhalt.geaendert, offen: (jetzt.offen || 0) > stand ? jetzt.offen : 0 });
+        }
+
+        // Stand von GitHub uebernehmen. Der bisherige lokale Stand bleibt
+        // als Kopie liegen, falls die Wahl falsch war.
+        function syncUebernehmen(fern) {
+            const sicherung = {};
+            BACKUP_KEYS.forEach(k => { sicherung[k] = localStorage.getItem(k); });
+            window.__syncUebernimmt = true;
+            try {
+                localStorage.setItem('sync_sicherung', JSON.stringify({ zeit: new Date().toISOString(), daten: sicherung }));
+                BACKUP_KEYS.forEach(k => {
+                    const wert = fern.daten ? fern.daten[k] : undefined;
+                    if (wert === undefined) return;
+                    if (wert === null) localStorage.removeItem(k);
+                    else localStorage.setItem(k, wert);
+                });
+            } finally {
+                window.__syncUebernimmt = false;
+            }
+            syncKonfigSetzen({ letzterAbgleich: fern.geaendert, offen: 0 });
+            allesNeuZeichnen();
+        }
+
+        function allesNeuZeichnen() {
+            ['renderDatabase', 'renderInventory', 'renderInjectionLog', 'renderTrackerCalendar', 'renderTrackerRecent',
+             'renderAnalytics', 'renderDashboard', 'renderAlarms', 'renderDailySchedule', 'loadChatHistory',
+             'updateMapSubstancePresets', 'penListenAuffrischen', 'renderNasalLog', 'renderClock', 'renderBackupStand']
+                .forEach(f => { if (typeof window[f] === 'function') { try { window[f](); } catch (e) { console.warn(f, e); } } });
+        }
+
+        function syncZusammenfassung(daten) {
+            const lies = k => { try { return JSON.parse(daten[k] || 'null'); } catch (e) { return null; } };
+            const journal = (lies('tracker_data') || []).length;
+            const bestand = Object.keys(lies('peptide_inventory') || {}).length;
+            return journal + (journal === 1 ? ' Journal-Eintrag, ' : ' Journal-Einträge, ') + bestand + (bestand === 1 ? ' Substanz' : ' Substanzen') + ' im Bestand';
+        }
+
+        // Beide Seiten haben sich geaendert: nachfragen
+        function syncKonfliktFragen(fern) {
+            return new Promise(fertig => {
+                const lokal = {};
+                BACKUP_KEYS.forEach(k => { lokal[k] = localStorage.getItem(k); });
+                const zeit = new Date(String(fern.geaendert).split('#')[0]);
+                const zeitText = isNaN(zeit) ? 'unbekannt' : zeit.toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+                document.body.insertAdjacentHTML('beforeend', `
+                    <div class="fixed inset-0 z-[130] flex items-center justify-center bg-base/85 backdrop-blur-sm p-4" id="sync-konflikt" role="dialog" aria-modal="true" aria-labelledby="sync-konflikt-titel">
+                        <div class="bg-surface border border-white/10 p-5 sm:p-6 rounded-2xl max-w-md w-full shadow-2xl space-y-4 overflow-y-auto" style="max-height: 90vh; max-height: 90dvh;">
+                            <div>
+                                <h3 id="sync-konflikt-titel" class="text-lg font-bold text-white">Zwei verschiedene Stände</h3>
+                                <p class="text-xs text-slate-400 mt-1">Auf diesem Gerät und auf einem anderen wurde seit dem letzten Abgleich etwas geändert. Welcher Stand soll gelten? Der andere wird überschrieben; eine Kopie des Stands dieses Geräts bleibt hier gespeichert.</p>
+                            </div>
+                            <button type="button" data-wahl="fern" class="w-full text-left p-4 rounded-xl bg-sky-500/10 border border-sky-500/40 hover:bg-sky-500/20 transition-colors">
+                                <span class="block text-sm font-bold text-white">Stand vom anderen Gerät übernehmen</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Geändert ${esc(zeitText)} · ${esc(syncZusammenfassung(fern.daten || {}))}</span>
+                            </button>
+                            <button type="button" data-wahl="lokal" class="w-full text-left p-4 rounded-xl bg-slate-800/60 border border-white/10 hover:bg-slate-800 transition-colors">
+                                <span class="block text-sm font-bold text-white">Stand dieses Geräts behalten</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">${esc(syncZusammenfassung(lokal))}</span>
+                            </button>
+                            <button type="button" data-wahl="" class="w-full py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/5">Später entscheiden</button>
+                        </div>
+                    </div>`);
+                const box = document.getElementById('sync-konflikt');
+                box.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+                    box.remove();
+                    fertig(b.dataset.wahl);
+                }));
+                box.querySelector('button').focus();
+            });
+        }
+
+        function syncFehlerText(e) {
+            if (e && e.status === 401) return 'Der GitHub-Token ist ungültig oder abgelaufen. Bitte trennen und mit einem neuen Token verbinden.';
+            if (e && e.status === 403) return 'GitHub verweigert den Zugriff. Hat der Token das Recht „gist“?';
+            if (e && e.status === 404) return 'Das Gist für den Abgleich wurde nicht gefunden. Bitte trennen und neu verbinden.';
+            if (e && e.name === 'OperationError') return 'Die Daten lassen sich mit diesem Passwort nicht entschlüsseln.';
+            if (!navigator.onLine || (e && e.name === 'TypeError')) return 'Keine Verbindung. Der Abgleich wird nachgeholt.';
+            return 'Abgleich fehlgeschlagen: ' + (e && e.message ? e.message : e);
+        }
+
+        function syncJetzt() {
+            const cfg = readStore('sync_config');
+            if (!cfg.token || !cfg.gistId || !cfg.schluessel || !window.crypto || !crypto.subtle) return Promise.resolve();
+            if (syncLaeuft) return syncLaeuft;
+            clearTimeout(syncTimer);
+            syncStatusText = 'Gleiche ab …';
+            renderSync();
+            syncLaeuft = (async () => {
+                try {
+                    const key = await syncSchluesselLaden(cfg);
+                    const umschlag = await gistUmschlagLesen(cfg.token, cfg.gistId);
+                    const fern = umschlag ? await syncEntschluesseln(key, umschlag) : null;
+                    const aktuell = readStore('sync_config');
+                    const fernNeu = !!(fern && fern.geaendert && fern.geaendert !== aktuell.letzterAbgleich);
+                    const lokalNeu = !!aktuell.offen || !fern;
+
+                    if (fernNeu && lokalNeu) {
+                        const wahl = await syncKonfliktFragen(fern);
+                        if (wahl === 'fern') syncUebernehmen(fern);
+                        else if (wahl === 'lokal') await syncHochladen(readStore('sync_config'), key);
+                        else { syncStatusText = 'Wartet auf deine Entscheidung'; return; }
+                    } else if (fernNeu) {
+                        syncUebernehmen(fern);
+                    } else if (lokalNeu) {
+                        await syncHochladen(readStore('sync_config'), key);
+                    }
+                    syncKonfigSetzen({ zuletzt: new Date().toISOString(), fehler: '' });
+                    syncStatusText = '';
+                } catch (e) {
+                    console.warn('Abgleich:', e);
+                    syncKonfigSetzen({ fehler: syncFehlerText(e) });
+                    syncStatusText = '';
+                } finally {
+                    syncLaeuft = null;
+                    renderSync();
+                    renderBackupStand();
+                }
+            })();
+            return syncLaeuft;
+        }
+
+        async function syncVerbinden() {
+            const token = (document.getElementById('sync-token').value || '').trim();
+            const passwort = document.getElementById('sync-passwort').value || '';
+            const meldung = document.getElementById('sync-meldung');
+            const zeige = (t, gut) => { meldung.textContent = t; meldung.className = 'text-xs ' + (gut ? 'text-emerald-400' : 'text-amber-300'); };
+
+            if (!window.crypto || !crypto.subtle) { zeige('Der Abgleich braucht eine sichere Verbindung (https). Öffne die App über ihre Webadresse.'); return; }
+            if (!token) { zeige('Bitte den GitHub-Token einfügen.'); return; }
+            if (passwort.length < 8) { zeige('Das Passwort braucht mindestens 8 Zeichen.'); return; }
+
+            const knopf = document.getElementById('sync-verbinden');
+            knopf.disabled = true;
+            zeige('Verbinde mit GitHub …', true);
+            try {
+                // Gibt es schon einen Abgleich auf diesem Konto?
+                let gist = null;
+                for (let seite = 1; seite <= 5 && !gist; seite++) {
+                    const liste = await ghAnfrage(token, '/gists?per_page=100&page=' + seite);
+                    gist = liste.find(g => g.files && g.files[SYNC_DATEI]) || null;
+                    if (liste.length < 100) break;
+                }
+                const geraet = Math.random().toString(36).slice(2, 10);
+
+                if (gist) {
+                    const umschlag = await gistUmschlagLesen(token, gist.id);
+                    const key = await syncSchluesselAusPasswort(passwort, umschlag.salt);
+                    try {
+                        await syncEntschluesseln(key, umschlag);
+                    } catch (e) {
+                        zeige('Das Passwort passt nicht zum vorhandenen Abgleich. Nimm dasselbe Passwort wie auf deinem anderen Gerät.');
+                        return;
+                    }
+                    syncKonfigSetzen({
+                        token: token, gistId: gist.id, salt: umschlag.salt, geraet: geraet,
+                        schluessel: zuB64(await crypto.subtle.exportKey('raw', key)),
+                        letzterAbgleich: '', offen: hatEigeneDaten() ? Date.now() : 0, fehler: ''
+                    });
+                } else {
+                    const salt = zuB64(crypto.getRandomValues(new Uint8Array(16)));
+                    const key = await syncSchluesselAusPasswort(passwort, salt);
+                    const cfg = { token: token, salt: salt, geraet: geraet, schluessel: zuB64(await crypto.subtle.exportKey('raw', key)) };
+                    const inhalt = syncInhaltLokal(cfg);
+                    const neu = await ghAnfrage(token, '/gists', {
+                        method: 'POST',
+                        body: JSON.stringify({ description: SYNC_BESCHREIBUNG, public: false,
+                            files: { [SYNC_DATEI]: { content: JSON.stringify(await syncVerschluesseln(key, salt, inhalt)) } } })
+                    });
+                    syncKonfigSetzen(Object.assign(cfg, { gistId: neu.id, letzterAbgleich: inhalt.geaendert, offen: 0, zuletzt: new Date().toISOString(), fehler: '' }));
+                }
+                renderSync();
+                await syncJetzt();
+            } catch (e) {
+                zeige(e && e.status === 401
+                    ? 'GitHub akzeptiert den Token nicht. Prüf, ob er vollständig kopiert ist und das Recht „gist“ hat.'
+                    : syncFehlerText(e));
+            } finally {
+                knopf.disabled = false;
+            }
+        }
+
+        function syncTrennen() {
+            customConfirm('Abgleich auf diesem Gerät beenden? Deine Daten bleiben hier und auf GitHub erhalten; Token und Schlüssel werden von diesem Gerät gelöscht.', () => {
+                localStorage.removeItem('sync_config');
+                renderSync();
+                renderBackupStand();
+            });
+        }
+
+        function renderSync() {
+            const box = document.getElementById('sync-inhalt');
+            if (!box) return;
+            const cfg = readStore('sync_config');
+            const feld = 'w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 px-3 text-sm text-white focus:border-sky-500 outline-none';
+
+            if (!cfg.gistId) {
+                // Eingaben nicht neu aufbauen, solange jemand tippt
+                if (document.getElementById('sync-token')) return;
+                box.innerHTML = `
+                    <ol class="space-y-4 text-sm text-slate-300">
+                        <li class="space-y-2">
+                            <span class="block font-semibold text-white">1. GitHub-Token erstellen</span>
+                            <span class="block text-xs text-slate-400">Der Link öffnet GitHub mit allem vorausgefüllt. Nur das Recht „gist“ ist angehakt, mehr braucht die App nicht. Ablaufdatum nach Wunsch, dann „Generate token“ und den Token kopieren.</span>
+                            <a href="${SYNC_TOKEN_LINK}" target="_blank" rel="noopener noreferrer" class="inline-flex px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 border border-slate-600 text-slate-200 hover:bg-slate-700">Token auf GitHub erstellen</a>
+                        </li>
+                        <li class="space-y-2">
+                            <label for="sync-token" class="block font-semibold text-white">2. Token einfügen</label>
+                            <input id="sync-token" type="password" autocomplete="off" spellcheck="false" placeholder="ghp_…" class="${feld} font-mono">
+                        </li>
+                        <li class="space-y-2">
+                            <label for="sync-passwort" class="block font-semibold text-white">3. Passwort für die Verschlüsselung</label>
+                            <input id="sync-passwort" type="password" autocomplete="new-password" placeholder="Mindestens 8 Zeichen" class="${feld}">
+                            <span class="block text-xs text-slate-400">Auf jedem Gerät dasselbe. Es verlässt dieses Gerät nie. Geht es verloren, lassen sich die Daten auf GitHub nicht mehr lesen; deine Daten auf den Geräten bleiben aber erhalten.</span>
+                        </li>
+                    </ol>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 mt-5">
+                        <button id="sync-verbinden" type="button" onclick="syncVerbinden()" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-sky-500/20 text-sky-300 border border-sky-500/50 hover:bg-sky-500 hover:text-white transition-all disabled:opacity-50">Verbinden</button>
+                        <p id="sync-meldung" class="text-xs text-slate-400" aria-live="polite">Auf dem zweiten Gerät dieselben drei Schritte mit demselben Passwort.</p>
+                    </div>`;
+                return;
+            }
+
+            const zuletzt = cfg.zuletzt ? new Date(cfg.zuletzt) : null;
+            const wann = zuletzt ? zuletzt.toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'noch nie';
+            let punkt = 'bg-emerald-400', text = 'Abgeglichen · zuletzt ' + wann;
+            if (syncStatusText) { punkt = 'bg-sky-400 animate-pulse'; text = syncStatusText; }
+            else if (cfg.fehler) { punkt = 'bg-amber-400'; text = cfg.fehler; }
+            else if (cfg.offen) { punkt = 'bg-sky-400'; text = 'Änderungen werden gleich hochgeladen · zuletzt ' + wann; }
+
+            box.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <p class="flex items-start gap-2 text-sm text-slate-200" aria-live="polite"><span class="w-2.5 h-2.5 mt-1.5 shrink-0 rounded-full ${punkt}"></span><span>${esc(text)}</span></p>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="syncJetzt()" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-sky-500/20 text-sky-300 border border-sky-500/50 hover:bg-sky-500 hover:text-white transition-all">Jetzt abgleichen</button>
+                        <button type="button" onclick="syncTrennen()" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 border border-slate-700 hover:text-rose-300 hover:border-rose-500/50 transition-all">Trennen</button>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-500 mt-3">Gleicht beim Öffnen, beim Zurückkehren in die App und kurz nach jeder Änderung ab.</p>`;
+        }
+
+        function initSync() {
+            renderSync();
+            syncJetzt();
+            document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') syncJetzt(); });
+            window.addEventListener('online', () => syncJetzt());
         }
 
         function importData(event) {

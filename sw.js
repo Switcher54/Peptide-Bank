@@ -12,7 +12,7 @@
  * ihn kein Browser.
  */
 
-const CACHE = 'peptide-bank-v10';
+const CACHE = 'peptide-bank-v11';
 
 // Ohne diese Dateien startet gar nichts.
 const KERN = ['./', './index.html'];
@@ -58,6 +58,10 @@ self.addEventListener('fetch', event => {
     if (req.method !== 'GET') return;
 
     const url = new URL(req.url);
+
+    // Abgleich mit GitHub immer direkt ueber das Netz, nie aus dem Cache -
+    // sonst saehe die App einen veralteten Stand.
+    if (url.hostname === 'api.github.com' || url.hostname.endsWith('githubusercontent.com')) return;
 
     // Schriftdateien liegen auf fonts.gstatic.com und tauchen erst
     // auf, wenn das Stylesheet geparst ist - deshalb hier statt in
